@@ -1,0 +1,8 @@
+{
+    "drawAmount": 1,
+    "playAmount": 1,
+    "handLimit": 5,
+    "keeperLimit": 2,
+    "location": "MISTHALIN",
+    "teleblock": false
+}

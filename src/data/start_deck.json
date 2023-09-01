@@ -1,0 +1,13 @@
+{
+    "startDeck": [
+        {
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Ernest",
+            "text": {
+                "flavour": "TBA",
+                "specialEffects": ""
+            }
+        }
+    ]
+}
