@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { initializeApp } from "firebase/app";
 import { getDatabase } from 'firebase/database';
+import { getAuth } from 'firebase/auth';
+import UserSchema from './schemas/userSchema';
 import firebaseConfig from '../firebaseConfig';
 import UserContext from './data/Context';
 import MainMenu from './pages/MainMenu';
@@ -12,13 +14,14 @@ import Login from "./pages/Login";
 const app = initializeApp(firebaseConfig);
 
 export default function RouteSwitch() {
-    const [user, setUser] = useState<unknown>();
+    const [user, setUser] = useState<UserSchema | undefined>();
 
     const db = getDatabase(app, "https://flux-bbbdc-default-rtdb.europe-west1.firebasedatabase.app/");
+    const auth = getAuth()
 
     return (
         <Router basename="/runeflux" >
-            <UserContext.Provider value={{user, setUser, db}}>
+            <UserContext.Provider value={{user, setUser, db, auth}}>
                 <Routes>
                     <Route
                         path='/'

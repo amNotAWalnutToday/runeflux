@@ -1,4 +1,10 @@
+import { useContext } from 'react';
+import UserContext from "../data/Context"
+import accountFunctions from "../utils/accountFunctions"
+
 export default function Login() {
+    const user = useContext(UserContext);
+
     return(
         <div className="main_menu">
             <form className="menu" method="">
@@ -31,6 +37,7 @@ export default function Login() {
                     <button
                         className="menu_link"
                         type="button"
+                        onClick={() => accountFunctions.createAccountAnon(user)}
                     >
                         Create Account
                     </button>
