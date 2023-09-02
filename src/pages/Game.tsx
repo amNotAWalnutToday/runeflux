@@ -1,6 +1,7 @@
 import { useEffect, useReducer, useContext } from 'react';
 // import { ref, set } from 'firebase/database';
 import UserAccountBox from '../components/UserAccountBox';
+import Card from '../components/Card';
 import UserContext from '../data/Context';
 import GameSchema from '../schemas/gameSchema';
 import CardSchema from '../schemas/cardSchema';
@@ -58,8 +59,9 @@ export default function Game() {
 
 
     return(
-        <div>
+        <div className='game_container' >
             <UserAccountBox />
+            <Card />
         </div>
     )
 }
