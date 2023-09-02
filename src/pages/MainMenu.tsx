@@ -1,6 +1,12 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import UserContext from "../data/Context"
+import accountFunctions from "../utils/accountFunctions"
 
 export default function MainMenu() {
+    const user = useContext(UserContext);
+    const navigate = useNavigate();
+
     return(
         <div className='main_menu' >
             <div className='menu'>
@@ -10,12 +16,15 @@ export default function MainMenu() {
                 >
                     Log in
                 </Link>
-                <Link
+                <button
                     className='menu_link'
-                    to='/lobby'
+                    onClick={(async () => {
+                        await accountFunctions.createAccountAnon(user);
+                        navigate('/lobby')
+                    })}
                 >
                         Play as Guest
-                </Link>
+                </button>
             </div>
         </div>
     )

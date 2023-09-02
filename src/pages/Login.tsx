@@ -1,9 +1,9 @@
-import { useContext } from 'react';
-import UserContext from "../data/Context"
-import accountFunctions from "../utils/accountFunctions"
+// import { useContext } from 'react';
+// import UserContext from "../data/Context"
+// import accountFunctions from "../utils/accountFunctions"
 
 export default function Login() {
-    const user = useContext(UserContext);
+    // const user = useContext(UserContext);
 
     return(
         <div className="main_menu">
@@ -37,7 +37,6 @@ export default function Login() {
                     <button
                         className="menu_link"
                         type="button"
-                        onClick={() => accountFunctions.createAccountAnon(user)}
                     >
                         Create Account
                     </button>
