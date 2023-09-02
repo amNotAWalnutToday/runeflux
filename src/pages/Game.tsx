@@ -1,4 +1,6 @@
-import { useEffect, useReducer } from 'react';
+import { useEffect, useReducer, useContext } from 'react';
+// import { ref, set } from 'firebase/database';
+import UserContext from '../data/Context';
 import GameSchema from '../schemas/gameSchema';
 import CardSchema from '../schemas/cardSchema';
 import PlayerSchema from '../schemas/playerSchema';
@@ -46,7 +48,8 @@ const loadGame = () => {
 
 export default function Game() {
     const [table, dispatchTable] = useReducer(tableReducer, loadGame());
-    
+    const { db } = useContext(UserContext);
+
     useEffect(() => {
         console.log(table);
         // setTimeout(() => dispatchTable({type: REDUCER_ACTIONS.RULE_CHANGE__DRAW, payload: Math.random() * 10}), 3000)
