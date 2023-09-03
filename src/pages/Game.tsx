@@ -1,7 +1,8 @@
-import { useEffect, useReducer, useContext } from 'react';
+import { useEffect, useState, useReducer, useContext } from 'react';
 // import { ref, set } from 'firebase/database';
 import UserAccountBox from '../components/UserAccountBox';
-import Card from '../components/Card';
+import HandOfCards from '../components/HandOfCards';
+import PlayCard from '../components/PlayCard';
 import UserContext from '../data/Context';
 import GameSchema from '../schemas/gameSchema';
 import CardSchema from '../schemas/cardSchema';
@@ -50,18 +51,32 @@ const loadGame = () => {
 
 export default function Game() {
     const [table, dispatchTable] = useReducer(tableReducer, loadGame());
+    const [selectedCard, setSelectedCard] = useState<CardSchema | null>(null);
     const { db } = useContext(UserContext);
 
     useEffect(() => {
         console.log(table);
         // setTimeout(() => dispatchTable({type: REDUCER_ACTIONS.RULE_CHANGE__DRAW, payload: Math.random() * 10}), 3000)
-    }, [table])
+    }, [table]);
 
+    const selectCard = (card: CardSchema | null) => {
+        setSelectedCard((prev) => {
+            if(prev === null || card === null) return card;
+            else return prev.name === card.name ? null : card;
+        });
+    }
 
     return(
         <div className='game_container' >
             <UserAccountBox />
-            <Card />
+            {
+            selectedCard 
+            &&
+            <PlayCard  />
+            }
+            <HandOfCards 
+                selectCard={selectCard}
+            />
         </div>
     )
 }
