@@ -1,12 +1,19 @@
+import { ref, set, Database, onValue } from 'firebase/database';
 import CardSchema from '../schemas/cardSchema';
 import PlayerSchema from '../schemas/playerSchema';
 import startDeckData from '../data/start_deck.json';
 import startRuleData from '../data/start_rules.json';
 import GameSchema from '../schemas/gameSchema';
 import UserSchema from '../schemas/userSchema';
+import RuleSchema from '../schemas/ruleSchema';
+import roomFunctions from './roomFunctions';
+
+const { convertGameToRoomGame } = roomFunctions;
 
 export default (() => {
-    const loadGame = (user: UserSchema | undefined) => {
+    const loadGame = (
+        user: UserSchema | undefined, 
+    ) => {
         const game = {
             deck: {
                 pure: [] as CardSchema[],
@@ -20,6 +27,59 @@ export default (() => {
             game.deck.pure.push(card);
         }
         return Object.assign({}, game, {rules: startRuleData});
+    }
+
+    const connectGame = async (
+        gameId: string,
+        db: Database,
+        setTable: React.Dispatch<React.SetStateAction<GameSchema>>,
+    ) => {
+        const gameRef = ref(db, `/games/${gameId}/game`);
+        onValue(gameRef, async (snapshot) => {
+            const data = await snapshot.val();
+
+            updateTable(
+                data.deck, data.goal,
+                data.rules,
+                data.players,
+                data.round,
+                setTable
+            );
+        });
+    }
+
+    const updateTable = (
+        deckData: { pure: CardSchema[], discard: CardSchema[] },
+        goalData: CardSchema[],
+        ruleData: RuleSchema,
+        playerData: PlayerSchema[],
+        roundData: number,
+        setTable: React.Dispatch<React.SetStateAction<GameSchema>>
+    ) => {
+        if(!deckData.discard) deckData.discard = [];
+        if(!goalData) goalData = [];
+        for(const player of playerData) {
+            if(!player.hand) player.hand = [];
+            if(!player.keepers) player.keepers = [];
+        }
+
+        const updatedTable = {
+            deck: deckData,
+            goal: goalData,
+            rule: ruleData,
+            players: playerData,
+            round: roundData
+        }
+
+        setTable((prev) => {
+            return { ...prev, ...updatedTable }
+        });
+    }
+
+    const uploadTable = (db: Database, gameState: GameSchema, gameId: string) => {         
+        const uploadGameState = convertGameToRoomGame(gameState);
+        const gameRef = ref(db, `/games/${gameId}/game`);
+        set(gameRef, uploadGameState);
     }
 
     const getPlayer = (players: PlayerSchema[], uid: string) => {
@@ -40,7 +100,8 @@ export default (() => {
         gameSetter: React.Dispatch<React.SetStateAction<GameSchema>>, 
         player_uid: string,
         playerSetter: React.Dispatch<React.SetStateAction<PlayerSchema>>, 
-        amount: number
+        db: Database,
+        gameId: string,
     ) => {
         const { topCard, updatedDeck } = removeCardFromDeck(gameState.deck.pure);
         if(!topCard) return;
@@ -49,10 +110,16 @@ export default (() => {
         const updatedPlayers = [...gameState.players];
         updatedPlayers[player.index] = player.state; 
         gameSetter((prev) => {
-            return {...prev, deck: {
-                pure: updatedDeck,
-                discard: prev.deck.discard
-            }, players: updatedPlayers}
+            const updatedGame = {
+                ...prev,
+                deck: {
+                    pure: updatedDeck,
+                    discard: prev.deck.discard
+                },
+                players: updatedPlayers
+            }
+            uploadTable(db, updatedGame, gameId);
+            return updatedGame;
         });
         playerSetter((prev) => {
             return { ...prev, ...player.state };
@@ -61,6 +128,8 @@ export default (() => {
     
     return {
         loadGame,
+        connectGame,
+        uploadTable,
         getPlayer,
         drawCards
     }

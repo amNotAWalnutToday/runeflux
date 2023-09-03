@@ -35,19 +35,23 @@ const rulesReducer = (state, action: TABLE_ACTIONS) => {
 }
 
 export default function Game() {
-    const { loadGame, getPlayer } = gameFunctions;
+    const { loadGame, getPlayer, connectGame } = gameFunctions;
 
     const [selectedCard, setSelectedCard] = useState<CardSchema | null>(null);
-    const { db, user } = useContext(UserContext);
+    const { db, user, joinedGameID } = useContext(UserContext);
     const [table, setTable] = useState<GameSchema>(loadGame(user));
     const [localPlayer, setLocalPlayer] = useState(getPlayer(table.players, user?.uid ?? '').state)
     const [rules, dispatchTable] = useReducer(rulesReducer, table.rules);
-
+    
     useEffect(() => {
         console.log(rules);
         // gameFunctions.drawCards(table, user?.uid ?? '0005', 5);
         // setTimeout(() => dispatchTable({type: REDUCER_ACTIONS.RULE_CHANGE__DRAW, payload: { amount:Math.random() * 10}}), 3000)
     }, [rules]);
+
+    useEffect(() => {
+        connectGame(joinedGameID, db, setTable);
+    }, []);
 
     const selectCard = (card: CardSchema | null) => {
         setSelectedCard((prev) => {
@@ -68,7 +72,7 @@ export default function Game() {
         })
     }
 
-    return(
+    return (
         <div className='game_container' >
             <UserAccountBox />
             <div className='user_bars__container'>
@@ -84,7 +88,7 @@ export default function Game() {
                 hand={localPlayer.hand}
             />
             <button onClick={() => { 
-                    gameFunctions.drawCards(table, setTable, user?.uid ?? '', setLocalPlayer, 5)
+                    gameFunctions.drawCards(table, setTable, user?.uid ?? '', setLocalPlayer, db, joinedGameID);
                     console.log(table);
                 }} >press me</button>
         </div>

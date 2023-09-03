@@ -15,13 +15,14 @@ const app = initializeApp(firebaseConfig);
 
 export default function RouteSwitch() {
     const [user, setUser] = useState<UserSchema | undefined>();
+    const [joinedGameID, setJoinedGameID] = useState("");
 
     const db = getDatabase(app, "https://flux-bbbdc-default-rtdb.europe-west1.firebasedatabase.app/");
     const auth = getAuth()
 
     return (
         <Router basename="/runeflux" >
-            <UserContext.Provider value={{user, setUser, db, auth}}>
+            <UserContext.Provider value={{user, setUser, db, auth, joinedGameID, setJoinedGameID}}>
                 <Routes>
                     <Route
                         path='/'
