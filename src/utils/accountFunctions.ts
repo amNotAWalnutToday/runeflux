@@ -1,5 +1,6 @@
 import { onAuthStateChanged, signInAnonymously, signOut } from 'firebase/auth';
 import { ref, set } from 'firebase/database';
+import testsettings from '../../testsettings.json';
 
 export default (() => {
     const createAccountAnon = async (user) => {
@@ -22,8 +23,19 @@ export default (() => {
             }
         });
     }
+
+    const testUserSignIn = (username: string, pass: string, setter) => {
+        let isUser = false;
+        for(const user of testsettings.users) {
+            if(user.name.toLowerCase() === username
+            && user.pass.toLowerCase() === pass) isUser = true;
+        }
+        if(isUser) setter((prev) => ({...prev, username, uid: username }));
+        return isUser;
+    }
     
     return {
-        createAccountAnon
+        createAccountAnon,
+        testUserSignIn
     }
 })();

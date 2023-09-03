@@ -5,7 +5,7 @@ interface CardSchema {
     effects: string[],
     text: {
         flavour: string,
-        specialEffect: string,
+        specialEffects: string,
     }
 }
 

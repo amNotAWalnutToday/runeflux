@@ -56,9 +56,24 @@ export default function Game() {
         });
     }
 
+    const mapPlayerBars = () => {
+        return table.players.map((player: PlayerSchema, ind: number) => {
+            return (
+                <UserAccountBox 
+                    key={`player_bar__${ind}`}
+                    isSideBox={true}
+                    player={player}
+                />
+            )
+        })
+    }
+
     return(
         <div className='game_container' >
             <UserAccountBox />
+            <div className='user_bars__container'>
+                { mapPlayerBars() }
+            </div>
             {
             selectedCard 
             &&

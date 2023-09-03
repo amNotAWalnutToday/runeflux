@@ -91,6 +91,20 @@
   align-items: center;
 }
 
+.user_bars__container {
+  position: absolute;
+  left: 0;
+  top: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 5rem;
+}
+
+.user_bar {
+  padding: 0.5rem 2.5rem;
+  background-color: #1119;
+}
+
 .hand_container {
   display: flex;
   padding: 0 35%;

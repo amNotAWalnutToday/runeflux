@@ -2,12 +2,13 @@ import { useState } from "react";
 import CardSchema from "../schemas/cardSchema";
 
 type Props = {
+    cardState: CardSchema,
     position: "HAND",
     numberInLine?: number,
     selectCard?: (card: CardSchema | null) => void,
 }
 
-export default function Card({position, numberInLine, selectCard}: Props) {
+export default function Card({cardState, position, numberInLine, selectCard}: Props) {
     const [isHover, setIsHover] = useState(false);
     
     return(
@@ -22,7 +23,7 @@ export default function Card({position, numberInLine, selectCard}: Props) {
                 e.stopPropagation();
                 setIsHover(false);
             })}
-            onClick={() => selectCard && selectCard({name: '1'})}
+            onClick={() => selectCard && selectCard(cardState)}
         >
             <div className='card_container__inner_left'>
                 <div className='card_header__background' >
