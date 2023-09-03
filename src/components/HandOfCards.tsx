@@ -3,14 +3,13 @@ import Card from "./Card"
 import CardSchema from "../schemas/cardSchema";
 
 type Props = {
+    hand: CardSchema[],
     selectCard: (card: CardSchema | null) => void,
 }
 
-export default function HandOfCards({selectCard}: Props) {
-    const [tempDeck, setTempDeck] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-
+export default function HandOfCards({hand, selectCard}: Props) {
     const mapHand = () => {
-        return tempDeck.map((card: CardSchema | number, index: number) => {
+        return hand.map((card: CardSchema | number, index: number) => {
             return (
                 <Card 
                     key={`hand_card_${index}`} 

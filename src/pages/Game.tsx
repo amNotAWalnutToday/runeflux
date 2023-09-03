@@ -6,9 +6,8 @@ import PlayCard from '../components/PlayCard';
 import UserContext from '../data/Context';
 import GameSchema from '../schemas/gameSchema';
 import CardSchema from '../schemas/cardSchema';
+import gameFunctions from '../utils/gameFunctions';
 import PlayerSchema from '../schemas/playerSchema';
-import startDeckData from '../data/start_deck.json';
-import startRuleData from '../data/start_rules.json';
 
 const enum REDUCER_ACTIONS {
     RULE_CHANGE__DRAW,
@@ -21,43 +20,34 @@ const enum REDUCER_ACTIONS {
 
 type TABLE_ACTIONS = {
     type: REDUCER_ACTIONS
-    payload?: number,
+    payload?: {
+        amount: number
+    },
 }
 
-const tableReducer = (state: GameSchema | unknown, action: TABLE_ACTIONS) => {
+const rulesReducer = (state, action: TABLE_ACTIONS) => {
     switch(action.type) {
         case REDUCER_ACTIONS.RULE_CHANGE__DRAW: 
-            return Object.assign({}, state, {rules: {drawAmount: action.payload, playAmount: 1, keeperLimit: 2, handLimit: 5, location: 'MISTHALIN', teleblock: false}})
+            return Object.assign({}, state, {drawAmount: action.payload?.amount})
         default: 
             return state;
     }
 }
 
-const loadGame = () => {
-    const game = {
-        deck: {
-            pure: [] as unknown[],
-            discard: [] as unknown[],
-        },
-        players: [] as PlayerSchema[],
-        goal: [] as CardSchema[],
-        round: 0,
-    }
-    for(const card of startDeckData.startDeck) {
-        game.deck.pure.push(card);
-    }
-    return Object.assign({}, game, {rules: startRuleData});
-}
-
 export default function Game() {
-    const [table, dispatchTable] = useReducer(tableReducer, loadGame());
+    const { loadGame, getPlayer } = gameFunctions;
+
     const [selectedCard, setSelectedCard] = useState<CardSchema | null>(null);
-    const { db } = useContext(UserContext);
+    const { db, user } = useContext(UserContext);
+    const [table, setTable] = useState<GameSchema>(loadGame(user));
+    const [localPlayer, setLocalPlayer] = useState(getPlayer(table.players, user?.uid ?? '').state)
+    const [rules, dispatchTable] = useReducer(rulesReducer, table.rules);
 
     useEffect(() => {
-        console.log(table);
-        // setTimeout(() => dispatchTable({type: REDUCER_ACTIONS.RULE_CHANGE__DRAW, payload: Math.random() * 10}), 3000)
-    }, [table]);
+        console.log(rules);
+        // gameFunctions.drawCards(table, user?.uid ?? '0005', 5);
+        // setTimeout(() => dispatchTable({type: REDUCER_ACTIONS.RULE_CHANGE__DRAW, payload: { amount:Math.random() * 10}}), 3000)
+    }, [rules]);
 
     const selectCard = (card: CardSchema | null) => {
         setSelectedCard((prev) => {
@@ -76,7 +66,12 @@ export default function Game() {
             }
             <HandOfCards 
                 selectCard={selectCard}
+                hand={localPlayer.hand}
             />
+            <button onClick={() => { 
+                    gameFunctions.drawCards(table, setTable, user?.uid ?? '', setLocalPlayer, 5)
+                    console.log(table);
+                }} >press me</button>
         </div>
     )
 }

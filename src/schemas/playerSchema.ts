@@ -1,7 +1,8 @@
 import CardSchema from "./cardSchema";
+import UserSchema from "./userSchema";
 
 interface PlayerSchema {
-    user: /*UserSchema*/null,
+    user: UserSchema,
     hand: CardSchema[]
     keepers: CardSchema[],
 }

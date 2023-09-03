@@ -4,7 +4,7 @@ import CardSchema from "../schemas/cardSchema";
 type Props = {
     position: "HAND",
     numberInLine?: number,
-    selectCard: (card: CardSchema | null) => void,
+    selectCard?: (card: CardSchema | null) => void,
 }
 
 export default function Card({position, numberInLine, selectCard}: Props) {
@@ -22,7 +22,7 @@ export default function Card({position, numberInLine, selectCard}: Props) {
                 e.stopPropagation();
                 setIsHover(false);
             })}
-            onClick={() => selectCard({name: '1'})}
+            onClick={() => selectCard && selectCard({name: '1'})}
         >
             <div className='card_container__inner_left'>
                 <div className='card_header__background' >

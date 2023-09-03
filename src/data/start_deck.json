@@ -4,9 +4,60 @@
             "type": "KEEPER",
             "subtype": "LIVING",
             "name": "Ernest",
+            "effects": [],
             "text": {
                 "flavour": "TBA",
                 "specialEffects": ""
+            }
+        },
+        {
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Draynor Manor",
+            "effects": [],
+            "text": {
+                "flavour": "TBA",
+                "specialEffects": ""
+            }
+        },
+        {
+            "type": "RULE",
+            "subtype": "LOCATION",
+            "name": "Misthalin",
+            "effects": ["LOCATION_MISTHALIN"],
+            "text": {
+                "flavour": "TBA",
+                "specialEffects": "teleport all players to the location of misthalin, this location has no special effects."
+            }
+        },
+        {
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Teleport",
+            "effects": ["LOCATION_CHOOSE"],
+            "text": {
+                "flavour": "TBA",
+                "specialEffects": "teleport to an available location of your choosing."
+            }
+        },
+        {
+            "type": "COUNTER",
+            "subtype": "",
+            "name": "telestop",
+            "effects": ["TELESTOP_OR_LOCATION_MISTHALIN"],
+            "text": {
+                "flavour": "TBA",
+                "specialEffects": "out of turn stop an opposing players teleport, during your turn teleport to misthalin."
+            }
+        },
+        {
+            "type": "CREEPER",
+            "subtype": "",
+            "name": "Wintertodt",
+            "effects": ["CHANCE_DISCARD"],
+            "text": {
+                "flavour": "TBA",
+                "specialEffects": "Attaches to a living card causing the owner to have a 50% chance to discard the draw amount of cards at the start of each turn."
             }
         }
     ]
