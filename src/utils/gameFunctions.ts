@@ -10,6 +10,12 @@ import roomFunctions from './roomFunctions';
 
 const { convertGameToRoomGame } = roomFunctions;
 
+type TurnSchema = {
+    player: string,
+    drawn: number,
+    played: number,
+}
+
 export default (() => {
     const loadGame = (
         user: UserSchema | undefined, 
@@ -96,18 +102,23 @@ export default (() => {
     const upload = (
         type: string,
         db: Database,
-        gameState: GameSchema,
+        payload: {
+            gameState?: GameSchema,
+            deckState?: CardSchema[],
+            turnState?: TurnSchema
+        },
         gameId: string
     ) => {
+        const { gameState, deckState, turnState } = payload;
         switch(type) {
             case "DECK_PURE":
-                return uploadDeck(db, gameState.deck.pure, gameId);
+                return uploadDeck(db, deckState ?? [], gameId);
             case "DECK_DISCARD":
-                return uploadDeck(db, gameState.deck.discard, gameId, true);
+                return uploadDeck(db, deckState ?? [], gameId, true);
             case "TURN":
-                return uploadTurn(db, gameState.turn, gameId);
+                return uploadTurn(db, turnState ?? {} as TurnSchema, gameId);
             default:
-                return uploadTable(db, gameState, gameId);
+                return uploadTable(db, gameState ?? {} as GameSchema, gameId);
         }
     }
 
@@ -123,7 +134,7 @@ export default (() => {
         await set(deckRef, deck.length ? deck : false);
     }
 
-    const uploadTurn = async (db: Database, turn, gameId: string) => {
+    const uploadTurn = async (db: Database, turn: TurnSchema, gameId: string) => {
         const turnRef = ref(db, `/games/${gameId}/game/turn`);
         await set(turnRef, turn);
     }
@@ -150,8 +161,10 @@ export default (() => {
     ) => {
         if(gameState.round === 0) {
             drawCards(gameState, gameSetter, player_uid, playerSetter, db, gameId, 3);
+            return 3;
         } else {
             drawCards(gameState, gameSetter, player_uid, playerSetter, db, gameId, gameState.rules.drawAmount);
+            return gameState.rules.drawAmount;
         }
     }
 
@@ -216,12 +229,21 @@ export default (() => {
         const nextPlayer = currentPlayer.index < players.length - 1
             ? currentPlayer.index + 1
             : 0
-        const thisTurn = {
-            ...turn,
-            player: players[nextPlayer].user.uid
-        }
-        turnDispatch({type: 0, payload: {player: players[nextPlayer].user.uid}});
-        uploadTurn(db, thisTurn, gameId);
+        // const thisTurn = {
+        //     ...turn,
+        //     player: players[nextPlayer].user.uid
+        // }
+        console.log(players[nextPlayer].user.uid)
+        turnDispatch({
+            type: 0, 
+            payload: {
+                player: players[nextPlayer].user.uid,
+                upload: {
+                    db,
+                    gameId
+                }
+            }
+        });
     }
     
     return {

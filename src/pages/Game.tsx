@@ -10,6 +10,7 @@ import gameFunctions from '../utils/gameFunctions';
 import roomFunctions from '../utils/roomFunctions';
 import PlayerSchema from '../schemas/playerSchema';
 import { useNavigate } from 'react-router-dom';
+import { Database } from 'firebase/database';
 
 const { 
     loadGame, 
@@ -77,14 +78,28 @@ type TURN_ACTIONS = {
     type: TURN_REDUCER_ACTION,
     payload: {
         player?: string,
-        amount?: number
+        amount?: number,
+        upload: {
+            db: Database,
+            gameId: string,
+        }
     }
 }
 
 const turnReducer = (state, action: TURN_ACTIONS) => {
+    const { player, amount } = action.payload;
+    const { db, gameId } = action.payload.upload; 
+
     switch(action.type) {
         case TURN_REDUCER_ACTION.CHANGE_TURN:
-            return Object.assign({}, state, {player: action.payload.player})
+            upload("TURN", db, {turnState: Object.assign({}, state, {player, drawn: 0, played: 0})}, gameId);
+            return Object.assign({}, state, {player, drawn: 0, played: 0});
+        case TURN_REDUCER_ACTION.DRAWN_ADD:
+            upload("TURN", db, {turnState: Object.assign({}, state, {player, drawn: amount})}, gameId);
+            return Object.assign({}, state, {player, drawn: amount});
+        case TURN_REDUCER_ACTION.PLAYED_ADD:
+            upload("TURN", db, {turnState: Object.assign({}, state, {played: amount})}, gameId);
+            return Object.assign({}, state, {played: amount});
         default:
             return state;
     }
@@ -96,6 +111,7 @@ export default function Game() {
     const navigate = useNavigate();
 
     const { db, user, joinedGameID } = useContext(UserContext);
+    const uploadProps = { db, gameId: joinedGameID }
     
     /*GLOBAL STATE*/
     const [table, setTable] = useState<GameSchema>(loadGame(user));
@@ -139,9 +155,15 @@ export default function Game() {
             const firstTurn = chooseWhoGoesFirst(table.players);
             const updatedDeck = shuffleDeck(table.deck.pure);
             dispatchDeck({type: DECK_REDUCER_ACTIONS.DECK_REPLACE__PURE, payload: {pile: updatedDeck}});
-            dispatchTurn({type: TURN_REDUCER_ACTION.CHANGE_TURN, payload: {player: firstTurn}});
-            await upload("DECK_PURE", db, table, joinedGameID);
-            await upload("TURN", db, table, joinedGameID);
+            dispatchTurn({
+                type: TURN_REDUCER_ACTION.CHANGE_TURN, 
+                payload: {
+                    player: firstTurn,
+                    upload: {...uploadProps},
+                }
+            });
+            await upload("DECK_PURE", db, {deckState: deck.pure}, joinedGameID);
+            // await upload("TURN", db, table, joinedGameID);
             await startGame(db, joinedGameID);
         }
     }
@@ -184,24 +206,27 @@ export default function Game() {
                 hand={localPlayer.hand}
             />
             }
-            <button onClick={() => { 
+            {/* <button onClick={() => { 
                     gameFunctions.drawCards(table, setTable, user?.uid ?? '', setLocalPlayer, db, joinedGameID);
-                }} >press me</button>
-            <button
+                }} >press me</button> */}
+            {/* <button
                 onClick={() => {
                     const newDeck = gameFunctions.shuffleDeck(table.deck.pure);
                     dispatchDeck({type: DECK_REDUCER_ACTIONS.DECK_REPLACE__PURE, payload: {pile: newDeck}});
                 }}
             >
                 shuffle
-            </button>
-
+            </button> */}
             {user &&
             table.turn.player === user?.uid
             &&
             <div>
                 <button
-                    onClick={() => drawPhase(table, setTable, user?.uid ?? '', setLocalPlayer, db, joinedGameID)}
+                    onClick={() => {
+                        const drawn = drawPhase(table, setTable, user?.uid ?? '', setLocalPlayer, db, joinedGameID)
+                        dispatchTurn({type: TURN_REDUCER_ACTION.DRAWN_ADD, payload: { player: table.turn.player && table.turn.player !== true ? table.turn.player : 'a', amount: drawn, upload: uploadProps}});
+                        // upload("TURN", db, table, joinedGameID);
+                    }}
                 >
                     Start Turn
                 </button>
@@ -209,6 +234,7 @@ export default function Game() {
                 onClick={() => {
                     endTurn(db, table.players, table.turn, dispatchTurn, joinedGameID);
                 }}
+                disabled={table.turn.drawn < table.rules.drawAmount}
                 >
                     end turn
                 </button>
