@@ -168,7 +168,6 @@ export default (() => {
     }
 
     const removeCardFromDeck = (deck: CardSchema[]) => {
-        console.log(deck);
         const topCard = deck.pop();
         return { topCard, updatedDeck: deck };
     }
@@ -205,6 +204,25 @@ export default (() => {
             return updatedGame;
         });
     }
+
+    const endTurn = (
+        db: Database, 
+        players: PlayerSchema[], 
+        turn, 
+        turnDispatch, 
+        gameId: string
+    ) => {
+        const currentPlayer = getPlayer(players, turn.player);
+        const nextPlayer = currentPlayer.index < players.length - 1
+            ? currentPlayer.index + 1
+            : 0
+        const thisTurn = {
+            ...turn,
+            player: players[nextPlayer].user.uid
+        }
+        turnDispatch({type: 0, payload: {player: players[nextPlayer].user.uid}});
+        uploadTurn(db, thisTurn, gameId);
+    }
     
     return {
         loadGame,
@@ -215,6 +233,7 @@ export default (() => {
         chooseWhoGoesFirst,
         drawPhase,
         drawCards,
-        shuffleDeck
+        shuffleDeck,
+        endTurn,
     }
 })();

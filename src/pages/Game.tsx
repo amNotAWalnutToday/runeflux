@@ -16,7 +16,7 @@ const {
     getPlayer, 
     connectGame, 
     chooseWhoGoesFirst,
-    uploadTable,
+    endTurn,
     upload,
     shuffleDeck,
     drawPhase,
@@ -109,7 +109,6 @@ export default function Game() {
     const [localPlayer, setLocalPlayer] = useState(getPlayer(table.players, user?.uid ?? '').state)
 
     useEffect(() => {
-        console.log(rules);
         // gameFunctions.drawCards(table, user?.uid ?? '0005', 5);
         // setTimeout(() => dispatchTable({type: REDUCER_ACTIONS.RULE_CHANGE__DRAW, payload: { amount:Math.random() * 10}}), 3000)
     }, [rules]);
@@ -135,7 +134,6 @@ export default function Game() {
     const opening = async () => {
         if(!user) return navigate('/');
         await connectGame(joinedGameID, db, setTable, user.uid, setLocalPlayer);
-        console.log(user.uid, joinedGameID);
         if(user.uid === joinedGameID) {
             if(await checkGameInProgress(db, joinedGameID)) return;
             const firstTurn = chooseWhoGoesFirst(table.players);
@@ -188,13 +186,11 @@ export default function Game() {
             }
             <button onClick={() => { 
                     gameFunctions.drawCards(table, setTable, user?.uid ?? '', setLocalPlayer, db, joinedGameID);
-                    console.log(table);
                 }} >press me</button>
             <button
                 onClick={() => {
                     const newDeck = gameFunctions.shuffleDeck(table.deck.pure);
                     dispatchDeck({type: DECK_REDUCER_ACTIONS.DECK_REPLACE__PURE, payload: {pile: newDeck}});
-                    console.log(deck, table.deck.pure);
                 }}
             >
                 shuffle
@@ -203,11 +199,20 @@ export default function Game() {
             {user &&
             table.turn.player === user?.uid
             &&
-            <button
-                onClick={() => drawPhase(table, setTable, user?.uid ?? '', setLocalPlayer, db, joinedGameID)}
-            >
-                Start Turn
-            </button>
+            <div>
+                <button
+                    onClick={() => drawPhase(table, setTable, user?.uid ?? '', setLocalPlayer, db, joinedGameID)}
+                >
+                    Start Turn
+                </button>
+                <button
+                onClick={() => {
+                    endTurn(db, table.players, table.turn, dispatchTurn, joinedGameID);
+                }}
+                >
+                    end turn
+                </button>
+            </div>
             }
             <p>{table.turn.player}</p>
         </div>
