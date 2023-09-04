@@ -105,6 +105,10 @@
   background-color: #1119;
 }
 
+.user_bar__uid {
+  font-size: 0.8em;
+}
+
 .hand_container {
   display: flex;
   padding: 0 35%;
@@ -115,6 +119,12 @@
 
 .hand_container .card:not(.card:first-child) {
   transform: translate(-50%);
+}
+
+.deck_card {
+  position: absolute;
+  left: 50px;
+  top: 50px;
 }
 
 .card {
@@ -193,6 +203,11 @@
 
 .card_hr__thick {
   border: 2px solid var(--white);
+}
+
+.card_back {
+  background-color: var(--black);
+  border: 5px solid white;
 }
 
 .fake_img {

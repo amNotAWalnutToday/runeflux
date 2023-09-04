@@ -11,6 +11,7 @@ import roomFunctions from '../utils/roomFunctions';
 import PlayerSchema from '../schemas/playerSchema';
 import { useNavigate } from 'react-router-dom';
 import { Database } from 'firebase/database';
+import DrawCard from '../components/DrawCard';
 
 const { 
     loadGame, 
@@ -175,6 +176,20 @@ export default function Game() {
         });
     }
 
+    const drawCards = () => {
+        const drawn = drawPhase(table, setTable, user?.uid ?? '', setLocalPlayer, db, joinedGameID)
+        dispatchTurn({
+            type: TURN_REDUCER_ACTION.DRAWN_ADD, 
+            payload: { 
+                player: table.turn.player && table.turn.player !== true 
+                    ? table.turn.player 
+                    : 'a', 
+                amount: drawn, 
+                upload: uploadProps
+            }
+        });
+    }
+
     const mapPlayerBars = () => {
         return table.players.map((player: PlayerSchema, ind: number) => {
             return (
@@ -201,6 +216,14 @@ export default function Game() {
             />
             }
             {
+            user?.uid === table.turn.player
+            && table.turn.drawn < table.rules.drawAmount
+            &&
+            <DrawCard 
+                drawCards={drawCards}
+            />
+            }
+            {
             localPlayer.hand.length
             &&
             <HandOfCards 
@@ -223,15 +246,6 @@ export default function Game() {
             table.turn.player === user?.uid
             &&
             <div>
-                <button
-                    onClick={() => {
-                        const drawn = drawPhase(table, setTable, user?.uid ?? '', setLocalPlayer, db, joinedGameID)
-                        dispatchTurn({type: TURN_REDUCER_ACTION.DRAWN_ADD, payload: { player: table.turn.player && table.turn.player !== true ? table.turn.player : 'a', amount: drawn, upload: uploadProps}});
-                        // upload("TURN", db, table, joinedGameID);
-                    }}
-                >
-                    Start Turn
-                </button>
                 <button
                 onClick={() => {
                     endTurn(db, table.players, table.turn, dispatchTurn, joinedGameID);

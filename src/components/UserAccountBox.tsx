@@ -13,12 +13,12 @@ export default function UserAccountBox({isSideBox, player}: Props) {
     return isSideBox ? (
         <div className="user_bar">
             <p>{player?.user.username ?? "Not Signed In!"}</p>
-            <p>{player?.user.uid ?? "000000000"}</p>
+            <p className="user_bar__uid">{player?.user.uid ?? "000000000"}</p>
         </div>
     ) : (
         <div>
             <p>{user?.username ?? "Not Signed In!"}</p>
-            <p>{user?.uid ?? "000000000"}</p>
+            <p className="user_bar__uid" >{user?.uid ?? "000000000"}</p>
         </div>
     )
 }
