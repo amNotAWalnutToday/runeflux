@@ -3,7 +3,7 @@ import CardSchema from "../schemas/cardSchema";
 
 type Props = {
     cardState: CardSchema,
-    position: "HAND",
+    position: "HAND" | "SELECT",
     numberInLine?: number,
     selectCard?: (card: CardSchema | null) => void,
 }

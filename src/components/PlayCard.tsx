@@ -1,9 +1,17 @@
+import CardSchema from "../schemas/cardSchema"
 import Card from "./Card"
 
-export default function PlayCard() {
+type Props = {
+    cardState: CardSchema
+}
+
+export default function PlayCard({cardState}: Props) {
     return (
         <div className="popup" >
-            <Card position={"HAND"} />
+            <Card 
+                cardState={cardState}
+                position={"SELECT"}
+            />
             <button className="menu_link">
                 Play Card
             </button>

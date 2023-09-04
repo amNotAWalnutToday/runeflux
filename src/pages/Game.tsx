@@ -196,7 +196,9 @@ export default function Game() {
             {
             selectedCard 
             &&
-            <PlayCard  />
+            <PlayCard 
+                cardState={selectedCard}
+            />
             }
             {
             localPlayer.hand.length
