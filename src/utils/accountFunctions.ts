@@ -15,7 +15,7 @@ export default (() => {
                 const uid = user.uid;
                 const reference = ref(db, `users/${uid}`);
                 set(reference, { username: 'Anon', uid, isReady: false });
-                setUser((prev) => Object.assign({}, prev, {username: 'Anon', uid}));
+                setUser((prev) => Object.assign({}, prev, {username: 'Anon', uid, isReady: false}));
                 console.log(localUser);
                 console.log(user);
             } else {

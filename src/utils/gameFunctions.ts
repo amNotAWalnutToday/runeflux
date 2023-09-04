@@ -26,25 +26,36 @@ export default (() => {
         for(const card of startDeckData.startDeck) {
             game.deck.pure.push(card);
         }
-        return Object.assign({}, game, {rules: startRuleData});
+        const turn = {
+            player: false,
+            drawn: 0,
+            played: 0
+        }
+        return Object.assign({}, game, {rules: startRuleData, turn});
     }
 
     const connectGame = async (
         gameId: string,
         db: Database,
         setTable: React.Dispatch<React.SetStateAction<GameSchema>>,
+        uid: string,
+        setLocalPlayer: React.Dispatch<React.SetStateAction<PlayerSchema>>,
     ) => {
         const gameRef = ref(db, `/games/${gameId}/game`);
-        onValue(gameRef, async (snapshot) => {
+        await onValue(gameRef, async (snapshot) => {
             const data = await snapshot.val();
 
             updateTable(
                 data.deck, data.goal,
                 data.rules,
                 data.players,
+                data.turn,
                 data.round,
                 setTable
             );
+            setLocalPlayer((prev) => {
+                return { ...prev, ...getPlayer(data.players, uid).state }
+            });
         });
     }
 
@@ -53,6 +64,11 @@ export default (() => {
         goalData: CardSchema[],
         ruleData: RuleSchema,
         playerData: PlayerSchema[],
+        turnData: {
+            player: string | boolean,
+            drawn: number,
+            played: number,
+        },
         roundData: number,
         setTable: React.Dispatch<React.SetStateAction<GameSchema>>
     ) => {
@@ -66,9 +82,10 @@ export default (() => {
         const updatedTable = {
             deck: deckData,
             goal: goalData,
-            rule: ruleData,
+            rules: ruleData,
             players: playerData,
-            round: roundData
+            round: roundData,
+            turn: turnData
         }
 
         setTable((prev) => {
@@ -76,10 +93,39 @@ export default (() => {
         });
     }
 
-    const uploadTable = (db: Database, gameState: GameSchema, gameId: string) => {         
+    const upload = (
+        type: string,
+        db: Database,
+        gameState: GameSchema,
+        gameId: string
+    ) => {
+        switch(type) {
+            case "DECK_PURE":
+                return uploadDeck(db, gameState.deck.pure, gameId);
+            case "DECK_DISCARD":
+                return uploadDeck(db, gameState.deck.discard, gameId, true);
+            case "TURN":
+                return uploadTurn(db, gameState.turn, gameId);
+            default:
+                return uploadTable(db, gameState, gameId);
+        }
+    }
+
+    const uploadTable = async (db: Database, gameState: GameSchema, gameId: string) => {         
         const uploadGameState = convertGameToRoomGame(gameState);
         const gameRef = ref(db, `/games/${gameId}/game`);
-        set(gameRef, uploadGameState);
+        await set(gameRef, uploadGameState);
+    }
+
+    const uploadDeck = async (db: Database, deck: CardSchema[], gameId: string, isDiscard = false) => {
+        const location = isDiscard ? 'discard' : 'pure';
+        const deckRef = ref(db, `/games/${gameId}/game/deck/${location}`);
+        await set(deckRef, deck.length ? deck : false);
+    }
+
+    const uploadTurn = async (db: Database, turn, gameId: string) => {
+        const turnRef = ref(db, `/games/${gameId}/game/turn`);
+        await set(turnRef, turn);
     }
 
     const getPlayer = (players: PlayerSchema[], uid: string) => {
@@ -87,6 +133,26 @@ export default (() => {
             if(uid === players[i].user.uid) return {state: players[i], index: i};
         }
         return {state: players[0], index: 0};
+    }
+
+    const chooseWhoGoesFirst = (players: PlayerSchema[]) => {
+        const ran = Math.floor(Math.random() * players.length);
+        return players[ran].user.uid;
+    }
+
+    const drawPhase = (
+        gameState: GameSchema,
+        gameSetter: React.Dispatch<React.SetStateAction<GameSchema>>, 
+        player_uid: string,
+        playerSetter: React.Dispatch<React.SetStateAction<PlayerSchema>>, 
+        db: Database,
+        gameId: string,
+    ) => {
+        if(gameState.round === 0) {
+            drawCards(gameState, gameSetter, player_uid, playerSetter, db, gameId, 3);
+        } else {
+            drawCards(gameState, gameSetter, player_uid, playerSetter, db, gameId, gameState.rules.drawAmount);
+        }
     }
 
     const shuffleDeck = (deck: CardSchema[]) => {
@@ -98,7 +164,6 @@ export default (() => {
             newDeck.push(oldDeck[ran]);
             oldDeck.splice(ran, 1);
         }
-        console.log(newDeck);
         return newDeck;
     }
 
@@ -115,18 +180,23 @@ export default (() => {
         playerSetter: React.Dispatch<React.SetStateAction<PlayerSchema>>, 
         db: Database,
         gameId: string,
+        amount = 1,
     ) => {
-        const { topCard, updatedDeck } = removeCardFromDeck(gameState.deck.pure);
-        if(!topCard) return;
         const player = getPlayer(gameState.players, player_uid);
-        player?.state.hand.push(topCard);
+        let newDeck: CardSchema[] = [];
+        for(let i = 0; i < amount; i++) {
+            const { topCard, updatedDeck } = removeCardFromDeck(gameState.deck.pure);
+            if(!topCard) return;
+            player?.state.hand.push(topCard);
+            newDeck = updatedDeck 
+        }
         const updatedPlayers = [...gameState.players];
         updatedPlayers[player.index] = player.state; 
         gameSetter((prev) => {
             const updatedGame = {
                 ...prev,
                 deck: {
-                    pure: updatedDeck,
+                    pure: newDeck,
                     discard: prev.deck.discard
                 },
                 players: updatedPlayers
@@ -134,16 +204,16 @@ export default (() => {
             uploadTable(db, updatedGame, gameId);
             return updatedGame;
         });
-        playerSetter((prev) => {
-            return { ...prev, ...player.state };
-        });
     }
     
     return {
         loadGame,
         connectGame,
+        upload,
         uploadTable,
         getPlayer,
+        chooseWhoGoesFirst,
+        drawPhase,
         drawCards,
         shuffleDeck
     }

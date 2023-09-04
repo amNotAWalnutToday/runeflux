@@ -10,6 +10,11 @@ interface GameSchema {
     goal: CardSchema[],
     rules: RuleSchema,
     players: PlayerSchema[],
+    turn: {
+        player: string | boolean,
+        drawn: number,
+        played: number,
+    },
     round: number,
 }
 

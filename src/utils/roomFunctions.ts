@@ -42,6 +42,13 @@ export default (() => {
         return {state: players[0], index: 0, error: true};
     }
 
+    const getUser = (users: UserSchema[], uid: string) => {
+        for(let i = 0; i < users.length; i++) {
+            if(uid === users[i].uid) return {state: users[i], index: i, error: false};
+        }
+        return {state: users[0], index: 0, error: true};
+    }
+
     const createRoom = (
         db: Database, 
         user: UserSchema | undefined,
@@ -57,6 +64,11 @@ export default (() => {
             },
             players: [{user: user ?? { username: 'hal', uid: '000001', isReady: false }, hand: false, keepers: false}],
             goal: false,
+            turn: {
+                player: false,
+                drawn: 0,
+                played: 0,
+            },
             round: 0,
         }
         for(const card of startDeckData.startDeck) {
@@ -66,14 +78,15 @@ export default (() => {
             game: Object.assign({}, game, {rules: startRuleData}),
             id: user?.uid ?? '',
             displayName: user?.username ?? '',
-            inProgress: false
+            inProgress: false,
+            users: [user ?? {uid: '0'} as UserSchema]
         };
         set(reference, room);
         setJoinedGameID(user?.uid ?? '');
         connectRoom(db, user?.uid ?? '', user ?? {} as UserSchema, setRooms, setJoinedGameID, setIsAllReady);
     }
 
-    const getRooms = (
+    const getRooms = async (
         db: Database,
         uid: string,
         setRooms: React.Dispatch<React.SetStateAction<RoomSchema[]>>,
@@ -82,7 +95,7 @@ export default (() => {
         try {
             const roomsRef = ref(db);
             const rooms: RoomSchema[] = [];
-            get(child(roomsRef, '/games')).then(async(snapshot) => {
+            await get(child(roomsRef, '/games')).then(async(snapshot) => {
                 const data: RoomSchema[] = await snapshot.val();
                 for(const room in data) {
                     rooms.push(data[room]);
@@ -130,38 +143,61 @@ export default (() => {
         setIsAllReady: React.Dispatch<React.SetStateAction<boolean>>,
     ) => {
         const roomsRef = ref(db);
-        onValue(child(roomsRef, `/games/${roomId}/game/players`), async (snapshot) => {
+        onValue(child(roomsRef, `/games/${roomId}/users`), async (snapshot) => {
             const data = await snapshot.val();
-            getRooms(db, user.uid, setRooms, setJoinedGameID);
+            await getRooms(db, user.uid, setRooms, setJoinedGameID);
             const allReady = [];
             for(const player of data) {
-                if(player.user.isReady) allReady.push(true);
+                if(player.isReady) allReady.push(true);
             }
             setIsAllReady((prev) => allReady.length === data.length ? true : prev);
         });
     }
 
-    const readyUp = (
+    const readyUp = async (
         db: Database,
         roomId: string,
         user: UserSchema,
         setUser: React.Dispatch<React.SetStateAction<UserSchema | undefined>>,
     ) => {
-        const roomsRef = ref(db);
-        get(child(roomsRef, `/games/${roomId}/game/players`)).then(async(snapshot) => {
-            const data = await snapshot.val();
-            const you = getPlayer(data, user.uid);
-            const players = [...data];
-            players[you.index].user.isReady = true;
-
-            await set(child(roomsRef, `/games/${roomId}/game/players`), players);
-            setUser((prev) => {
-                if(!prev) return;
-                return { ...prev, isReady: true }
-            })
-        });
+        try {
+            const roomsRef = ref(db);
+            await get(child(roomsRef, `/games/${roomId}/users`)).then(async(snapshot) => {
+                const data = await snapshot.val();
+                const you = getUser(data, user.uid);
+                console.log(data, you);
+                const players = [...data];
+                players[you.index].isReady = true;
+    
+                await set(child(roomsRef, `/games/${roomId}/users`), players);
+                setUser((prev) => {
+                    if(!prev) return;
+                    return { ...prev, isReady: true }
+                })
+            });
+        } catch(e) {
+            console.error(e);
+        }
     }
 
+    const startGame = async (db: Database, gameId: string) => {
+        const roomRef = ref(db, `/games/${gameId}/inProgress`);
+        await set(roomRef, true);
+    }
+
+    const checkGameInProgress = async (db: Database, gameId: string) => {
+        try {
+            const roomRef = ref(db);
+            let isInProgress = false;
+            await get(child(roomRef, `/games/${gameId}/inProgress`)).then(async (snapshot) => {
+                const data = await snapshot.val();
+                if(data) isInProgress = true;
+            });
+            return isInProgress;
+        } catch(e) {
+            console.error(e);
+        }
+    }
 
     return {
         convertGameToRoomGame,
@@ -169,6 +205,8 @@ export default (() => {
         getRooms,
         joinRoom,
         connectRoom,
-        readyUp
+        readyUp,
+        startGame,
+        checkGameInProgress
     }
 })()
