@@ -8,8 +8,9 @@ import GameSchema from '../schemas/gameSchema';
 import CardSchema from '../schemas/cardSchema';
 import gameFunctions from '../utils/gameFunctions';
 import PlayerSchema from '../schemas/playerSchema';
+import { useNavigate } from 'react-router-dom';
 
-const enum REDUCER_ACTIONS {
+const enum RULE_REDUCER_ACTIONS {
     RULE_CHANGE__DRAW,
     RULE_CHANGE__PLAY,
     RULE_CHANGE__KEEPER_LIMIT,
@@ -18,17 +19,37 @@ const enum REDUCER_ACTIONS {
     RULE_CHANGE__TELEBLOCK,
 }
 
-type TABLE_ACTIONS = {
-    type: REDUCER_ACTIONS
+type RULE_ACTIONS = {
+    type: RULE_REDUCER_ACTIONS
     payload?: {
         amount: number
     },
 }
 
-const rulesReducer = (state, action: TABLE_ACTIONS) => {
+const rulesReducer = (state, action: RULE_ACTIONS) => {
     switch(action.type) {
-        case REDUCER_ACTIONS.RULE_CHANGE__DRAW: 
+        case RULE_REDUCER_ACTIONS.RULE_CHANGE__DRAW: 
             return Object.assign({}, state, {drawAmount: action.payload?.amount})
+        default: 
+            return state;
+    }
+}
+
+const enum DECK_REDUCER_ACTIONS {
+    DECK_REPLACE__PURE
+}
+
+type DECK_ACTIONS = {
+    type: DECK_REDUCER_ACTIONS,
+    payload: {
+        pile: CardSchema[]
+    }
+}
+
+const deckReducer = (state, action: DECK_ACTIONS) => {
+    switch(action.type) {
+        case DECK_REDUCER_ACTIONS.DECK_REPLACE__PURE:
+            return Object.assign({}, state, {pure: action.payload.pile})
         default: 
             return state;
     }
@@ -36,13 +57,15 @@ const rulesReducer = (state, action: TABLE_ACTIONS) => {
 
 export default function Game() {
     const { loadGame, getPlayer, connectGame } = gameFunctions;
+    const navigate = useNavigate();
 
     const [selectedCard, setSelectedCard] = useState<CardSchema | null>(null);
     const { db, user, joinedGameID } = useContext(UserContext);
     const [table, setTable] = useState<GameSchema>(loadGame(user));
     const [localPlayer, setLocalPlayer] = useState(getPlayer(table.players, user?.uid ?? '').state)
-    const [rules, dispatchTable] = useReducer(rulesReducer, table.rules);
-    
+    const [rules, dispatchRules] = useReducer(rulesReducer, table.rules);
+    const [deck, dispatchDeck] = useReducer(deckReducer, table.deck);
+
     useEffect(() => {
         console.log(rules);
         // gameFunctions.drawCards(table, user?.uid ?? '0005', 5);
@@ -50,6 +73,13 @@ export default function Game() {
     }, [rules]);
 
     useEffect(() => {
+        setTable((prev) => {
+            return { ...prev, deck }
+        });
+    }, [deck]);
+
+    useEffect(() => {
+        if(!user) return navigate('/');
         connectGame(joinedGameID, db, setTable);
     }, []);
 
@@ -91,6 +121,15 @@ export default function Game() {
                     gameFunctions.drawCards(table, setTable, user?.uid ?? '', setLocalPlayer, db, joinedGameID);
                     console.log(table);
                 }} >press me</button>
+            <button
+                onClick={() => {
+                    const newDeck = gameFunctions.shuffleDeck(table.deck.pure);
+                    dispatchDeck({type: DECK_REDUCER_ACTIONS.DECK_REPLACE__PURE, payload: {pile: newDeck}});
+                    console.log(deck, table.deck.pure);
+                }}
+            >
+                shuffle
+            </button>
         </div>
     )
 }

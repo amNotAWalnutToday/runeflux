@@ -89,6 +89,19 @@ export default (() => {
         return {state: players[0], index: 0};
     }
 
+    const shuffleDeck = (deck: CardSchema[]) => {
+        const newDeck = [];
+        const oldDeck = [...deck];
+        const maxDeckLength = deck.length;
+        for(let deckLength = maxDeckLength; deckLength > 0; deckLength--) {
+            const ran = Math.floor(Math.random() * deckLength);
+            newDeck.push(oldDeck[ran]);
+            oldDeck.splice(ran, 1);
+        }
+        console.log(newDeck);
+        return newDeck;
+    }
+
     const removeCardFromDeck = (deck: CardSchema[]) => {
         console.log(deck);
         const topCard = deck.pop();
@@ -131,6 +144,7 @@ export default (() => {
         connectGame,
         uploadTable,
         getPlayer,
-        drawCards
+        drawCards,
+        shuffleDeck
     }
 })();
