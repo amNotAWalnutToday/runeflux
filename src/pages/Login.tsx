@@ -44,7 +44,7 @@ export default function Login() {
                             const password = passwordRef.current;
                             if(!username || !password) return;
                             const isUser = accountFunctions.testUserSignIn(usernameRef?.current.value, passwordRef.current?.value, setUser)
-                            if(isUser) navigate('/game');
+                            if(isUser) navigate('/lobby');
                         }}
                     >
                         Sign In

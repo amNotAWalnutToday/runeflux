@@ -14,7 +14,7 @@ export default (() => {
             if(user) {
                 const uid = user.uid;
                 const reference = ref(db, `users/${uid}`);
-                set(reference, { username: 'Anon', uid });
+                set(reference, { username: 'Anon', uid, isReady: false });
                 setUser((prev) => Object.assign({}, prev, {username: 'Anon', uid}));
                 console.log(localUser);
                 console.log(user);
@@ -30,7 +30,7 @@ export default (() => {
             if(user.name.toLowerCase() === username
             && user.pass.toLowerCase() === pass) isUser = true;
         }
-        if(isUser) setter((prev) => ({...prev, username, uid: username }));
+        if(isUser) setter((prev) => ({...prev, username, uid: username, isReady: false }));
         return isUser;
     }
     

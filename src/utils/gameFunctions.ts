@@ -19,7 +19,7 @@ export default (() => {
                 pure: [] as CardSchema[],
                 discard: [] as CardSchema[],
             },
-            players: [{user: user ?? { username: 'hal', uid: '000001' }, hand: [], keepers: []}] as PlayerSchema[],
+            players: [{user: user ?? { username: 'hal', uid: '000001', isReady: true }, hand: [], keepers: []}] as PlayerSchema[],
             goal: [] as CardSchema[],
             round: 0,
         }
@@ -83,7 +83,7 @@ export default (() => {
     }
 
     const getPlayer = (players: PlayerSchema[], uid: string) => {
-        for(let i = 0; i < players.length - 1; i++) {
+        for(let i = 0; i < players.length; i++) {
             if(uid === players[i].user.uid) return {state: players[i], index: i};
         }
         return {state: players[0], index: 0};
