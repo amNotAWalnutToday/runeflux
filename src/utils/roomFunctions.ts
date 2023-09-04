@@ -35,6 +35,10 @@ export default (() => {
         return { user, hand, keepers }
     }
 
+    const createUser = (uid: string, username: string, isReady: boolean) => {
+        return { uid, username, isReady };
+    }
+
     const getPlayer = (players: RoomPlayer[], uid: string) => {
         for(let i = 0; i < players.length; i++) {
             if(uid === players[i].user.uid) return {state: players[i], index: i, error: false};
@@ -129,6 +133,10 @@ export default (() => {
             const players = [...data.game.players];
             players.push(player);
             await set(child(roomsRef, `/games/${roomId}/game/players`), players);
+            const users = [...data.users];
+            users.push(user);
+            await set(child(roomsRef, `/games/${roomId}/users`), users);
+
             setJoinedGameID(roomId);
             connectRoom(db, roomId, user, setRooms, setJoinedGameID, setIsAllReady);
         });
@@ -146,6 +154,7 @@ export default (() => {
         onValue(child(roomsRef, `/games/${roomId}/users`), async (snapshot) => {
             const data = await snapshot.val();
             await getRooms(db, user.uid, setRooms, setJoinedGameID);
+            console.log(data);
             const allReady = [];
             for(const player of data) {
                 if(player.isReady) allReady.push(true);

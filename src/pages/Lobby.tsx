@@ -52,12 +52,12 @@ export default function Lobby() {
             if(room.id === joinedGameID) yourRoom = room;
         }
         if(!yourRoom) return;
-        return yourRoom.game.players.map((player, ind) => {
+        return yourRoom.users.map((player, ind) => {
             return (
                 <div
                     key={`lobby_player__${ind}`}
                 >
-                    <p>{ind + 1}). {player.user.username} {player.user.isReady ? 'Ready' : 'Waiting' }</p>
+                    <p>{ind + 1}). {player.username} {player.isReady ? 'Ready' : 'Waiting' }</p>
                 </div>
             )
         });
