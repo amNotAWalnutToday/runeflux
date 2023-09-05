@@ -1,12 +1,10 @@
 import RuleSchema from "./ruleSchema";
 import CardSchema from "./cardSchema";
 import PlayerSchema from "./playerSchema";
+import DeckSchema from "./deckSchema";
 
 interface GameSchema {
-    deck: {
-        pure: CardSchema[],
-        discard: CardSchema[],
-    },
+    deck: DeckSchema,
     goal: CardSchema[],
     rules: RuleSchema,
     players: PlayerSchema[],

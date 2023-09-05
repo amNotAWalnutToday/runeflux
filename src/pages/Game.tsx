@@ -1,17 +1,18 @@
 import { useEffect, useState, useReducer, useContext } from 'react';
-// import { ref, set } from 'firebase/database';
-import UserAccountBox from '../components/UserAccountBox';
-import HandOfCards from '../components/HandOfCards';
-import PlayCard from '../components/PlayCard';
+import { useNavigate } from 'react-router-dom';
+import { Database } from 'firebase/database';
 import UserContext from '../data/Context';
 import GameSchema from '../schemas/gameSchema';
 import CardSchema from '../schemas/cardSchema';
+import RuleSchema from '../schemas/ruleSchema';
+import TurnSchema from '../schemas/turnSchema';
+import PlayerSchema from '../schemas/playerSchema';
 import gameFunctions from '../utils/gameFunctions';
 import roomFunctions from '../utils/roomFunctions';
-import PlayerSchema from '../schemas/playerSchema';
-import { useNavigate } from 'react-router-dom';
-import { Database } from 'firebase/database';
 import DrawCard from '../components/DrawCard';
+import UserAccountBox from '../components/UserAccountBox';
+import HandOfCards from '../components/HandOfCards';
+import PlayCard from '../components/PlayCard';
 
 const { 
     loadGame, 
@@ -40,7 +41,7 @@ type RULE_ACTIONS = {
     },
 }
 
-const rulesReducer = (state, action: RULE_ACTIONS) => {
+const rulesReducer = (state: RuleSchema, action: RULE_ACTIONS) => {
     switch(action.type) {
         case RULE_REDUCER_ACTIONS.RULE_CHANGE__DRAW: 
             return Object.assign({}, state, {drawAmount: action.payload?.amount})
@@ -66,7 +67,7 @@ type DECK_ACTIONS = {
     }
 }
 
-const deckReducer = (state, action: DECK_ACTIONS) => {
+const deckReducer = (state: {pure: CardSchema[], discard: CardSchema[]}, action: DECK_ACTIONS) => {
     const { pile, amount } = action.payload;
     const { db, gameId } = action.payload.upload;
     console.log(state);
@@ -100,7 +101,7 @@ type TURN_ACTIONS = {
     }
 }
 
-const turnReducer = (state, action: TURN_ACTIONS) => {
+const turnReducer = (state: TurnSchema, action: TURN_ACTIONS) => {
     const { player, amount } = action.payload;
     const { db, gameId } = action.payload.upload; 
 
@@ -135,12 +136,11 @@ type PLAYER_ACTIONS = {
     }
 }
 
-const playerReducer = (state, action: PLAYER_ACTIONS) => {
+const playerReducer = (state: PlayerSchema[], action: PLAYER_ACTIONS) => {
     const { playerId, cards } = action.payload;
     const { db, gameId } = action.payload.upload;
     const players = [...state];
     const player = getPlayer(state, playerId);
-    console.log(player, 'reducer');
     switch(action.type) {
         case PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD:
             players[player.index] = Object.assign({}, player.state, {hand: [...player.state.hand, ...cards ?? []]})
@@ -167,13 +167,13 @@ export default function Game() {
     const [players, dispatchPlayers] = useReducer(playerReducer, table.players);
 
     /*LOCAL STATE*/
-    const [loading, setLoading] = useState(true);
     const [selectedCard, setSelectedCard] = useState<CardSchema | null>(null);
     const [localPlayer, setLocalPlayer] = useState(getPlayer(table.players, user?.uid ?? '').state)
 
     useEffect(() => {
-        // gameFunctions.drawCards(table, user?.uid ?? '0005', 5);
-        // setTimeout(() => dispatchTable({type: REDUCER_ACTIONS.RULE_CHANGE__DRAW, payload: { amount:Math.random() * 10}}), 3000)
+        setTable((prev) => {
+            return { ...prev, rules }
+        });
     }, [rules]);
 
     useEffect(() => {
@@ -194,7 +194,8 @@ export default function Game() {
         });
         setLocalPlayer((prev) => {
             return { ...prev, ...getPlayer(table.players, user?.uid ?? '').state }
-        })
+        });
+        /*eslint-disable-next-line*/
     }, [players]);
 
     useEffect(() => {
@@ -224,8 +225,6 @@ export default function Game() {
                     upload: {...uploadProps},
                 }
             });
-            // await upload("DECK_PURE", db, {deckState: deck.pure}, joinedGameID);
-            // await upload("TURN", db, table, joinedGameID);
             await startGame(db, joinedGameID);
         }
     }
@@ -238,7 +237,7 @@ export default function Game() {
     }
 
     const drawCards = () => {
-        const drawn = drawPhase(table, setTable, user?.uid ?? '', setLocalPlayer, db, joinedGameID)
+        const drawn = drawPhase(table);
         dispatchDeck({
             type: DECK_REDUCER_ACTIONS.DECK_REMOVE__PURE_TOP,
             payload: {
@@ -308,17 +307,6 @@ export default function Game() {
                 hand={localPlayer.hand}
             />
             }
-            {/* <button onClick={() => { 
-                    gameFunctions.drawCards(table, setTable, user?.uid ?? '', setLocalPlayer, db, joinedGameID);
-                }} >press me</button> */}
-            {/* <button
-                onClick={() => {
-                    const newDeck = gameFunctions.shuffleDeck(table.deck.pure);
-                    dispatchDeck({type: DECK_REDUCER_ACTIONS.DECK_REPLACE__PURE, payload: {pile: newDeck}});
-                }}
-            >
-                shuffle
-            </button> */}
             {user &&
             table.turn.player === user?.uid
             &&
@@ -326,7 +314,6 @@ export default function Game() {
                 <button
                 onClick={() => {
                     const isEndOfRound = endTurn(db, table.players, table.turn, dispatchTurn, joinedGameID);
-                    console.log(isEndOfRound, "isEndof");
                     if(isEndOfRound) {
                         setTable((prev) => ({...prev, round: prev.round++}));
                         upload("ROUND", db, {roundState: table.round + 1}, joinedGameID);

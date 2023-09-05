@@ -5,6 +5,7 @@ import UserSchema from '../schemas/userSchema';
 import CardSchema from '../schemas/cardSchema';
 import RoomSchema from '../schemas/RoomSchema';
 import roomGameSchema from '../schemas/roomGameSchema';
+import PlayerSchema from '../schemas/playerSchema';
 
 interface RoomPlayer {
     hand: boolean | CardSchema[],
@@ -29,6 +30,12 @@ export default (() => {
             }
         }
         return game;
+    }
+
+    const convertToRoomPlayer = (player: RoomPlayer | PlayerSchema) => {
+        if(!Array.isArray(player.hand) || !player.hand.length) player.hand = false;
+        if(!Array.isArray(player.keepers) || !player.keepers.length) player.keepers = false;
+        return player;
     }
 
     const createPlayer = (user: UserSchema, hand = false, keepers = false) => {
@@ -66,7 +73,7 @@ export default (() => {
                 pure: [] as CardSchema[],
                 discard: false,
             },
-            players: [{user: user ?? { username: 'hal', uid: '000001', isReady: false }, hand: false, keepers: false}],
+            players: [{user: user ?? createUser("00001", "hally", false), hand: false, keepers: false}],
             goal: false,
             turn: {
                 player: false,
@@ -210,6 +217,7 @@ export default (() => {
 
     return {
         convertGameToRoomGame,
+        convertToRoomPlayer,
         createRoom,
         getRooms,
         joinRoom,
