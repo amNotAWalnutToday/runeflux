@@ -11,6 +11,36 @@
             }
         },
         {
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Ghost",
+            "effects": ["LOCATION_MORYTANIA__CHANGE_BROTHERS"],
+            "text": {
+                "flavour": "TBA",
+                "specialEffects": "Reveals its origins when in a specific location."
+            }
+        },
+        {
+            "type": "KEEPER",
+            "subtype": "RUNE",
+            "name": "Mind Rune",
+            "effects": [],
+            "text": {
+                "flavour": "TBA",
+                "specialEffects": ""
+            }
+        },
+        {
+            "type": "KEEPER",
+            "subtype": "RUNE",
+            "name": "Chaos Rune",
+            "effects": ["WORMHOLE"],
+            "text": {
+                "flavour": "TBA",
+                "specialEffects": "Once per turn, choose to draw 1 and play it."
+            }
+        },
+        {
             "type": "GOAL",
             "subtype": "",
             "name": "Draynor Manor",
@@ -28,6 +58,26 @@
             "text": {
                 "flavour": "TBA",
                 "specialEffects": "teleport all players to the location of misthalin, this location has no special effects."
+            }
+        },
+        {
+            "type": "RULE",
+            "subtype": "BASIC",
+            "name": "Draw 2",
+            "effects": ["RULE_CHANGE__DRAW_AMOUNT_2"],
+            "text": {
+                "flavour": "TBA",
+                "specialEffects": "When this card is in play, each player will draw 2 cards per turn."
+            }
+        },
+        {
+            "type": "RULE",
+            "subtype": "BASIC",
+            "name": "Play 2",
+            "effects": ["RULE_CHANGE__PLAY_AMOUNT_2"],
+            "text": {
+                "flavour": "TBA",
+                "specialEffects": "When this card is in play, each player will play 2 cards per turn."
             }
         },
         {
