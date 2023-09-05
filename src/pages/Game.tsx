@@ -50,20 +50,33 @@ const rulesReducer = (state, action: RULE_ACTIONS) => {
 }
 
 const enum DECK_REDUCER_ACTIONS {
-    DECK_REPLACE__PURE
+    DECK_REPLACE__PURE,
+    DECK_REMOVE__PURE_TOP,
 }
 
 type DECK_ACTIONS = {
     type: DECK_REDUCER_ACTIONS,
     payload: {
-        pile: CardSchema[]
+        pile: CardSchema[],
+        amount?: number
+        upload: {
+            db: Database,
+            gameId: string,
+        }
     }
 }
 
 const deckReducer = (state, action: DECK_ACTIONS) => {
+    const { pile, amount } = action.payload;
+    const { db, gameId } = action.payload.upload;
+    console.log(state);
     switch(action.type) {
         case DECK_REDUCER_ACTIONS.DECK_REPLACE__PURE:
-            return Object.assign({}, state, {pure: action.payload.pile})
+            upload("DECK_PURE", db, {deckState: pile}, gameId);
+            return Object.assign({}, state, {pure: [...pile]});
+        case DECK_REDUCER_ACTIONS.DECK_REMOVE__PURE_TOP:
+            upload("DECK_PURE", db, {deckState: [...state.pure.slice(0, state.pure.length - (amount ?? 0))]}, gameId);
+            return Object.assign({}, state, {pure: [...state.pure.slice(0, state.pure.length - (amount ?? 0))]})
         default: 
             return state;
     }
@@ -106,6 +119,38 @@ const turnReducer = (state, action: TURN_ACTIONS) => {
     }
 }
 
+const enum PLAYER_REDUCER_ACTIONS {
+    HAND_CARDS__ADD
+}
+
+type PLAYER_ACTIONS = {
+    type: PLAYER_REDUCER_ACTIONS,
+    payload: {
+        playerId: string,
+        cards?: CardSchema[],
+        upload: {
+            db: Database,
+            gameId: string,
+        }
+    }
+}
+
+const playerReducer = (state, action: PLAYER_ACTIONS) => {
+    const { playerId, cards } = action.payload;
+    const { db, gameId } = action.payload.upload;
+    const players = [...state];
+    const player = getPlayer(state, playerId);
+    console.log(player, 'reducer');
+    switch(action.type) {
+        case PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD:
+            players[player.index] = Object.assign({}, player.state, {hand: [...player.state.hand, ...cards ?? []]})
+            upload("PLAYER", db, {playersState: players, playerId}, gameId);
+            return [...players]; 
+        default:
+            return state;
+    }
+}
+
 export default function Game() {
     const { startGame, checkGameInProgress } = roomFunctions;
 
@@ -119,6 +164,7 @@ export default function Game() {
     const [rules, dispatchRules] = useReducer(rulesReducer, table.rules);
     const [deck, dispatchDeck] = useReducer(deckReducer, table.deck);
     const [turn, dispatchTurn] = useReducer(turnReducer, table.turn);
+    const [players, dispatchPlayers] = useReducer(playerReducer, table.players);
 
     /*LOCAL STATE*/
     const [loading, setLoading] = useState(true);
@@ -143,6 +189,15 @@ export default function Game() {
     }, [turn]);
 
     useEffect(() => {
+        setTable((prev) => {
+            return { ...prev, players }
+        });
+        setLocalPlayer((prev) => {
+            return { ...prev, ...getPlayer(table.players, user?.uid ?? '').state }
+        })
+    }, [players]);
+
+    useEffect(() => {
         if(!user) return navigate('/');
         opening();
         /*eslint-disable-next-line*/
@@ -155,7 +210,13 @@ export default function Game() {
             if(await checkGameInProgress(db, joinedGameID)) return;
             const firstTurn = chooseWhoGoesFirst(table.players);
             const updatedDeck = shuffleDeck(table.deck.pure);
-            dispatchDeck({type: DECK_REDUCER_ACTIONS.DECK_REPLACE__PURE, payload: {pile: updatedDeck}});
+            dispatchDeck({
+                type: DECK_REDUCER_ACTIONS.DECK_REPLACE__PURE, 
+                payload: {
+                    pile: updatedDeck,
+                    upload: {...uploadProps}
+                }
+            });
             dispatchTurn({
                 type: TURN_REDUCER_ACTION.CHANGE_TURN, 
                 payload: {
@@ -163,7 +224,7 @@ export default function Game() {
                     upload: {...uploadProps},
                 }
             });
-            await upload("DECK_PURE", db, {deckState: deck.pure}, joinedGameID);
+            // await upload("DECK_PURE", db, {deckState: deck.pure}, joinedGameID);
             // await upload("TURN", db, table, joinedGameID);
             await startGame(db, joinedGameID);
         }
@@ -178,6 +239,22 @@ export default function Game() {
 
     const drawCards = () => {
         const drawn = drawPhase(table, setTable, user?.uid ?? '', setLocalPlayer, db, joinedGameID)
+        dispatchDeck({
+            type: DECK_REDUCER_ACTIONS.DECK_REMOVE__PURE_TOP,
+            payload: {
+                pile: [],
+                amount: drawn,
+                upload: uploadProps
+            }
+        });
+        dispatchPlayers({
+            type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
+            payload: {
+                playerId: user?.uid ?? '',
+                cards: Array.from(deck.pure.slice(deck.pure.length - drawn)),
+                upload: uploadProps
+            }
+        })
         dispatchTurn({
             type: TURN_REDUCER_ACTION.DRAWN_ADD, 
             payload: { 
@@ -248,7 +325,12 @@ export default function Game() {
             <div>
                 <button
                 onClick={() => {
-                    endTurn(db, table.players, table.turn, dispatchTurn, joinedGameID);
+                    const isEndOfRound = endTurn(db, table.players, table.turn, dispatchTurn, joinedGameID);
+                    console.log(isEndOfRound, "isEndof");
+                    if(isEndOfRound) {
+                        setTable((prev) => ({...prev, round: prev.round++}));
+                        upload("ROUND", db, {roundState: table.round + 1}, joinedGameID);
+                    }
                 }}
                 disabled={table.turn.drawn < table.rules.drawAmount}
                 >

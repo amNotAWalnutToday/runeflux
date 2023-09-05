@@ -105,11 +105,18 @@ export default (() => {
         payload: {
             gameState?: GameSchema,
             deckState?: CardSchema[],
-            turnState?: TurnSchema
+            turnState?: TurnSchema,
+            playersState?: PlayerSchema[],
+            roundState?: number,
+            playerId?: string,
         },
         gameId: string
     ) => {
-        const { gameState, deckState, turnState } = payload;
+        const { 
+            gameState, deckState, turnState, 
+            playersState, playerId, roundState 
+        } = payload;
+
         switch(type) {
             case "DECK_PURE":
                 return uploadDeck(db, deckState ?? [], gameId);
@@ -117,6 +124,10 @@ export default (() => {
                 return uploadDeck(db, deckState ?? [], gameId, true);
             case "TURN":
                 return uploadTurn(db, turnState ?? {} as TurnSchema, gameId);
+            case "PLAYER": 
+                return uploadPlayer(db, playersState ?? [], playerId ?? '', gameId); 
+            case "ROUND":
+                return uploadRound(db, roundState ?? 0, gameId);
             default:
                 return uploadTable(db, gameState ?? {} as GameSchema, gameId);
         }
@@ -137,6 +148,23 @@ export default (() => {
     const uploadTurn = async (db: Database, turn: TurnSchema, gameId: string) => {
         const turnRef = ref(db, `/games/${gameId}/game/turn`);
         await set(turnRef, turn);
+    }
+
+    const uploadPlayer = async (db: Database, players: PlayerSchema[], playerId: string, gameId) => {
+        const { state, index } = getPlayer(players, playerId);
+        if(!Array.isArray(state.hand) || !state.hand.length) state.hand = false;
+        const playerRef = ref(db, `/games/${gameId}/game/players/${index}`);
+        console.log(state);
+        await set(playerRef, state);
+    }
+
+    const uploadRound = async (db: Database, round: number, gameId: string) => {
+        try {
+            const roundRef = ref(db, `/games/${gameId}/game/round`);
+            await set(roundRef, round);
+        } catch(e) {
+            return console.error(e);
+        }
     }
 
     const getPlayer = (players: PlayerSchema[], uid: string) => {
@@ -160,10 +188,10 @@ export default (() => {
         gameId: string,
     ) => {
         if(gameState.round === 0) {
-            drawCards(gameState, gameSetter, player_uid, playerSetter, db, gameId, 3);
+            // drawCards(gameState, gameSetter, player_uid, playerSetter, db, gameId, 3);
             return 3;
         } else {
-            drawCards(gameState, gameSetter, player_uid, playerSetter, db, gameId, gameState.rules.drawAmount);
+            // drawCards(gameState, gameSetter, player_uid, playerSetter, db, gameId, gameState.rules.drawAmount);
             return gameState.rules.drawAmount;
         }
     }
@@ -244,6 +272,7 @@ export default (() => {
                 }
             }
         });
+        return !nextPlayer ? true : false; 
     }
     
     return {
