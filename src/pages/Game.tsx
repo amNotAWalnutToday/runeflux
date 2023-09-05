@@ -14,6 +14,7 @@ import UserAccountBox from '../components/UserAccountBox';
 import HandOfCards from '../components/HandOfCards';
 import PlayCard from '../components/PlayCard';
 import GameRules from '../components/GameRules';
+import EndTurn from '../components/EndTurn';
 
 const { 
     loadGame, 
@@ -267,6 +268,14 @@ export default function Game() {
         });
     }
 
+    const endTurnHandler = () => {
+        const isEndOfRound = endTurn(db, table.players, table.turn, dispatchTurn, joinedGameID);
+        if(isEndOfRound) {
+            setTable((prev) => ({...prev, round: prev.round++}));
+            upload("ROUND", db, {roundState: table.round + 1}, joinedGameID);
+        }
+    }
+
     const mapPlayerBars = () => {
         return table.players.map((player: PlayerSchema, ind: number) => {
             return (
@@ -274,6 +283,7 @@ export default function Game() {
                     key={`player_bar__${ind}`}
                     isSideBox={true}
                     player={player}
+                    isTurn={table.turn.player === player.user.uid}
                 />
             )
         })
@@ -305,31 +315,21 @@ export default function Game() {
             }
             {
             localPlayer.hand.length
-            &&
+            ?
             <HandOfCards 
                 selectCard={selectCard}
                 hand={localPlayer.hand}
             />
+            : null
             }
             {user &&
             table.turn.player === user?.uid
             &&
-            <div>
-                <button
-                onClick={() => {
-                    const isEndOfRound = endTurn(db, table.players, table.turn, dispatchTurn, joinedGameID);
-                    if(isEndOfRound) {
-                        setTable((prev) => ({...prev, round: prev.round++}));
-                        upload("ROUND", db, {roundState: table.round + 1}, joinedGameID);
-                    }
-                }}
-                disabled={table.turn.drawn < table.rules.drawAmount}
-                >
-                    end turn
-                </button>
-            </div>
+            <EndTurn 
+                table={table}
+                endTurn={endTurnHandler}
+            />
             }
-            <p>{table.turn.player}</p>
         </div>
     )
 }
