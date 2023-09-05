@@ -13,6 +13,7 @@ import DrawCard from '../components/DrawCard';
 import UserAccountBox from '../components/UserAccountBox';
 import HandOfCards from '../components/HandOfCards';
 import PlayCard from '../components/PlayCard';
+import GameRules from '../components/GameRules';
 
 const { 
     loadGame, 
@@ -284,6 +285,9 @@ export default function Game() {
             <div className='user_bars__container'>
                 { mapPlayerBars() }
             </div>
+            <GameRules 
+                rules={table.rules}
+            />
             {
             selectedCard 
             &&
