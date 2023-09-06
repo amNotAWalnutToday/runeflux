@@ -3,7 +3,7 @@ import CardSchema from "../schemas/cardSchema";
 
 type Props = {
     hand: CardSchema[],
-    selectCard: (card: CardSchema | null) => void,
+    selectCard: (card: { state: CardSchema, index: number } | null) => void,
 }
 
 export default function HandOfCards({hand, selectCard}: Props) {
@@ -12,7 +12,7 @@ export default function HandOfCards({hand, selectCard}: Props) {
             return (
                 <Card 
                     key={`hand_card_${index}`} 
-                    cardState={card}
+                    cardState={{ state: card, index}}
                     position={"HAND"} 
                     numberInLine={index + 1} 
                     selectCard={selectCard}

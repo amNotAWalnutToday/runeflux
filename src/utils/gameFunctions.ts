@@ -194,6 +194,12 @@ export default (() => {
         }
     }
 
+    const removeCardFromHand = (hand: CardSchema[], cardIndex: number) => {
+        const firstHalf = hand.slice(0, cardIndex);
+        const lastHalf = hand.slice(cardIndex + 1);
+        return firstHalf.concat(lastHalf);
+    }
+
     const shuffleDeck = (deck: CardSchema[]) => {
         const newDeck = [];
         const oldDeck = [...deck];
@@ -240,6 +246,7 @@ export default (() => {
         getPlayer,
         chooseWhoGoesFirst,
         drawPhase,
+        removeCardFromHand,
         shuffleDeck,
         endTurn,
     }

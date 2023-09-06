@@ -2,10 +2,10 @@ import { useState } from "react";
 import CardSchema from "../schemas/cardSchema";
 
 type Props = {
-    cardState: CardSchema,
+    cardState: { state: CardSchema, index: number },
     position: "HAND" | "SELECT",
     numberInLine?: number,
-    selectCard?: (card: CardSchema | null) => void,
+    selectCard?: (card: { state: CardSchema, index: number } | null) => void,
 }
 
 export default function Card({cardState, position, numberInLine, selectCard}: Props) {
@@ -27,15 +27,15 @@ export default function Card({cardState, position, numberInLine, selectCard}: Pr
         >
             <div className='card_container__inner_left'>
                 <div className='card_header__background' >
-                    <h4 className='card_header__text' >{cardState.name.split(" ").join("_")}</h4>
+                    <h4 className='card_header__text' >{cardState.state.name.split(" ").join("_")}</h4>
                 </div>
             </div>
             <div className='card_container__inner_right'>
-                <h2>{cardState.type}</h2>
+                <h2>{cardState.state.type}</h2>
                 <p>Attaches to Living</p>
-                <h3>{cardState.name}</h3>
+                <h3>{cardState.state.name}</h3>
                 <hr className='card_hr__thick' />
-                <p>{cardState.text.specialEffects}</p>
+                <p>{cardState.state.text.specialEffects}</p>
                 <div className='fake_img'></div>
             </div>
         </div>

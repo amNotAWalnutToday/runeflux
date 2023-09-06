@@ -1,6 +1,6 @@
 import { useEffect, useState, useReducer, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Database } from 'firebase/database';
+import { Database, remove } from 'firebase/database';
 import UserContext from '../data/Context';
 import GameSchema from '../schemas/gameSchema';
 import CardSchema from '../schemas/cardSchema';
@@ -26,6 +26,7 @@ const {
     upload,
     shuffleDeck,
     drawPhase,
+    removeCardFromHand
 } = gameFunctions;
 
 const enum RULE_REDUCER_ACTIONS {
@@ -85,6 +86,7 @@ const enum DECK_REDUCER_ACTIONS {
     INIT,
     DECK_REPLACE__PURE,
     DECK_REMOVE__PURE_TOP,
+    DECK_ADD__DISCARD_BOT,
 }
 
 type DECK_ACTIONS = {
@@ -112,7 +114,10 @@ const deckReducer = (state: DeckSchema, action: DECK_ACTIONS) => {
         case DECK_REDUCER_ACTIONS.DECK_REMOVE__PURE_TOP:
             upload("DECK_PURE", db, {deckState: [...state.pure.slice(0, state.pure.length - (amount ?? 0))]}, gameId);
             return Object.assign({}, state, {pure: [...state.pure.slice(0, state.pure.length - (amount ?? 0))]})
-        default: 
+       case DECK_REDUCER_ACTIONS.DECK_ADD__DISCARD_BOT:
+            upload("DECK_DISCARD", db, {deckState: pile ? [...pile].concat([...state.discard]) : []}, gameId);
+            return Object.assign({}, state, {discard: pile ? [...pile].concat([...state.discard]) :[]});
+       default: 
             return state;
     }
 }
@@ -160,7 +165,8 @@ const turnReducer = (state: TurnSchema, action: TURN_ACTIONS) => {
 
 const enum PLAYER_REDUCER_ACTIONS {
     INIT,
-    HAND_CARDS__ADD
+    HAND_CARDS__ADD,
+    HAND_CARDS__REMOVE,
 }
 
 type PLAYER_ACTIONS = {
@@ -169,6 +175,7 @@ type PLAYER_ACTIONS = {
         playerId: string,
         init?: PlayerSchema[],
         cards?: CardSchema[],
+        cardIndex?: number,
         upload: {
             db: Database,
             gameId: string,
@@ -177,7 +184,7 @@ type PLAYER_ACTIONS = {
 }
 
 const playerReducer = (state: PlayerSchema[], action: PLAYER_ACTIONS) => {
-    const { playerId, init, cards } = action.payload;
+    const { playerId, init, cards, cardIndex } = action.payload;
     const { db, gameId } = action.payload.upload;
     const players = [...state];
     const player = getPlayer(state, playerId);
@@ -188,6 +195,10 @@ const playerReducer = (state: PlayerSchema[], action: PLAYER_ACTIONS) => {
             players[player.index] = Object.assign({}, player.state, {hand: [...player.state.hand, ...cards ?? []]})
             upload("PLAYER", db, {playersState: players, playerId}, gameId);
             return [...players]; 
+        case PLAYER_REDUCER_ACTIONS.HAND_CARDS__REMOVE:
+            players[player.index].hand = cards ? [...cards] : [];
+            upload("PLAYER", db, {playersState: players, playerId}, gameId);
+            return [...players];
         default:
             return state;
     }
@@ -210,7 +221,7 @@ export default function Game() {
 
     /*LOCAL STATE*/
     const [loading, setLoading] = useState(true);
-    const [selectedCard, setSelectedCard] = useState<CardSchema | null>(null);
+    const [selectedCard, setSelectedCard] = useState<{state: CardSchema, index: number} | null>(null);
     const [localPlayer, setLocalPlayer] = useState(getPlayer(table.players, user?.uid ?? '').state)
 
     useEffect(() => {
@@ -326,10 +337,10 @@ export default function Game() {
         setLoading(() => false);
     }
 
-    const selectCard = (card: CardSchema | null) => {
+    const selectCard = (card: { state: CardSchema, index: number } | null) => {
         setSelectedCard((prev) => {
             if(prev === null || card === null) return card;
-            else return prev.name === card.name ? null : card;
+            else return prev.state.name === card.state.name ? null : card;
         });
     }
 
@@ -361,6 +372,26 @@ export default function Game() {
                 upload: uploadProps
             }
         });
+    }
+    
+    const discardCardFromHand = (cardIndex: number) => {
+        const updatedHand = removeCardFromHand(localPlayer.hand, cardIndex);
+        dispatchDeck({
+            type: DECK_REDUCER_ACTIONS.DECK_ADD__DISCARD_BOT,
+            payload: {
+                pile: [localPlayer.hand[cardIndex]],
+                upload: uploadProps
+            }
+        });
+        dispatchPlayers({
+            type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__REMOVE,
+            payload: {
+                playerId: user?.uid ?? '',
+                cards: [...updatedHand],
+                upload: uploadProps
+            }
+        });
+        setSelectedCard(() => null);
     }
 
     const endTurnHandler = () => {
@@ -398,6 +429,7 @@ export default function Game() {
             &&
             <PlayCard 
                 cardState={selectedCard}
+                discardCard={discardCardFromHand}
             />
             }
             {
