@@ -84,6 +84,7 @@ export default (() => {
             deckState?: CardSchema[],
             turnState?: TurnSchema,
             playersState?: PlayerSchema[],
+            ruleState?: RuleSchema,
             roundState?: number,
             playerId?: string,
         },
@@ -91,7 +92,8 @@ export default (() => {
     ) => {
         const { 
             gameState, deckState, turnState, 
-            playersState, playerId, roundState 
+            playersState, playerId, roundState,
+            ruleState
         } = payload;
 
         switch(type) {
@@ -99,6 +101,8 @@ export default (() => {
                 return uploadDeck(db, deckState ?? [], gameId);
             case "DECK_DISCARD":
                 return uploadDeck(db, deckState ?? [], gameId, true);
+            case "RULES":
+                return uploadRules(db, ruleState ?? {} as RuleSchema, gameId);
             case "TURN":
                 return uploadTurn(db, turnState ?? {} as TurnSchema, gameId);
             case "PLAYER": 
@@ -116,7 +120,7 @@ export default (() => {
             const gameRef = ref(db, `/games/${gameId}/game`);
             await set(gameRef, uploadGameState);
         } catch(e) {
-            console.error(e);
+            return console.error(e);
         }
     }
 
@@ -126,7 +130,7 @@ export default (() => {
             const deckRef = ref(db, `/games/${gameId}/game/deck/${location}`);
             await set(deckRef, deck.length ? deck : false);
         } catch(e) {
-            console.error(e);
+            return console.error(e);
         }
     }
 
@@ -135,7 +139,16 @@ export default (() => {
             const turnRef = ref(db, `/games/${gameId}/game/turn`);
             await set(turnRef, turn);
         } catch(e) {
-            console.error(e);
+            return console.error(e);
+        }
+    }
+
+    const uploadRules = async (db: Database, rules: RuleSchema, gameId: string) => {
+        try {
+            const ruleRef = ref(db, `/games/${gameId}/game/rules`);
+            await set(ruleRef, rules);
+        } catch(e) {
+            return console.error(e);
         }
     }
 
@@ -146,7 +159,7 @@ export default (() => {
             const playerRef = ref(db, `/games/${gameId}/game/players/${index}`);
             await set(playerRef, roomPlayer);
         } catch(e) {
-            console.error(e);
+            return console.error(e);
         }
     }
 

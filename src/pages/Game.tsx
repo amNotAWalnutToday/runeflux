@@ -40,15 +40,42 @@ const enum RULE_REDUCER_ACTIONS {
 
 type RULE_ACTIONS = {
     type: RULE_REDUCER_ACTIONS
-    payload?: {
-        amount: number
+    payload: {
+        init? : RuleSchema,
+        amount?: number,
+        location?: string,
+        teleblock?: boolean,
+        upload: {
+            db: Database,
+            gameId: string,
+        }
     },
 }
 
 const rulesReducer = (state: RuleSchema, action: RULE_ACTIONS) => {
+    const { init, amount, location, teleblock } = action.payload;
+    const { db, gameId } = action.payload.upload;
     switch(action.type) {
-        case RULE_REDUCER_ACTIONS.RULE_CHANGE__DRAW: 
-            return Object.assign({}, state, {drawAmount: action.payload?.amount})
+        case RULE_REDUCER_ACTIONS.INIT:
+            return Object.assign({}, state, {...init});
+        case RULE_REDUCER_ACTIONS.RULE_CHANGE__DRAW:
+            upload("RULES", db, {ruleState: {...state, drawAmount: amount ?? 1}}, gameId);
+            return Object.assign({}, state, {drawAmount: amount ?? 1});
+        case RULE_REDUCER_ACTIONS.RULE_CHANGE__PLAY:
+            upload("RULES", db, {ruleState: {...state, playAmount: amount ?? 1}}, gameId);
+            return Object.assign({}, state, {playAmount: amount ?? 1});
+        case RULE_REDUCER_ACTIONS.RULE_CHANGE__HAND_LIMIT:
+            upload("RULES", db, {ruleState: {...state, handLimit: amount ?? 1}}, gameId);
+            return Object.assign({}, state, {handLimit: amount ?? 1});
+        case RULE_REDUCER_ACTIONS.RULE_CHANGE__KEEPER_LIMIT:
+            upload("RULES", db, {ruleState: {...state, keeperLimit: amount ?? 1}}, gameId);
+            return Object.assign({}, state, {keeperLimit: amount ?? 1});
+        case RULE_REDUCER_ACTIONS.RULE_CHANGE__LOCATION:
+            upload("RULES", db, {ruleState: {...state, location: location ?? "MISTHALIN"}}, gameId);
+            return Object.assign({}, state, {location: location ?? "MISTHALIN"});
+        case RULE_REDUCER_ACTIONS.RULE_CHANGE__TELEBLOCK:
+            upload("RULES", db, {ruleState: {...state, teleblock: teleblock ?? false}}, gameId);
+            return Object.assign({}, state, {teleblock: teleblock ?? false})
         default: 
             return state;
     }
@@ -76,7 +103,6 @@ type DECK_ACTIONS = {
 const deckReducer = (state: DeckSchema, action: DECK_ACTIONS) => {
     const { pile, amount, init } = action.payload;
     const { db, gameId } = action.payload.upload;
-    console.log(state);
     switch(action.type) {
         case DECK_REDUCER_ACTIONS.INIT:
             return Object.assign({}, state, {...init});
@@ -260,6 +286,14 @@ export default function Game() {
                 upload: uploadProps
             }
         });
+        dispatchRules({
+            type: RULE_REDUCER_ACTIONS.INIT,
+            payload: {
+                init: {...ruleData},
+                amount: 0,
+                upload: uploadProps
+            }
+        })
         setTable((prev) => ({...prev, round: roundData}));
         setLocalPlayer((prev) => {
             return { ...prev, ...getPlayer(playerData, user?.uid ?? '').state }
