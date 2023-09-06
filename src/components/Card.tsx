@@ -13,7 +13,7 @@ export default function Card({cardState, position, numberInLine, selectCard}: Pr
     
     return(
         <div 
-            className={`card`} 
+            className={`card ${cardState.state.type.toLowerCase()}`} 
             style={ position === "HAND" ? {transform: `translate(calc(-50% * ${numberInLine}), ${isHover ? "-50px" : "0"})`} : {} } 
             onMouseEnter={((e) => {
                 e.stopPropagation();
@@ -36,7 +36,6 @@ export default function Card({cardState, position, numberInLine, selectCard}: Pr
                 <h3>{cardState.state.name}</h3>
                 <hr className='card_hr__thick' />
                 <p>{cardState.state.text.specialEffects}</p>
-                <div className='fake_img'></div>
             </div>
         </div>
     )

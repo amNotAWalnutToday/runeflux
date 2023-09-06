@@ -2,6 +2,10 @@
   --orange: orangered;
   --black: #111;
   --white: #fbfdfe;
+  --light-pink: #faf;
+  --light-green: #4fa;
+  --light-blue: #4cf;
+  --light-purple: #9af;
   --golden: goldenrod;
   --gold: gold;
   --golden_highlight: rgba(184, 142, 35, 0.9);
@@ -166,8 +170,69 @@ body {
   background-color: var(--black);
 }
 
-.card .selected {
+.card.rule .card_header__background {
+  background-color: var(--gold);
+}
 
+.card.rule h3,
+.card.rule h2 {
+  color: var(--gold);
+}
+
+.card.rule hr {
+  border-color: var(--gold);
+}
+
+.card.keeper .card_header__background {
+  background-color: var(--light-green);
+}
+
+.card.keeper h3,
+.card.keeper h2 {
+  color: var(--light-green);
+}
+
+.card.keeper hr {
+  border-color: var(--light-green);
+}
+
+.card.goal .card_header__background {
+  background-color: var(--light-pink);
+}
+
+.card.goal h3,
+.card.goal h2 {
+  color: var(--light-pink);
+}
+
+.card.goal hr {
+  border-color: var(--light-pink);
+}
+
+.card.action .card_header__background {
+  background-color: var(--light-blue);
+}
+
+.card.action h3,
+.card.action h2 {
+  color: var(--light-blue);
+}
+
+.card.action hr {
+  border-color: var(--light-blue);
+}
+
+.card.counter .card_header__background {
+  background-color: var(--light-purple);
+}
+
+.card.counter h3, 
+.card.counter h2 {
+  color: var(--light-purple);
+}
+
+.card.counter hr {
+  border-color: var(--light-purple);
 }
 
 .card p {
@@ -261,13 +326,4 @@ body {
   opacity: 50%;
   padding-right: 1rem;
   cursor: not-allowed;
-}
-
-.fake_img {
-  display: block;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background-color: pink;
-  align-self: center;
 }
