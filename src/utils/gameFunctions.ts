@@ -24,6 +24,7 @@ export default (() => {
             players: [{user: user ?? { username: 'hal', uid: '000001', isReady: true }, hand: [], keepers: []}] as PlayerSchema[],
             goal: [] as CardSchema[],
             round: 0,
+            pending: false,
         }
         for(const card of startDeckData.startDeck) {
             game.deck.pure.push(card);
@@ -46,6 +47,7 @@ export default (() => {
             playerData: PlayerSchema[],
             turnData: TurnSchema,
             roundData: number,
+            pendingData: CardSchema | false,
         ) => void,
     ) => {
         try {
@@ -58,6 +60,7 @@ export default (() => {
                     data.players,
                     data.turn,
                     data.round,
+                    data.pending,
                 );
             });
             await onValue(gameRef, async (snapshot) => {
@@ -69,6 +72,7 @@ export default (() => {
                     data.players,
                     data.turn,
                     data.round,
+                    data.pending
                 );
             });
         } catch(e) {
@@ -86,6 +90,7 @@ export default (() => {
             playersState?: PlayerSchema[],
             ruleState?: RuleSchema,
             roundState?: number,
+            cardState?: CardSchema | false,
             playerId?: string,
         },
         gameId: string
@@ -93,7 +98,7 @@ export default (() => {
         const { 
             gameState, deckState, turnState, 
             playersState, playerId, roundState,
-            ruleState
+            ruleState, cardState,
         } = payload;
 
         switch(type) {
@@ -109,6 +114,8 @@ export default (() => {
                 return uploadPlayer(db, playersState ?? [], playerId ?? '', gameId); 
             case "ROUND":
                 return uploadRound(db, roundState ?? 0, gameId);
+            case "PENDING":
+                return uploadPending(db, cardState ?? false, gameId);
             default:
                 return uploadTable(db, gameState ?? {} as GameSchema, gameId);
         }
@@ -167,6 +174,15 @@ export default (() => {
         try {
             const roundRef = ref(db, `/games/${gameId}/game/round`);
             await set(roundRef, round);
+        } catch(e) {
+            return console.error(e);
+        }
+    }
+
+    const uploadPending = async (db: Database, card: CardSchema | false, gameId: string) => {
+        try {
+            const pendingRef = ref(db, `/games/${gameId}/game/pending`);
+            await set(pendingRef, card);
         } catch(e) {
             return console.error(e);
         }

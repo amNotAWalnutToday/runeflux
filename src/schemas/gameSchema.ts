@@ -13,6 +13,7 @@ interface GameSchema {
         drawn: number,
         played: number,
     },
+    pending: CardSchema | boolean,
     round: number,
 }
 

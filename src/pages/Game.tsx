@@ -1,6 +1,6 @@
 import { useEffect, useState, useReducer, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Database, remove } from 'firebase/database';
+import { Database } from 'firebase/database';
 import UserContext from '../data/Context';
 import GameSchema from '../schemas/gameSchema';
 import CardSchema from '../schemas/cardSchema';
@@ -271,6 +271,7 @@ export default function Game() {
         playerData: PlayerSchema[],
         turnData: TurnSchema,
         roundData: number,
+        pendingData: CardSchema | false,
     ) => {
         if(!deckData.discard) deckData.discard = [];
         if(!deckData.pure) deckData.pure = [];
@@ -311,7 +312,7 @@ export default function Game() {
                 upload: uploadProps
             }
         })
-        setTable((prev) => ({...prev, round: roundData}));
+        setTable((prev) => ({...prev, round: roundData, pending: pendingData}));
         setLocalPlayer((prev) => {
             return { ...prev, ...getPlayer(playerData, user?.uid ?? '').state }
         });
@@ -411,6 +412,85 @@ export default function Game() {
         setSelectedCard(() => null);
     }
 
+    const playCard = (card: CardSchema | false, indexInHand: number) => {
+        if(!card) return;
+        if(card.subtype === "LOCATION" && rules.teleblock) return;
+        upload('PENDING', db, {cardState: card}, joinedGameID);
+        discardCardFromHand(indexInHand);
+        dispatchTurn({
+            type: TURN_REDUCER_ACTION.PLAYED_ADD,
+            payload: {
+                amount: turn.played + 1,
+                upload: uploadProps
+            }
+        })
+
+        setTimeout(() => {
+            upload('PENDING', db, {cardState: false}, joinedGameID);
+            switch(card.type) {
+                case "RULE":
+                    return playRuleCard(card);
+            }
+        }, 1000);
+    }
+
+    const playRuleCard = (card: CardSchema) => {
+        if(card.effects.includes("RULE_PLAY")) {
+            const amount = card.effects[1];
+            dispatchRules({
+                type: RULE_REDUCER_ACTIONS.RULE_CHANGE__PLAY,
+                payload: {
+                    amount: Number(amount),
+                    upload: uploadProps
+                }
+            });
+        } else if(card.effects.includes("RULE_DRAW")) {
+            const amount = card.effects[1];
+            dispatchRules({
+                type: RULE_REDUCER_ACTIONS.RULE_CHANGE__DRAW,
+                payload: {
+                    amount: Number(amount),
+                    upload: uploadProps
+                }
+            });
+        } else if(card.effects.includes("RULE_HAND_LIMIT")) {
+            const amount = card.effects[1];
+            dispatchRules({
+                type: RULE_REDUCER_ACTIONS.RULE_CHANGE__HAND_LIMIT,
+                payload: {
+                    amount: Number(amount),
+                    upload: uploadProps
+                }
+            });
+        } else if(card.effects.includes("RULE_KEEPER_LIMIT")) {
+            const amount = card.effects[1];
+            dispatchRules({
+                type: RULE_REDUCER_ACTIONS.RULE_CHANGE__KEEPER_LIMIT,
+                payload: {
+                    amount: Number(amount),
+                    upload: uploadProps
+                }
+            });
+        } else if(card.effects.includes("LOCATION")) {
+            const location = card.effects[1];
+            dispatchRules({
+                type: RULE_REDUCER_ACTIONS.RULE_CHANGE__LOCATION,
+                payload: {
+                    location,
+                    upload: uploadProps
+                }
+            });
+        } else if(card.effects.includes("TELEBLOCK")) {
+            dispatchRules({
+                type: RULE_REDUCER_ACTIONS.RULE_CHANGE__TELEBLOCK,
+                payload: {
+                    teleblock: true,
+                    upload: uploadProps,
+                }
+            })
+        }
+    }
+
     const endTurnHandler = () => {
         const isEndOfRound = endTurn(db, table.players, table.turn, dispatchTurn, joinedGameID);
         if(isEndOfRound) {
@@ -454,6 +534,7 @@ export default function Game() {
             &&
             <PlayCard 
                 cardState={selectedCard}
+                playCard={playCard}
                 discardCard={discardCardFromHand}
             />
             }

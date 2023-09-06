@@ -80,6 +80,7 @@ export default (() => {
                 drawn: 0,
                 played: 0,
             },
+            pending: false,
             round: 0,
         }
         for(const card of startDeckData.startDeck) {

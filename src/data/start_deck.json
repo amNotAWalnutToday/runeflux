@@ -5,110 +5,98 @@
             "subtype": "LIVING",
             "name": "Ernest",
             "effects": [],
-            "text": {
-                "flavour": "TBA",
-                "specialEffects": ""
-            }
+            "text": ""
         },
         {
             "type": "KEEPER",
             "subtype": "LIVING",
             "name": "Ghost",
             "effects": ["LOCATION_MORYTANIA__CHANGE_BROTHERS"],
-            "text": {
-                "flavour": "TBA",
-                "specialEffects": "Reveals its origins when in a specific location."
-            }
+            "text": "Reveals its origins when in a specific location."
         },
         {
             "type": "KEEPER",
             "subtype": "RUNE",
             "name": "Mind Rune",
             "effects": [],
-            "text": {
-                "flavour": "TBA",
-                "specialEffects": ""
-            }
+            "text": ""
         },
         {
             "type": "KEEPER",
             "subtype": "RUNE",
             "name": "Chaos Rune",
             "effects": ["WORMHOLE"],
-            "text": {
-                "flavour": "TBA",
-                "specialEffects": "Once per turn, choose to draw 1 and play it."
-            }
+            "text": "Once per turn, choose to draw 1 and play it."
         },
         {
             "type": "GOAL",
             "subtype": "",
             "name": "Draynor Manor",
             "effects": [],
-            "text": {
-                "flavour": "TBA",
-                "specialEffects": ""
-            }
+            "text": ""
         },
         {
             "type": "RULE",
             "subtype": "LOCATION",
             "name": "Misthalin",
-            "effects": ["LOCATION_MISTHALIN"],
-            "text": {
-                "flavour": "TBA",
-                "specialEffects": "teleport all players to the location of misthalin, this location has no special effects."
-            }
+            "effects": ["LOCATION", "MISTHALIN"],
+            "text": "teleport all players to the location of misthalin, this location has no special effects."
+        },
+        {
+            "type": "RULE",
+            "subtype": "LOCATION",
+            "name": "Abyss",
+            "effects": ["LOCATION", "ABYSS"],
+            "text": "When this card is in play, each player has to discard down to 1 card to end their turn."
         },
         {
             "type": "RULE",
             "subtype": "BASIC",
             "name": "Draw 2",
-            "effects": ["RULE_CHANGE__DRAW_AMOUNT_2"],
-            "text": {
-                "flavour": "TBA",
-                "specialEffects": "When this card is in play, each player will draw 2 cards per turn."
-            }
+            "effects": ["RULE_DRAW", 2],
+            "text": "When this card is in play, each player will draw 2 cards per turn."
         },
         {
             "type": "RULE",
             "subtype": "BASIC",
             "name": "Play 2",
-            "effects": ["RULE_CHANGE__PLAY_AMOUNT_2"],
-            "text": {
-                "flavour": "TBA",
-                "specialEffects": "When this card is in play, each player will play 2 cards per turn."
-            }
+            "effects": ["RULE_PLAY", 2],
+            "text": "When this card is in play, each player will play 2 cards per turn."
+        },
+        {
+            "type": "RULE",
+            "subtype": "BASIC",
+            "name": "Hand Limit 1",
+            "effects": ["RULE_HAND_LIMIT", 1],
+            "text": "When this card is in play, each player has to discard down to 1 card to end their turn."
+        },
+        {
+            "type": "RULE",
+            "subtype": "BASIC",
+            "name": "Keeper Limit 3",
+            "effects": ["RULE_KEEPER_LIMIT", 3],
+            "text": "When this card is in play, each player can have 3 keepers in play."
+        },
+        {
+            "type": "RULE",
+            "subtype": "BASIC",
+            "name": "Teleblock",
+            "effects": ["TELEBLOCK"],
+            "text": "When this card is in play, location can not be changed."
         },
         {
             "type": "ACTION",
             "subtype": "",
             "name": "Teleport",
             "effects": ["LOCATION_CHOOSE"],
-            "text": {
-                "flavour": "TBA",
-                "specialEffects": "teleport to an available location of your choosing."
-            }
+            "text": "teleport to an available location of your choosing."
         },
         {
             "type": "COUNTER",
             "subtype": "",
             "name": "telestop",
             "effects": ["TELESTOP_OR_LOCATION_MISTHALIN"],
-            "text": {
-                "flavour": "TBA",
-                "specialEffects": "out of turn stop an opposing players teleport, during your turn teleport to misthalin."
-            }
-        },
-        {
-            "type": "CREEPER",
-            "subtype": "",
-            "name": "Wintertodt",
-            "effects": ["CHANCE_DISCARD"],
-            "text": {
-                "flavour": "TBA",
-                "specialEffects": "Attaches to a living card causing the owner to have a 50% chance to discard the draw amount of cards at the start of each turn."
-            }
+            "text": "out of turn stop an opposing players teleport, during your turn teleport to misthalin."
         }
     ]
 }

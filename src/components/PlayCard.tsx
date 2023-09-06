@@ -2,11 +2,12 @@ import CardSchema from "../schemas/cardSchema"
 import Card from "./Card"
 
 type Props = {
-    cardState: { state: CardSchema, index: number }
-    discardCard: (cardIndex: number) => void
+    cardState: { state: CardSchema, index: number },
+    playCard: (card: CardSchema | false, indexInHand: number) => void,
+    discardCard: (cardIndex: number) => void,
 }
 
-export default function PlayCard({cardState, discardCard}: Props) {
+export default function PlayCard({cardState, playCard, discardCard}: Props) {
     return (
         <div className="popup" >
             <Card 
@@ -14,7 +15,10 @@ export default function PlayCard({cardState, discardCard}: Props) {
                 position={"SELECT"}
             />
             <div>
-                <button className="menu_link">
+                <button 
+                    className="menu_link"
+                    onClick={() => playCard(cardState.state, cardState.index)}
+                >
                     Play Card
                 </button>
                 <button

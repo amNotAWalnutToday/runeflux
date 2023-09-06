@@ -11,7 +11,10 @@ export default function EndTurn({table, endTurn}: Props) {
             <button
                 className="endturn_btn"
                 onClick={endTurn}
-                disabled={table.turn.drawn < table.rules.drawAmount}
+                disabled={
+                    table.turn.drawn < table.rules.drawAmount
+                    || table.turn.played < table.rules.playAmount
+                }
             >
                 End Turn
             </button>  
