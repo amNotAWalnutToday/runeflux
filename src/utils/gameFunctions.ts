@@ -209,6 +209,7 @@ export default (() => {
             newDeck.push(oldDeck[ran]);
             oldDeck.splice(ran, 1);
         }
+        console.log(deck);
         return newDeck;
     }
 

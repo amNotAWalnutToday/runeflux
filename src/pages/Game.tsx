@@ -85,6 +85,7 @@ const rulesReducer = (state: RuleSchema, action: RULE_ACTIONS) => {
 const enum DECK_REDUCER_ACTIONS {
     INIT,
     DECK_REPLACE__PURE,
+    DECK_REPLACE__DISCARD_TO_PURE,
     DECK_REMOVE__PURE_TOP,
     DECK_ADD__DISCARD_BOT,
 }
@@ -111,6 +112,10 @@ const deckReducer = (state: DeckSchema, action: DECK_ACTIONS) => {
         case DECK_REDUCER_ACTIONS.DECK_REPLACE__PURE:
             upload("DECK_PURE", db, {deckState: pile}, gameId);
             return Object.assign({}, state, {pure: [...pile]});
+        case DECK_REDUCER_ACTIONS.DECK_REPLACE__DISCARD_TO_PURE:
+            upload("DECK_PURE", db, {deckState: [...pile]}, gameId);
+            upload("DECK_DISCARD", db, {deckState: []}, gameId);
+            return Object.assign({}, state, {pure: [...pile], discard: []});
         case DECK_REDUCER_ACTIONS.DECK_REMOVE__PURE_TOP:
             upload("DECK_PURE", db, {deckState: [...state.pure.slice(0, state.pure.length - (amount ?? 0))]}, gameId);
             return Object.assign({}, state, {pure: [...state.pure.slice(0, state.pure.length - (amount ?? 0))]})
@@ -184,7 +189,7 @@ type PLAYER_ACTIONS = {
 }
 
 const playerReducer = (state: PlayerSchema[], action: PLAYER_ACTIONS) => {
-    const { playerId, init, cards, cardIndex } = action.payload;
+    const { playerId, init, cards } = action.payload;
     const { db, gameId } = action.payload.upload;
     const players = [...state];
     const player = getPlayer(state, playerId);
@@ -268,6 +273,7 @@ export default function Game() {
         roundData: number,
     ) => {
         if(!deckData.discard) deckData.discard = [];
+        if(!deckData.pure) deckData.pure = [];
         if(!goalData) goalData = [];
         for(const player of playerData) {
             if(!player.hand) player.hand = [];
@@ -346,6 +352,17 @@ export default function Game() {
 
     const drawCards = () => {
         const drawn = drawPhase(table);
+        if(!deck.pure || !deck.pure.length) {
+            const updatedDeck = shuffleDeck([...deck.pure, ...deck.discard]);
+            dispatchDeck({
+                type: DECK_REDUCER_ACTIONS.DECK_REPLACE__DISCARD_TO_PURE,
+                payload: {
+                    pile: [...updatedDeck],
+                    upload: uploadProps
+                }
+            });
+            return;
+        }
         dispatchDeck({
             type: DECK_REDUCER_ACTIONS.DECK_REMOVE__PURE_TOP,
             payload: {
@@ -425,19 +442,19 @@ export default function Game() {
                 rules={table.rules}
             />
             {
-            selectedCard 
-            &&
-            <PlayCard 
-                cardState={selectedCard}
-                discardCard={discardCardFromHand}
-            />
-            }
-            {
             user?.uid === table.turn.player
             && table.turn.drawn < table.rules.drawAmount
             &&
             <DrawCard 
                 drawCards={drawCards}
+            />
+            }
+            {
+            selectedCard 
+            &&
+            <PlayCard 
+                cardState={selectedCard}
+                discardCard={discardCardFromHand}
             />
             }
             {
