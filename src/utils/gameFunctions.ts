@@ -1,4 +1,4 @@
-import { ref, set, Database, onValue } from 'firebase/database';
+import { ref, get, child, set, Database, onValue } from 'firebase/database';
 import CardSchema from '../schemas/cardSchema';
 import PlayerSchema from '../schemas/playerSchema';
 import TurnSchema from '../schemas/turnSchema';
@@ -7,6 +7,7 @@ import startRuleData from '../data/start_rules.json';
 import GameSchema from '../schemas/gameSchema';
 import UserSchema from '../schemas/userSchema';
 import RuleSchema from '../schemas/ruleSchema';
+import DeckSchema from '../schemas/deckSchema';
 import roomFunctions from './roomFunctions';
 
 const { convertGameToRoomGame, convertToRoomPlayer } = roomFunctions;
@@ -38,60 +39,41 @@ export default (() => {
     const connectGame = async (
         gameId: string,
         db: Database,
-        setTable: React.Dispatch<React.SetStateAction<GameSchema>>,
-        uid: string,
-        setLocalPlayer: React.Dispatch<React.SetStateAction<PlayerSchema>>,
+        init: (
+            deckData: DeckSchema,
+            goalData: CardSchema[],
+            ruleData: RuleSchema,
+            playerData: PlayerSchema[],
+            turnData: TurnSchema,
+            roundData: number,
+        ) => void,
     ) => {
-        const gameRef = ref(db, `/games/${gameId}/game`);
-        await onValue(gameRef, async (snapshot) => {
-            const data = await snapshot.val();
-
-            updateTable(
-                data.deck, data.goal,
-                data.rules,
-                data.players,
-                data.turn,
-                data.round,
-                setTable
-            );
-            setLocalPlayer((prev) => {
-                return { ...prev, ...getPlayer(data.players, uid).state }
+        try {
+            const gameRef = ref(db, `/games/${gameId}/game`);
+            await get(child(gameRef, '/')).then( async (snapshot) => {
+                const data = await snapshot.val();
+                init(
+                    data.deck, data.goal,
+                    data.rules,
+                    data.players,
+                    data.turn,
+                    data.round,
+                );
             });
-        });
-    }
-
-    const updateTable = (
-        deckData: { pure: CardSchema[], discard: CardSchema[] },
-        goalData: CardSchema[],
-        ruleData: RuleSchema,
-        playerData: PlayerSchema[],
-        turnData: {
-            player: string | boolean,
-            drawn: number,
-            played: number,
-        },
-        roundData: number,
-        setTable: React.Dispatch<React.SetStateAction<GameSchema>>
-    ) => {
-        if(!deckData.discard) deckData.discard = [];
-        if(!goalData) goalData = [];
-        for(const player of playerData) {
-            if(!player.hand) player.hand = [];
-            if(!player.keepers) player.keepers = [];
+            await onValue(gameRef, async (snapshot) => {
+                const data = await snapshot.val();
+    
+                init(
+                    data.deck, data.goal,
+                    data.rules,
+                    data.players,
+                    data.turn,
+                    data.round,
+                );
+            });
+        } catch(e) {
+            console.error(e);
         }
-
-        const updatedTable = {
-            deck: deckData,
-            goal: goalData,
-            rules: ruleData,
-            players: playerData,
-            round: roundData,
-            turn: turnData
-        }
-
-        setTable((prev) => {
-            return { ...prev, ...updatedTable }
-        });
     }
 
     const upload = (
@@ -224,7 +206,7 @@ export default (() => {
             : 0
 
         turnDispatch({
-            type: 0, 
+            type: 1, 
             payload: {
                 player: players[nextPlayer].user.uid,
                 upload: {

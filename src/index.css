@@ -150,6 +150,7 @@ body {
   position: absolute;
   left: 50px;
   top: 50px;
+  box-shadow: 4px 4px 12px black !important;
 }
 
 .card {
