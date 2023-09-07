@@ -353,7 +353,7 @@ export default function Game() {
 
     const drawCards = () => {
         const drawn = drawPhase(table);
-        if(!deck.pure || !deck.pure.length) {
+        if(!deck.pure || deck.pure.length < rules.drawAmount) {
             const updatedDeck = shuffleDeck([...deck.pure, ...deck.discard]);
             dispatchDeck({
                 type: DECK_REDUCER_ACTIONS.DECK_REPLACE__DISCARD_TO_PURE,
@@ -386,7 +386,7 @@ export default function Game() {
                 player: table.turn.player && table.turn.player !== true 
                     ? table.turn.player 
                     : 'a', 
-                amount: drawn, 
+                amount: turn.drawn + drawn, 
                 upload: uploadProps
             }
         });

@@ -206,7 +206,7 @@ export default (() => {
         if(gameState.round === 0) {
             return 3;
         } else {
-            return gameState.rules.drawAmount;
+            return gameState.rules.drawAmount - gameState.turn.drawn;
         }
     }
 
