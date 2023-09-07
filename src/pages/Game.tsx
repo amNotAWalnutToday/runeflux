@@ -17,6 +17,7 @@ import GameRules from '../components/GameRules';
 import EndTurn from '../components/EndTurn';
 import DeckSchema from '../schemas/deckSchema';
 import Table from '../components/Table';
+import Card from '../components/Card';
 
 const { 
     loadGame, 
@@ -562,6 +563,16 @@ export default function Game() {
                 localPlayer={localPlayer}
                 endTurn={endTurnHandler}
             />
+            {
+                table.pending !== false 
+                &&
+                table.pending !== true
+                &&
+                <Card 
+                    position={"PENDING"}
+                    cardState={{state:  table.pending , index: 0}}
+                />
+            }
         </div>
     )
 }

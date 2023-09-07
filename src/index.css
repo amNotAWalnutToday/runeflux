@@ -456,3 +456,28 @@ a:hover,
     opacity: 10%;
   }
 }
+
+.pending {
+  position: absolute;
+  top: 50%;
+  margin-top: -200px;
+  left: 50%;
+  margin-left: -100px;
+  animation: putdown 0.2s linear 1;
+}
+
+@keyframes putdown {
+  from {
+    transform: translateY(-250px) scale(1.5);
+    opacity: 10%;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 100%;
+  }
+}
+
+.hand_card {
+  transition: transform ease-out 0.2s;
+}

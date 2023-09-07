@@ -1,20 +1,30 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CardSchema from "../schemas/cardSchema";
 
 type Props = {
     cardState: { state: CardSchema, index: number },
-    position: "HAND" | "SELECT" | "TABLE",
+    position: "HAND" | "SELECT" | "PENDING" | "TABLE",
     numberInLine?: number,
     selectCard?: (card: { state: CardSchema, index: number } | null) => void,
 }
 
 export default function Card({cardState, position, numberInLine, selectCard}: Props) {
     const [isHover, setIsHover] = useState(false);
+    const [animation, setAnimation] = useState(position === "HAND");
+
+    useEffect(() => {
+        setTimeout(() => {
+            setAnimation(() => false);
+        }, 300);
+    }, []);
+
+    const origin = `translate(calc(-50% * ${numberInLine}), -250px)`;
+    const handPosition = `translate(calc(-50% * ${numberInLine}), ${isHover ? "-50px" : "0"})`
     
     return(
         <div 
-            className={`card ${cardState.state.type.toLowerCase()} ${position === "TABLE" ? "table_goal" : ""}`} 
-            style={ position === "HAND" ? {transform: `translate(calc(-50% * ${numberInLine}), ${isHover ? "-50px" : "0"})`} : {} } 
+            className={`card ${cardState.state.type.toLowerCase()} ${position === "PENDING" ? "pending" : ""} ${position === "HAND" ? "hand_card": ""}`} 
+            style={ position === "HAND" ? {transform: animation ?  origin : handPosition} : {} } 
             onMouseEnter={((e) => {
                 e.stopPropagation();
                 setIsHover(true);
