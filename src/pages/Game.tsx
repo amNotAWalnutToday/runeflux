@@ -552,6 +552,7 @@ export default function Game() {
             &&
             <EndTurn 
                 table={table}
+                localPlayer={localPlayer}
                 endTurn={endTurnHandler}
             />
             }

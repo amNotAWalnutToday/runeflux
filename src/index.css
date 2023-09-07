@@ -6,6 +6,7 @@
   --light-green: #4fa;
   --light-blue: #4cf;
   --light-purple: #9af;
+  --crimson: crimson;
   --golden: goldenrod;
   --gold: gold;
   --golden_highlight: rgba(184, 142, 35, 0.9);
@@ -307,10 +308,17 @@ body {
   border: 5px solid white;
 }
 
-.endturn_btn {
+.endturn_btn_container {
   position: absolute;
+  z-index: 10;
   top: 50%;
   margin-top: -60px;
+  right: 0px;
+  padding: 1rem 6rem 1rem 1rem;
+}
+
+.endturn_btn {
+  position: absolute;
   right: 0px;
   padding: 1rem 6rem 1rem 1rem;
   color: white;
@@ -321,9 +329,32 @@ body {
   transition: padding 0.75s ease-in-out;
 }
 
-.endturn_btn:disabled {
+.endturn_btn.disabled {
   background-color: #1119;
   opacity: 50%;
   padding-right: 1rem;
   cursor: not-allowed;
+}
+
+.errors_container {
+  opacity: 0%;
+  animation: rise 2s linear 1;
+  background-color: #fafcfeb0;
+  padding: 0.25rem;
+  box-shadow: 0px 3px 12px black;
+}
+
+.errors_message {
+  color: var(--crimson);
+}
+
+@keyframes rise {
+  from {
+    transform: translateY(0px);
+    opacity: 100%;
+  }
+  to {
+    transform: translateY(-25px);
+    opacity: 10%;
+  }
 }
