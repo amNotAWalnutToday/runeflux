@@ -50,7 +50,7 @@ export default function PlayCard({
     const clearPlayErrors = () => setPlayErrors(() => []);
 
     const checkIfDiscardDisabled = () => {
-        const isHandFull    = localPlayer.hand.length    >= table.rules.handLimit;
+        const isHandFull = localPlayer.hand.length > table.rules.handLimit;
 
         if(!isHandFull) {
             return [isHandFull];
