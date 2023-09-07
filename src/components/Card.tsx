@@ -26,6 +26,7 @@ export default function Card({cardState, position, numberInLine, selectCard}: Pr
             className={`card ${cardState.state.type.toLowerCase()} ${position === "PENDING" ? "pending" : ""} ${position === "HAND" ? "hand_card": ""}`} 
             style={ position === "HAND" ? {transform: animation ?  origin : handPosition} : {} } 
             onMouseEnter={((e) => {
+                if(animation) return;
                 e.stopPropagation();
                 setIsHover(true);
             })}
