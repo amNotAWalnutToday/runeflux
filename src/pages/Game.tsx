@@ -534,6 +534,7 @@ export default function Game() {
             &&
             <PlayCard 
                 cardState={selectedCard}
+                table={table}
                 playCard={playCard}
                 discardCard={discardCardFromHand}
             />
@@ -547,15 +548,11 @@ export default function Game() {
             />
             : null
             }
-            {user &&
-            table.turn.player === user?.uid
-            &&
             <EndTurn 
                 table={table}
                 localPlayer={localPlayer}
                 endTurn={endTurnHandler}
             />
-            }
         </div>
     )
 }

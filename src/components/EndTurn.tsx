@@ -18,9 +18,10 @@ export default function EndTurn({table, localPlayer, endTurn}: Props) {
                            || !localPlayer.hand.length;
         const isHandFull    = localPlayer.hand.length    >= table.rules.handLimit;
         const isKeepersFull = localPlayer.keepers.length >= table.rules.keeperLimit;
+        const isTurn        = table.turn.player === localPlayer.user.uid; 
 
-        if(!hasDrawn || !hasPlayed || isHandFull || isKeepersFull) {
-            return [hasDrawn, hasPlayed, isHandFull, isKeepersFull];
+        if(!hasDrawn || !hasPlayed || isHandFull || isKeepersFull || !isTurn) {
+            return [hasDrawn, hasPlayed, isHandFull, isKeepersFull, isTurn];
         }
         else return false;
     }
@@ -38,6 +39,9 @@ export default function EndTurn({table, localPlayer, endTurn}: Props) {
         }
         if(errors[3]) {
             errorMessages.push("Keeper limit reached! Discard a keeper.");
+        }
+        if(!errors[4]) {
+            errorMessages.push("Please wait your turn.");
         }
         setErrors(() => ([...errorMessages]));
     }
