@@ -535,6 +535,7 @@ export default function Game() {
             <PlayCard 
                 cardState={selectedCard}
                 table={table}
+                localPlayer={localPlayer}
                 playCard={playCard}
                 discardCard={discardCardFromHand}
             />

@@ -4,16 +4,25 @@ import CardSchema from "../schemas/cardSchema"
 import GameSchema from "../schemas/gameSchema"
 import Card from "./Card"
 import ErrorMessage from './ErrorMessage';
+import PlayerSchema from '../schemas/playerSchema';
 
 type Props = {
     cardState: { state: CardSchema, index: number },
     table: GameSchema,
+    localPlayer: PlayerSchema,
     playCard: (card: CardSchema | false, indexInHand: number) => void,
     discardCard: (cardIndex: number) => void,
 }
 
-export default function PlayCard({cardState, table, playCard, discardCard}: Props) {
+export default function PlayCard({
+    cardState, 
+    table, 
+    localPlayer,  
+    playCard, 
+    discardCard
+}: Props) {
     const [playErrors, setPlayErrors] = useState<string[]>([]);
+    const [discardErrors, setDiscardErrors] = useState<string[]>([]);
     const { user } = useContext(UserContext);
 
     const checkIfPlayDisabled = () => {
@@ -38,9 +47,26 @@ export default function PlayCard({cardState, table, playCard, discardCard}: Prop
         setPlayErrors(() => [...errorMessages]);
     }
 
-    const clearPlayErrors = () => {
-        setPlayErrors(() => []);
+    const clearPlayErrors = () => setPlayErrors(() => []);
+
+    const checkIfDiscardDisabled = () => {
+        const isHandFull    = localPlayer.hand.length    >= table.rules.handLimit;
+
+        if(!isHandFull) {
+            return [isHandFull];
+        }
+        else return false;
     }
+
+    const displayDiscardErrors = (errors: boolean[]) => {
+        const errorMessages: string[] = [];
+        if(!errors[0]) {
+            errorMessages.push("Hand limit has not been reached.")
+        }
+        setDiscardErrors(() => [...errorMessages]);
+    }
+
+    const clearDiscardErrors = () => setDiscardErrors(() => []);
 
     const mapErrors = (errors: string[], clearErrors: () => void) => {
         return errors.map((message, ind) => {
@@ -79,9 +105,21 @@ export default function PlayCard({cardState, table, playCard, discardCard}: Prop
                 >
                     Play Card
                 </button>
+                <div className='errors_container__discard' >
+                    {
+                        discardErrors.length
+                            ? mapErrors(discardErrors, clearDiscardErrors)
+                            : null
+                    }
+                </div>
                 <button
-                    className="discard_btn__card"
-                    onClick={() => discardCard(cardState.index)}
+                    className={`discard_btn__card ${table.pending || checkIfDiscardDisabled() ? "disabled" : ""}`}
+                    onClick={() => {
+                        if(table.pending) return;
+                        const isError = checkIfDiscardDisabled();
+                        if(isError) return displayDiscardErrors(isError);
+                        discardCard(cardState.index);
+                    }}
                 >
                     Discard Card
                 </button>
