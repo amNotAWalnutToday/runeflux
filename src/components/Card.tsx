@@ -3,7 +3,7 @@ import CardSchema from "../schemas/cardSchema";
 
 type Props = {
     cardState: { state: CardSchema, index: number },
-    position: "HAND" | "SELECT",
+    position: "HAND" | "SELECT" | "TABLE",
     numberInLine?: number,
     selectCard?: (card: { state: CardSchema, index: number } | null) => void,
 }
@@ -13,7 +13,7 @@ export default function Card({cardState, position, numberInLine, selectCard}: Pr
     
     return(
         <div 
-            className={`card ${cardState.state.type.toLowerCase()}`} 
+            className={`card ${cardState.state.type.toLowerCase()} ${position === "TABLE" ? "table_goal" : ""}`} 
             style={ position === "HAND" ? {transform: `translate(calc(-50% * ${numberInLine}), ${isHover ? "-50px" : "0"})`} : {} } 
             onMouseEnter={((e) => {
                 e.stopPropagation();

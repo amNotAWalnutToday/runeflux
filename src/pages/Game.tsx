@@ -16,6 +16,7 @@ import PlayCard from '../components/PlayCard';
 import GameRules from '../components/GameRules';
 import EndTurn from '../components/EndTurn';
 import DeckSchema from '../schemas/deckSchema';
+import Table from '../components/Table';
 
 const { 
     loadGame, 
@@ -514,6 +515,13 @@ export default function Game() {
 
     return (
         <div className='game_container' >
+            {   
+                // !loading
+                // &&
+                <Table 
+                    table={table}
+                />
+            }
             <UserAccountBox />
             <div className='user_bars__container'>
                 { mapPlayerBars() }

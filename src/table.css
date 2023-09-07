@@ -1,0 +1,121 @@
+.table_container {
+    display: grid;
+    margin-top: 0.5rem;
+    padding: 1rem;
+    gap: 0.25rem;
+    grid-template-columns: 150px 1fr 150px;
+    grid-template-rows: 150px 1fr 150px;
+    background-color: #1239;
+    border: var(--border_gold_outset);
+    outline: var(--outline_gold_inset);
+    width: 900px;
+    height: 700px;
+    border-radius: 50px;
+    filter: drop-shadow(2px 2px 4px black);
+}
+
+.keeper_container.length_2plus {
+    display: flex;
+    justify-content: space-evenly;
+}
+  
+.keeper_container.length_1 {
+    display: flex;
+    justify-content: center;
+}
+  
+.player_3_keepers,
+.player_4_keepers {
+    flex-direction: column;
+}
+  
+.player_3_keepers {
+    align-items: flex-end;
+}
+  
+.player_4_keepers {
+    align-items: flex-start;
+}
+  
+.player_3_keepers .table_keeper,
+.player_4_keepers .table_keeper {
+    width: 150px;
+    height: 80px;
+}
+  
+.player_1_keepers {
+    grid-column: 2 / 3;
+    grid-row: 0 / 1;
+}
+  
+.player_2_keepers {
+    grid-column: 2 / 3;
+    grid-row: 3 / 4;
+}
+  
+.player_3_keepers {
+    grid-column: 0 / 1;
+    grid-row: 2 / 3;
+}
+  
+.player_4_keepers {
+    grid-column: 3 / 4;
+    grid-row: 2 / 3;
+}
+  
+.table_goals {
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
+    display: flex;
+    gap: 1rem;
+    justify-self: center;
+    align-self: center;
+}
+
+.table_keeper {
+    background-color: #4fa;
+    width: 100px;
+    height: 150px;
+}
+
+.card_outline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 240px;
+    max-height: 309px;
+    min-width: 240px;
+    min-height: 309px;
+    width: 240px;
+    height: 309px;
+    outline: 2px dashed var(--light-pink);
+}
+  
+.mini_card_outline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 150px;
+    outline: 2px dashed var(--light-green);
+}
+
+/*  */
+/*  */
+/* potentially does nothing */
+.player_2_keepers .mini_card_outline,
+.player_1_keepers .mini_card_outline {
+  position: absolute;
+  left: 50%;
+  margin-left: -50px;
+}
+
+.player_4_keepers .mini_card_outline,
+.player_3_keepers .mini_card_outline {
+  position: absolute;
+  top: 50%;
+  margin-top: -75px;
+}
+/*  */
+/* uselessness ends here */
+/*  */

@@ -1,6 +1,9 @@
 :root {
   --orange: orangered;
   --black: #111;
+  --black-fade: #1119;
+  --black-fade-light: #121212df;
+  --white-fade: #fbfdfb99;
   --white: #fbfdfe;
   --light-pink: #faf;
   --light-green: #4fa;
@@ -110,6 +113,12 @@ a:hover,
   right: 0px;
 }
 
+/* .goal {
+  width: 209px;
+  height: 309px;
+  background-color: #faf;
+} */
+
 .user_bars__container {
   position: absolute;
   left: 0;
@@ -186,6 +195,7 @@ a:hover,
   border-color: var(--gold);
 }
 
+.card__mini .card_header__background,
 .card.keeper .card_header__background {
   background-color: var(--light-green);
 }
@@ -242,6 +252,34 @@ a:hover,
   font-size: 0.8em;
 }
 
+.player_1_keepers .card__mini,
+.player_2_keepers .card__mini {
+  width: 75px;
+  height: 150px;
+}
+
+.player_3_keepers .card__mini,
+.player_4_keepers .card__mini {
+  width: 150px;
+  height: 75px;
+}
+
+.card__mini * {
+  font-size: 0.9em;
+}
+
+.card__mini {
+  display: flex;
+  background-color: var(--black);
+  border-radius: 9px;
+  filter: drop-shadow(0px 0px 2px white);
+}
+
+.side_card__mini {
+  flex-direction: column;
+  align-items: center;
+}
+
 .popup {
   position: absolute;
   z-index: 5;
@@ -257,7 +295,7 @@ a:hover,
   margin-left: -400px;
   margin-top: -300px;;
   padding: 1rem;
-  background-color: #1119;
+  background-color: var(--black-fade-light);
   box-shadow: 0px 12px 32px black;
   border-radius: 6px;
   border: var(--border_gold_outset);
@@ -278,6 +316,16 @@ a:hover,
   width: 3rem;
 }
 
+.card__mini .card_container__inner_left {
+  width: 2rem;
+  letter-spacing: normal;
+}
+
+.side_card_container__inner_left {
+  width: 80%;
+  margin-top: 0.3rem;
+}
+
 .card_container__inner_right {
   display: flex;
   flex-direction: column;
@@ -295,10 +343,21 @@ a:hover,
   border-radius: 3px;
 }
 
+.side_card_header__background {
+  background-color: var(--light-green);
+  border-radius: 3px;
+}
+
 .card_header__text {
   color: var(--black);
   transform: rotateZ(270deg);
   letter-spacing: 1px;
+}
+
+.side_card_header__text {
+  color: black;
+  transform: rotateZ(0);
+  text-align: center;
 }
 
 .card_hr__thick {
