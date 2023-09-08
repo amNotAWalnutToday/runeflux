@@ -24,6 +24,7 @@ const {
     getPlayer, 
     connectGame, 
     chooseWhoGoesFirst,
+    checkShouldDiscard,
     endTurn,
     upload,
     shuffleDeck,
@@ -448,15 +449,18 @@ export default function Game() {
         });
     }
     
-    const discardCardFromHand = (cardIndex: number) => {
+    const discardCardFromHand = (cardIndex: number, addToDiscard = true) => {
         const updatedHand = removeCardFromHand(localPlayer.hand, cardIndex);
-        dispatchDeck({
-            type: DECK_REDUCER_ACTIONS.DECK_ADD__DISCARD_BOT,
-            payload: {
-                pile: [localPlayer.hand[cardIndex]],
-                upload: uploadProps
-            }
-        });
+        if(addToDiscard){
+            dispatchDeck({
+                type: DECK_REDUCER_ACTIONS.DECK_ADD__DISCARD_BOT,
+                payload: {
+                    pile: [localPlayer.hand[cardIndex]],
+                    upload: uploadProps
+                }
+            });
+        }
+
         dispatchPlayers({
             type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__REMOVE,
             payload: {
@@ -472,7 +476,7 @@ export default function Game() {
         if(!card) return;
         if(card.subtype === "LOCATION" && rules.teleblock) return;
         upload('PENDING', db, {cardState: card}, joinedGameID);
-        discardCardFromHand(indexInHand);
+        discardCardFromHand(indexInHand, checkShouldDiscard(card.type));
         dispatchTurn({
             type: TURN_REDUCER_ACTION.PLAYED_ADD,
             payload: {

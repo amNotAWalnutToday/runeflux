@@ -211,6 +211,21 @@ export default (() => {
         return players[ran].user.uid;
     }
 
+    const checkShouldDiscard = (cardType: string) => {
+        switch(cardType) {
+            case "GOAL":
+            case "KEEPER":
+                return false;
+            case "ACTION":
+            case "COUNTER":
+            case "RULE":
+            case "CREEPER":
+                return true;
+            default:
+                return true;
+        }
+    }
+
     const drawPhase = (
         gameState: GameSchema,
     ) => {
@@ -272,6 +287,7 @@ export default (() => {
         uploadTable,
         getPlayer,
         chooseWhoGoesFirst,
+        checkShouldDiscard,
         drawPhase,
         removeCardFromHand,
         shuffleDeck,

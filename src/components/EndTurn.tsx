@@ -17,7 +17,7 @@ export default function EndTurn({table, localPlayer, endTurn}: Props) {
         const hasPlayed     = table.turn.played          >= table.rules.playAmount
                            || !localPlayer.hand.length;
         const isHandFull    = localPlayer.hand.length    >  table.rules.handLimit;
-        const isKeepersFull = localPlayer.keepers.length >= table.rules.keeperLimit;
+        const isKeepersFull = localPlayer.keepers.length > table.rules.keeperLimit;
         const isTurn        = table.turn.player === localPlayer.user.uid; 
 
         if(!hasDrawn || !hasPlayed || isHandFull || isKeepersFull || !isTurn) {
