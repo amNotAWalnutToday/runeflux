@@ -18,6 +18,7 @@ import EndTurn from '../components/EndTurn';
 import DeckSchema from '../schemas/deckSchema';
 import Table from '../components/Table';
 import Card from '../components/Card';
+import InspectKeeper from '../components/InspectKeeper';
 
 const { 
     loadGame, 
@@ -268,7 +269,28 @@ export default function Game() {
     /*LOCAL STATE*/
     const [loading, setLoading] = useState(true);
     const [selectedCard, setSelectedCard] = useState<{state: CardSchema, index: number} | null>(null);
+    const [inspectedKeeper, setInspectedKeeper] = useState<{state: CardSchema, index: number} | null>(null);
     const [localPlayer, setLocalPlayer] = useState(getPlayer(table.players, user?.uid ?? '').state)
+
+    const selectCard = (card: { state: CardSchema, index: number } | null) => {
+        setSelectedCard((prev) => {
+            if(prev === null || card === null) return card;
+            else return prev.state.name === card.state.name ? null : card;
+        });
+        if(inspectedKeeper) {
+            setInspectedKeeper(() => null);
+        }
+    }
+
+    const inspectKeeper = (card: { state: CardSchema, index: number } | null) => {
+        setInspectedKeeper((prev) => {
+            if(prev === null || card === null) return card;
+            else return prev.state.name === card.state.name ? null : card;
+        });
+        if(selectedCard) {
+            setSelectedCard(() => null);
+        }
+    }
 
     useEffect(() => {
         setTable((prev) => {
@@ -399,13 +421,6 @@ export default function Game() {
             await startGame(db, joinedGameID);
         }
         setLoading(() => false);
-    }
-
-    const selectCard = (card: { state: CardSchema, index: number } | null) => {
-        setSelectedCard((prev) => {
-            if(prev === null || card === null) return card;
-            else return prev.state.name === card.state.name ? null : card;
-        });
     }
 
     const drawCards = () => {
@@ -606,6 +621,7 @@ export default function Game() {
                 // &&
                 <Table 
                     table={table}
+                    inspectKeeper={inspectKeeper}
                 />
             }
             <UserAccountBox />
@@ -633,6 +649,13 @@ export default function Game() {
                 playCard={playCard}
                 discardCard={discardCardFromHand}
             />
+            }
+            {
+                inspectedKeeper
+                &&
+                <InspectKeeper
+                    cardState={inspectedKeeper}
+                />
             }
             {
             localPlayer.hand.length

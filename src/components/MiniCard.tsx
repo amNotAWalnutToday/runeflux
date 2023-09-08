@@ -3,12 +3,14 @@ import CardSchema from "../schemas/cardSchema"
 type Props = {
     isSideWays: boolean,
     cardState: { state: CardSchema, index: number },
+    inspectKeeper: (card: { state: CardSchema, index: number } | null) => void,
 }
 
-export default function MiniCard({cardState, isSideWays}: Props) {
+export default function MiniCard({cardState, isSideWays, inspectKeeper}: Props) {
     return isSideWays ? (
         <div  
             className={`card__mini ${cardState.state.type.toLowerCase()}`}
+            onClick={() => inspectKeeper(cardState)}
         >
             <div className='card_container__inner_left'>
                 <div className={`card_header__background`} >
