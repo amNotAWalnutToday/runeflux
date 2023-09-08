@@ -141,7 +141,7 @@
             "type": "ACTION",
             "subtype": "",
             "name": "Reset half of rules(upto)",
-            "effects": ["RULES_RESET_CHOOSE", "OPTIONAL"],
+            "effects": ["RULE_RESET_CHOOSE", "HALF", "OPTIONAL"],
             "text": "When played, choose up to half the rules to reset."
         },
         {

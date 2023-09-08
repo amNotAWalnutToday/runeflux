@@ -1,6 +1,7 @@
 import { useEffect, useState, useReducer, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Database } from 'firebase/database';
+import start_rules from '../data/start_rules.json';
 import UserContext from '../data/Context';
 import GameSchema from '../schemas/gameSchema';
 import CardSchema from '../schemas/cardSchema';
@@ -22,7 +23,8 @@ import InspectKeeper from '../components/InspectKeeper';
 
 const { 
     loadGame, 
-    getPlayer, 
+    getPlayer,
+    getInitRule, 
     connectGame, 
     chooseWhoGoesFirst,
     checkShouldDiscard,
@@ -41,12 +43,15 @@ const enum RULE_REDUCER_ACTIONS {
     RULE_CHANGE__HAND_LIMIT,
     RULE_CHANGE__LOCATION,
     RULE_CHANGE__TELEBLOCK,
+    RULE_RESET__CHOICE,
+    RULE_RESET__ALL,
 }
 
 type RULE_ACTIONS = {
     type: RULE_REDUCER_ACTIONS
     payload: {
         init? : RuleSchema,
+        ruleKey? : string,
         amount?: number,
         location?: string,
         teleblock?: boolean,
@@ -58,7 +63,7 @@ type RULE_ACTIONS = {
 }
 
 const rulesReducer = (state: RuleSchema, action: RULE_ACTIONS) => {
-    const { init, amount, location, teleblock } = action.payload;
+    const { init, ruleKey, amount, location, teleblock } = action.payload;
     const { db, gameId } = action.payload.upload;
     switch(action.type) {
         case RULE_REDUCER_ACTIONS.INIT:
@@ -80,7 +85,13 @@ const rulesReducer = (state: RuleSchema, action: RULE_ACTIONS) => {
             return Object.assign({}, state, {location: location ?? "MISTHALIN"});
         case RULE_REDUCER_ACTIONS.RULE_CHANGE__TELEBLOCK:
             upload("RULES", db, {ruleState: {...state, teleblock: teleblock ?? false}}, gameId);
-            return Object.assign({}, state, {teleblock: teleblock ?? false})
+            return Object.assign({}, state, {teleblock: teleblock ?? false});
+        case RULE_REDUCER_ACTIONS.RULE_RESET__CHOICE: 
+            upload("RULES", db, {ruleState: {...state, [`${ruleKey}`]: getInitRule(ruleKey ?? "")}}, gameId);
+            return Object.assign({}, state, {[`${ruleKey}`]: getInitRule(ruleKey ?? "")});
+        case RULE_REDUCER_ACTIONS.RULE_RESET__ALL:
+            upload("RULES", db, { ruleState: {...start_rules} }, gameId);
+            return Object.assign({}, state, { ...start_rules });
         default: 
             return state;
     }
@@ -275,6 +286,9 @@ export default function Game() {
     const [loading, setLoading] = useState(true);
     const [selectedCard, setSelectedCard] = useState<{state: CardSchema, index: number} | null>(null);
     const [inspectedKeeper, setInspectedKeeper] = useState<{state: CardSchema, index: number} | null>(null);
+    const [selectedRuleGroup, setSelectedRuleGroup] = useState<string[]>([]);
+    const [selectedPlayerGroup, setSelectedPlayerGroup] = useState<PlayerSchema[]>([]);
+    const [selectedKeeperGroup, setSelectedKeeperGroup] = useState<{ state: CardSchema, index: number, playerIndex: number }[]>([]);
     const [localPlayer, setLocalPlayer] = useState(getPlayer(table.players, user?.uid ?? '').state)
 
     const selectCard = (card: { state: CardSchema, index: number } | null) => {
@@ -295,6 +309,40 @@ export default function Game() {
         if(selectedCard) {
             setSelectedCard(() => null);
         }
+    }
+
+    const resetGroups = (exception?: string) => {
+        if(exception !== "KEEPERS") setSelectedKeeperGroup(() => []);
+        if(exception !== "PLAYERS") setSelectedPlayerGroup(() => []);
+        if(exception !== "RULES") setSelectedRuleGroup(() => []);
+    }
+
+    const selectRuleGroup = (rule: string) => {
+        setSelectedRuleGroup((prev) => {
+            if(prev.includes(rule)) return [];
+            return [...prev, rule];
+        });
+        resetGroups("RULES");
+    }
+
+    const selectKeeperGroup = (keeper: { state: CardSchema, index: number, playerIndex: number }) => {
+        setSelectedKeeperGroup((prev) => {
+            for(const item of prev) {
+                if(item.index === keeper.index && item.playerIndex === keeper.playerIndex) return [];
+            }
+            return [...prev, keeper];
+        });
+        resetGroups("KEEPERS");
+    } 
+
+    const selectPlayerGroup = (player: PlayerSchema) => {
+        setSelectedPlayerGroup((prev) => {
+            for(const p of prev) {
+                if(p.user.uid === player.user.uid) return [];
+            }
+            return [...prev, player];
+        });
+        resetGroups("PLAYERS");
     }
 
     useEffect(() => {
@@ -515,6 +563,10 @@ export default function Game() {
         setInspectedKeeper(() => null);
     }
 
+    const resetPending = () => {
+        upload('PENDING', db, {cardState: false}, joinedGameID);
+    }
+
     const playCard = (card: CardSchema | false, indexInHand: number) => {
         if(!card) return;
         if(card.subtype === "LOCATION" && rules.teleblock) return;
@@ -529,7 +581,7 @@ export default function Game() {
         });
 
         setTimeout(() => {
-            upload('PENDING', db, {cardState: false}, joinedGameID);
+            resetPending();
             switch(card.type) {
                 case "KEEPER":
                     return playKeeperCard(card);
@@ -537,6 +589,8 @@ export default function Game() {
                     return playRuleCard(card);
                 case "GOAL":
                     return playGoalCard(card);
+                case "ACTION":
+                    return playActionCards(card);
             }
         }, 1000);
     }
@@ -621,6 +675,27 @@ export default function Game() {
         }
     }
 
+    const playActionCards = (card: CardSchema) => {
+        if(card.effects.includes("RULES_RESET")) {
+            dispatchRules({
+                type: RULE_REDUCER_ACTIONS.RULE_RESET__ALL,
+                payload: {
+                    upload: uploadProps,
+                }
+            });
+        } else if(card.effects.includes("RULE_RESET_CHOOSE")) {
+            for(let i = 0; i <= (card.effects.length > 1 ? 2 : 0); i++) {
+                dispatchRules({
+                    type: RULE_REDUCER_ACTIONS.RULE_RESET__CHOICE,
+                    payload: {
+                        ruleKey: selectedRuleGroup[i],
+                        upload: uploadProps
+                    }
+                });
+            }
+        } 
+    }
+
     const endTurnHandler = () => {
         const isEndOfRound = endTurn(db, table.players, table.turn, dispatchTurn, joinedGameID);
         if(isEndOfRound) {
@@ -637,6 +712,8 @@ export default function Game() {
                     isSideBox={true}
                     player={player}
                     isTurn={table.turn.player === player.user.uid}
+                    selectedPlayerGroup={selectedPlayerGroup}
+                    selectPlayerGroup={selectPlayerGroup}
                 />
             )
         })
@@ -644,12 +721,23 @@ export default function Game() {
 
     return (
         <div className='game_container' >
+            <button
+                className='menu_link'
+                onClick={() => {
+                    playActionCards({effects: ["RULE_RESET_CHOOSE"]} as CardSchema);
+
+                }}
+            >
+                action card function test
+            </button>
             {   
                 // !loading
                 // &&
                 <Table 
                     table={table}
                     inspectKeeper={inspectKeeper}
+                    selectKeeperGroup={selectKeeperGroup}
+                    selectedKeeperGroup={selectedKeeperGroup}
                 />
             }
             <UserAccountBox />
@@ -658,6 +746,8 @@ export default function Game() {
             </div>
             <GameRules 
                 rules={table.rules}
+                selectRuleGroup={selectRuleGroup}
+                selectedRuleGroup={selectedRuleGroup}
             />
             {
             user?.uid === table.turn.player

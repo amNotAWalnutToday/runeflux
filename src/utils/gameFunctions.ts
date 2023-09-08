@@ -206,6 +206,14 @@ export default (() => {
         return {state: players[0], index: 0};
     }
 
+    const getInitRule = (key: string): number | string | boolean => {
+        const startingRules: {[key: string]: number | string | boolean} = startRuleData
+        for(const rule in startingRules) {
+            if(key === rule) return (startingRules[rule]);
+        }
+        return 0;
+    }
+
     const chooseWhoGoesFirst = (players: PlayerSchema[]) => {
         const ran = Math.floor(Math.random() * players.length);
         return players[ran].user.uid;
@@ -286,6 +294,7 @@ export default (() => {
         upload,
         uploadTable,
         getPlayer,
+        getInitRule,
         chooseWhoGoesFirst,
         checkShouldDiscard,
         drawPhase,

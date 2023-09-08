@@ -5,6 +5,7 @@ interface PlayerSchema {
     user: UserSchema,
     hand: CardSchema[]
     keepers: CardSchema[],
+    isReady: boolean,
 }
 
 export default PlayerSchema;

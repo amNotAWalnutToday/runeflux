@@ -6,9 +6,16 @@ import MiniCard from "./MiniCard";
 type Props = {
     table: GameSchema,
     inspectKeeper: (card: {state: CardSchema, index: number} | null) => void,
+    selectedKeeperGroup: { state: CardSchema, index: number, playerIndex: number }[],
+    selectKeeperGroup: (card: { state: CardSchema, index: number, playerIndex: number }) => void,
 }
 
-export default function Table({table, inspectKeeper}: Props) {
+export default function Table({
+    table, 
+    inspectKeeper, 
+    selectKeeperGroup, 
+    selectedKeeperGroup,
+}: Props) {
     const { players, goal } = table;
 
     const mapKeepers = (keepers: CardSchema[], horizontal: boolean, playerNum: number) => {
@@ -19,6 +26,9 @@ export default function Table({table, inspectKeeper}: Props) {
                     isSideWays={horizontal}
                     cardState={{ state: keeper, index }}
                     inspectKeeper={inspectKeeper}
+                    selectKeeperGroup={selectKeeperGroup}
+                    selectedKeeperGroup={selectedKeeperGroup}
+                    playerNum={playerNum}
                 />
             )
         })

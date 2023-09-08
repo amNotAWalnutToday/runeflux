@@ -42,6 +42,7 @@
   text-decoration: none;
   border: none;
   list-style-type: none;
+  user-select: none;
 }
 
 body {
@@ -145,6 +146,10 @@ a:hover,
 
 .user_bar.highlight {
   background-color: var(--golden_highlight);
+}
+
+.user_bar.selected {
+  outline: 2px dashed var(--white);
 }
 
 .user_bar__uid {
@@ -281,7 +286,11 @@ a:hover,
   display: flex;
   background-color: var(--black);
   border-radius: 9px;
-  filter: drop-shadow(0px 0px 2px white);
+  filter: drop-shadow(0px 0px 2px var(--light-green));
+}
+
+.card__mini.selected {
+  outline: 2px dashed var(--light-green);
 }
 
 .side_card__mini {
@@ -489,4 +498,13 @@ a:hover,
 
 .hand_card {
   transition: transform ease-out 0.2s;
+}
+
+.rule {
+  border: 2px dashed #0000;
+  padding: 0.1rem 1rem;
+}
+
+.rule.highlight {
+  border: 2px dashed var(--golden_highlight);
 }
