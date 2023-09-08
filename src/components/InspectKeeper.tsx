@@ -3,9 +3,10 @@ import Card from "./Card";
 
 type Props = {
     cardState: { state: CardSchema, index: number },
+    discardKeeper: (cardIndex: number, addToDiscard?: boolean) => void,
 }
 
-export default function InspectKeeper({cardState}: Props) {
+export default function InspectKeeper({cardState, discardKeeper}: Props) {
     return ( 
         <div className="popup" >
             <Card 
@@ -18,7 +19,12 @@ export default function InspectKeeper({cardState}: Props) {
                 >
                     Use Effect
                 </button>
-                <button className="discard_btn__card" >
+                <button 
+                    className="discard_btn__card" 
+                    onClick={() => {
+                        discardKeeper(cardState.index)
+                    }}
+                >
                     Discard Card
                 </button>
             </div>

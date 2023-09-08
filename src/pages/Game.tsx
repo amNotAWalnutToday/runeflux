@@ -177,6 +177,7 @@ const enum PLAYER_REDUCER_ACTIONS {
     HAND_CARDS__ADD,
     HAND_CARDS__REMOVE,
     KEEPER_CARDS__ADD,
+    KEEPER_CARDS__REMOVE,
 }
 
 type PLAYER_ACTIONS = {
@@ -211,6 +212,10 @@ const playerReducer = (state: PlayerSchema[], action: PLAYER_ACTIONS) => {
             return [...players];
         case PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__ADD:
             players[player.index] = Object.assign({}, player.state, {keepers: [...player.state.keepers, ...cards ?? []]});
+            upload("PLAYER", db, {playersState: players, playerId}, gameId);
+            return [...players];
+        case PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__REMOVE:
+            players[player.index].keepers = cards ? [...cards] : [];
             upload("PLAYER", db, {playersState: players, playerId}, gameId);
             return [...players];
         default:
@@ -487,6 +492,29 @@ export default function Game() {
         setSelectedCard(() => null);
     }
 
+    const discardKeeper = (cardIndex: number, addToDiscard = true) => {
+        const updatedKeepers = removeCardFromHand(localPlayer.keepers, cardIndex);
+        if(addToDiscard) {
+            dispatchDeck({
+                type: DECK_REDUCER_ACTIONS.DECK_ADD__DISCARD_BOT,
+                payload: {
+                    pile: [localPlayer.keepers[cardIndex]],
+                    upload: uploadProps
+                }
+            });
+        }
+
+        dispatchPlayers({
+            type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__REMOVE,
+            payload: {
+                playerId: user?.uid ?? '',
+                cards: [...updatedKeepers],
+                upload: uploadProps
+            }
+        });
+        setInspectedKeeper(() => null);
+    }
+
     const playCard = (card: CardSchema | false, indexInHand: number) => {
         if(!card) return;
         if(card.subtype === "LOCATION" && rules.teleblock) return;
@@ -655,6 +683,7 @@ export default function Game() {
                 &&
                 <InspectKeeper
                     cardState={inspectedKeeper}
+                    discardKeeper={discardKeeper}
                 />
             }
             {
