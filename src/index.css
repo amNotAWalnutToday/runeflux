@@ -48,6 +48,15 @@ body {
   overflow-x: hidden;
 }
 
+.underlay {
+  background-color: #111111ef;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
 .main_menu {
   display: flex;
   flex-direction: column;

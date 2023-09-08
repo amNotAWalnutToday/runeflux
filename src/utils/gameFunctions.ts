@@ -65,7 +65,6 @@ export default (() => {
             });
             await onValue(gameRef, async (snapshot) => {
                 const data = await snapshot.val();
-    
                 init(
                     data.deck, data.goal,
                     data.rules,
@@ -91,6 +90,7 @@ export default (() => {
             ruleState?: RuleSchema,
             roundState?: number,
             cardState?: CardSchema | false,
+            goalState?: CardSchema[],
             playerId?: string,
         },
         gameId: string
@@ -98,7 +98,7 @@ export default (() => {
         const { 
             gameState, deckState, turnState, 
             playersState, playerId, roundState,
-            ruleState, cardState,
+            ruleState, cardState, goalState
         } = payload;
 
         switch(type) {
@@ -116,6 +116,8 @@ export default (() => {
                 return uploadRound(db, roundState ?? 0, gameId);
             case "PENDING":
                 return uploadPending(db, cardState ?? false, gameId);
+            case "GOAL":
+                return uploadGoal(db, goalState ?? [], gameId);
             default:
                 return uploadTable(db, gameState ?? {} as GameSchema, gameId);
         }
@@ -188,6 +190,15 @@ export default (() => {
         }
     }
 
+    const uploadGoal = async (db: Database, cards: CardSchema[], gameId: string) => {
+        try {
+            const goalRef = ref(db, `/games/${gameId}/game/goal`);
+            await set(goalRef, cards?.length ? cards : false);
+        } catch(e) {
+            return console.error(e);
+        }
+    }
+
     const getPlayer = (players: PlayerSchema[], uid: string) => {
         for(let i = 0; i < players.length; i++) {
             if(uid === players[i].user.uid) return {state: players[i], index: i};
@@ -225,7 +236,6 @@ export default (() => {
             newDeck.push(oldDeck[ran]);
             oldDeck.splice(ran, 1);
         }
-        console.log(deck);
         return newDeck;
     }
 

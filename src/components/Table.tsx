@@ -10,10 +10,11 @@ type Props = {
 export default function Table({table}: Props) {
     const { players, goal } = table;
 
-    const mapKeepers = (keepers: CardSchema[], horizontal: boolean) => {
+    const mapKeepers = (keepers: CardSchema[], horizontal: boolean, playerNum: number) => {
         return keepers.map((keeper, index) => {
             return (
                 <MiniCard 
+                    key={`table_keepers__p${playerNum}_${index}`}
                     isSideWays={horizontal}
                     cardState={{ state: keeper, index }}
                 />
@@ -25,6 +26,7 @@ export default function Table({table}: Props) {
         return goal.map((goal, index) => {
             return (
                 <Card
+                    key={`table_goals__${index}`}
                     position={"TABLE"}
                     cardState={{state: goal, index}}
                 />
@@ -37,7 +39,7 @@ export default function Table({table}: Props) {
             <div className={`player_1_keepers keeper_container ${players[0].keepers.length > 1 ? "length_2plus" : "length_1"}`}>
                 {
                     players[0].keepers.length
-                        ? mapKeepers(players[0].keepers, true)
+                        ? mapKeepers(players[0].keepers, true, 1)
                         : (
                             <div className="mini_card_outline" >
                                 <p>No Keeper!</p>
@@ -51,7 +53,7 @@ export default function Table({table}: Props) {
             <div className={`player_2_keepers keeper_container ${players[1]?.keepers.length > 1 ? "length_2plus" : "length_1"}`}>
                 {
                     players[1]?.keepers.length
-                        ? mapKeepers(players[1]?.keepers, true)
+                        ? mapKeepers(players[1]?.keepers, true, 2)
                         : (
                             <div className="mini_card_outline" >
                                 <p>No Keeper!</p>
@@ -66,7 +68,7 @@ export default function Table({table}: Props) {
             <div className={`player_3_keepers keeper_container ${players[2].keepers.length > 1 ? "length_2plus" : "length_1"}`}>
                 {
                     players[1].keepers.length
-                        ? mapKeepers(players[2].keepers, false)
+                        ? mapKeepers(players[2].keepers, false, 3)
                         : (
                             <div className="mini_card_outline" >
                                 <p>No Keeper!</p>
@@ -81,7 +83,7 @@ export default function Table({table}: Props) {
             <div className={`player_4_keepers keeper_container ${players[3].keepers.length > 1 ? "length_2plus" : "length_1"}`}>
                 {
                     players[3].keepers.length
-                        ? mapKeepers(players[3].keepers, false)
+                        ? mapKeepers(players[3].keepers, false, 4)
                         : (
                             <div className="mini_card_outline" >
                                 <p>No Keeper!</p>

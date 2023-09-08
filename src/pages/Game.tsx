@@ -211,6 +211,38 @@ const playerReducer = (state: PlayerSchema[], action: PLAYER_ACTIONS) => {
     }
 }
 
+const enum GOAL_REDUCER_ACTIONS {
+    INIT,
+    GOAL_REPLACE__SINGLE,
+}
+
+type GOAL_ACTIONS = {
+    type: GOAL_REDUCER_ACTIONS,
+    payload: {
+        goals: CardSchema[],
+        upload: {
+            db: Database,
+            gameId: string,
+        }
+    }
+}
+
+const goalReducer = (state: CardSchema[], action: GOAL_ACTIONS) => {
+    const { goals } = action.payload;
+    const { db, gameId } = action.payload.upload;
+
+    switch(action.type) {
+        case GOAL_REDUCER_ACTIONS.INIT:
+            return goals ? [...goals] : [];
+        case GOAL_REDUCER_ACTIONS.GOAL_REPLACE__SINGLE:
+            upload("GOAL", db, {goalState: goals?.length ? [...goals] : []}, gameId);
+            return [...goals]; 
+        
+        default:
+            return state;
+    }
+}
+
 export default function Game() {
     const { startGame, checkGameInProgress } = roomFunctions;
 
@@ -225,6 +257,7 @@ export default function Game() {
     const [deck, dispatchDeck] = useReducer(deckReducer, table.deck);
     const [turn, dispatchTurn] = useReducer(turnReducer, table.turn);
     const [players, dispatchPlayers] = useReducer(playerReducer, table.players);
+    const [goal, dispatchGoal] = useReducer(goalReducer, table.goal);
 
     /*LOCAL STATE*/
     const [loading, setLoading] = useState(true);
@@ -245,6 +278,9 @@ export default function Game() {
 
     useEffect(() => {
         setTable((prev) => {
+            if(prev.turn.player !== turn.player) {
+                setSelectedCard(() => null);
+            }
             return { ...prev, turn }
         });
     }, [turn]);
@@ -258,6 +294,12 @@ export default function Game() {
         });
         /*eslint-disable-next-line*/
     }, [players]);
+
+    useEffect(() => {
+        setTable((prev) => {
+            return { ...prev, goal }
+        });
+    }, [goal]);
 
     useEffect(() => {
         if(!user) return navigate('/');
@@ -313,7 +355,14 @@ export default function Game() {
                 amount: 0,
                 upload: uploadProps
             }
-        })
+        });
+        dispatchGoal({
+            type: GOAL_REDUCER_ACTIONS.INIT,
+            payload: {
+                goals: [...goalData],
+                upload: uploadProps
+            }
+        });
         setTable((prev) => ({...prev, round: roundData, pending: pendingData}));
         setLocalPlayer((prev) => {
             return { ...prev, ...getPlayer(playerData, user?.uid ?? '').state }
@@ -425,15 +474,29 @@ export default function Game() {
                 amount: turn.played + 1,
                 upload: uploadProps
             }
-        })
+        });
 
         setTimeout(() => {
             upload('PENDING', db, {cardState: false}, joinedGameID);
             switch(card.type) {
                 case "RULE":
                     return playRuleCard(card);
+                case "GOAL":
+                    return playGoalCard(card);
             }
         }, 1000);
+    }
+
+    const playGoalCard = (card: CardSchema) => {
+        const newGoals = [];
+        newGoals.push(card);
+        dispatchGoal({
+            type: GOAL_REDUCER_ACTIONS.GOAL_REPLACE__SINGLE,
+            payload: {
+                goals: newGoals,
+                upload: uploadProps
+            } 
+        });
     }
 
     const playRuleCard = (card: CardSchema) => {
@@ -489,7 +552,7 @@ export default function Game() {
                     teleblock: true,
                     upload: uploadProps,
                 }
-            })
+            });
         }
     }
 

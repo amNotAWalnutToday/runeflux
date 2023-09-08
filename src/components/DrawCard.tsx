@@ -6,16 +6,18 @@ type Props = {
 
 export default function DrawCard({drawCards}: Props) {
     return (
-        <div className="popup" >
-            <Deck
-
-            />
-            <button 
-                className="menu_link"
-                onClick={drawCards}
-            >
-                Draw Cards
-            </button>
-        </div>
+        <>
+            <div className="underlay" />
+            <div className="popup" >
+                <Deck
+                />
+                <button
+                    className="menu_link"
+                    onClick={drawCards}
+                >
+                    Draw Cards
+                </button>
+            </div>
+        </>
     )
 }
