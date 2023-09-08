@@ -174,6 +174,7 @@ const enum PLAYER_REDUCER_ACTIONS {
     INIT,
     HAND_CARDS__ADD,
     HAND_CARDS__REMOVE,
+    KEEPER_CARDS__ADD,
 }
 
 type PLAYER_ACTIONS = {
@@ -199,11 +200,15 @@ const playerReducer = (state: PlayerSchema[], action: PLAYER_ACTIONS) => {
         case PLAYER_REDUCER_ACTIONS.INIT:
             return init ? [...init] : [];
         case PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD:
-            players[player.index] = Object.assign({}, player.state, {hand: [...player.state.hand, ...cards ?? []]})
+            players[player.index] = Object.assign({}, player.state, {hand: [...player.state.hand, ...cards ?? []]});
             upload("PLAYER", db, {playersState: players, playerId}, gameId);
             return [...players]; 
         case PLAYER_REDUCER_ACTIONS.HAND_CARDS__REMOVE:
             players[player.index].hand = cards ? [...cards] : [];
+            upload("PLAYER", db, {playersState: players, playerId}, gameId);
+            return [...players];
+        case PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__ADD:
+            players[player.index] = Object.assign({}, player.state, {keepers: [...player.state.keepers, ...cards ?? []]});
             upload("PLAYER", db, {playersState: players, playerId}, gameId);
             return [...players];
         default:
@@ -479,12 +484,25 @@ export default function Game() {
         setTimeout(() => {
             upload('PENDING', db, {cardState: false}, joinedGameID);
             switch(card.type) {
+                case "KEEPER":
+                    return playKeeperCard(card);
                 case "RULE":
                     return playRuleCard(card);
                 case "GOAL":
                     return playGoalCard(card);
             }
         }, 1000);
+    }
+
+    const playKeeperCard = (card: CardSchema) => {
+        dispatchPlayers({
+            type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__ADD,
+            payload: {
+                playerId: user?.uid ?? '',
+                cards: [card],
+                upload: uploadProps
+            }
+        });
     }
 
     const playGoalCard = (card: CardSchema) => {
