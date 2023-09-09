@@ -29,10 +29,14 @@ export default (() => {
         for(const card of startDeckData.startDeck) {
             game.deck.pure.push(card);
         }
-        const turn = {
+        const turn: TurnSchema = {
             player: false,
             drawn: 0,
-            played: 0
+            played: 0,
+            temporary: {
+                hand: [],
+                play: 0,
+            },
         }
         return Object.assign({}, game, {rules: startRuleData, turn});
     }
@@ -144,9 +148,10 @@ export default (() => {
     }
 
     const uploadTurn = async (db: Database, turn: TurnSchema, gameId: string) => {
-        try {
+        try {     
+            console.log(turn, "upload")
             const turnRef = ref(db, `/games/${gameId}/game/turn`);
-            await set(turnRef, turn);
+            await set(turnRef, Object.assign({}, turn, {temporary: { ...turn.temporary, hand: turn.temporary.hand.length ? turn.temporary.hand : false }}));
         } catch(e) {
             return console.error(e);
         }

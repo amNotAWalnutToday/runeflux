@@ -79,6 +79,10 @@ export default (() => {
                 player: false,
                 drawn: 0,
                 played: 0,
+                temporary: {
+                    hand: [],
+                    play: 0,
+                }
             },
             pending: false,
             round: 0,

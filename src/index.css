@@ -46,7 +46,7 @@
 }
 
 body {
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 .underlay {
@@ -170,6 +170,7 @@ a:hover,
   position: absolute;
   bottom: 1rem; 
   width: 100vw;
+  height: 190px;
 }
 
 .hand_container .card:not(.card:first-child) {

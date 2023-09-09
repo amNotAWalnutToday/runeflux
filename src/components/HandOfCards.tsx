@@ -6,7 +6,7 @@ type Props = {
     selectCard: (card: { state: CardSchema, index: number } | null) => void,
 }
 
-export default function HandOfCards({hand, selectCard}: Props) {
+export default function HandOfCards({hand, selectCard}: Props) {    
     const mapHand = () => {
         return hand.map((card: CardSchema, index: number) => {
             return (
@@ -22,7 +22,9 @@ export default function HandOfCards({hand, selectCard}: Props) {
     }
 
     return (
-        <div className="hand_container">
+        <div 
+            className="hand_container"
+        >
             { mapHand() }
         </div>
     )

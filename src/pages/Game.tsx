@@ -146,7 +146,12 @@ const enum TURN_REDUCER_ACTION {
     INIT,
     CHANGE_TURN,
     DRAWN_ADD,
-    PLAYED_ADD
+    PLAYED_ADD,
+    TEMPORARY_HAND__BEGIN,
+    TEMPORARY_HAND__END,
+    TEMPORARY_HAND_CARD__ADD,
+    TEMPORARY_HAND_CARD__REMOVE,
+    TEMPORARY_PLAY_CHANGE,
 }
 
 type TURN_ACTIONS = {
@@ -155,6 +160,7 @@ type TURN_ACTIONS = {
         init?: TurnSchema,
         player?: string,
         amount?: number,
+        cards?: CardSchema[],
         upload: {
             db: Database,
             gameId: string,
@@ -163,8 +169,9 @@ type TURN_ACTIONS = {
 }
 
 const turnReducer = (state: TurnSchema, action: TURN_ACTIONS) => {
-    const { player, amount, init } = action.payload;
+    const { player, amount, cards, init } = action.payload;
     const { db, gameId } = action.payload.upload; 
+    const { temporary } = state;
 
     switch(action.type) {
         case TURN_REDUCER_ACTION.INIT:
@@ -178,6 +185,18 @@ const turnReducer = (state: TurnSchema, action: TURN_ACTIONS) => {
         case TURN_REDUCER_ACTION.PLAYED_ADD:
             upload("TURN", db, {turnState: Object.assign({}, state, {played: amount})}, gameId);
             return Object.assign({}, state, {played: amount});
+        case TURN_REDUCER_ACTION.TEMPORARY_HAND__BEGIN:
+            upload("TURN", db, {turnState: Object.assign({}, state, {temporary: { ...temporary, hand: cards ? [...cards] : [], play: amount ?? 0 }})}, gameId);
+            return Object.assign({}, state, {temporary: { ...temporary, hand: cards ? [...cards] : [] }, play: amount ?? 0});
+        case TURN_REDUCER_ACTION.TEMPORARY_HAND_CARD__REMOVE:
+            upload("TURN", db, {turnState: Object.assign({}, state, {temporary: { ...temporary, hand: cards ? [...cards] : [] }})}, gameId);
+            return Object.assign({}, state, {temporary: { ...temporary, hand: cards ? [...cards] : [] }});
+        case TURN_REDUCER_ACTION.TEMPORARY_HAND_CARD__ADD:
+            upload("TURN", db, {turnState: Object.assign({}, state, {temporary: {...temporary, hand: temporary && cards ? [...temporary.hand, ...cards] : []}})}, gameId);
+            return Object.assign({}, state, {temporary: { ...temporary, hand: temporary && cards ? [...temporary.hand, ...cards] : [] }});
+        case TURN_REDUCER_ACTION.TEMPORARY_PLAY_CHANGE:
+            upload("TURN", db, {turnState: Object.assign({}, state, {temporary: {...temporary, play: amount}})}, gameId);
+            return Object.assign({}, state, {temporary: { ...temporary, play: amount }});
         default:
             return state;
     }
@@ -424,6 +443,7 @@ export default function Game() {
             if(!player.hand) player.hand = [];
             if(!player.keepers) player.keepers = [];
         }
+        if(!turnData.temporary.hand) turnData.temporary.hand = [];
 
         dispatchDeck({
             type: DECK_REDUCER_ACTIONS.INIT,
@@ -559,6 +579,31 @@ export default function Game() {
         setSelectedCard(() => null);
     }
 
+    const discardTemporaryCard = (cardIndex: number, addToDiscard = true) => {
+        if(!turn.temporary) return;
+        const { hand } = turn.temporary;
+        const updatedHand = removeCard(hand, cardIndex);
+        if(addToDiscard) {
+            dispatchDeck({
+                type: DECK_REDUCER_ACTIONS.DECK_ADD__DISCARD_BOT,
+                payload: {
+                    pile: [hand[cardIndex]],
+                    upload: uploadProps
+                }
+            });
+        }
+
+        dispatchTurn({
+            type: TURN_REDUCER_ACTION.TEMPORARY_HAND_CARD__REMOVE,
+            payload: {
+                cards: [...updatedHand],
+                upload: uploadProps
+            }
+        });
+
+        setSelectedCard(() => null);
+    }
+
     const discardKeeper = (cardIndex: number, addToDiscard = true) => {
         const updatedKeepers = removeCard(localPlayer.keepers, cardIndex);
         if(addToDiscard) {
@@ -598,7 +643,25 @@ export default function Game() {
                 upload: uploadProps
             }
         });
+        resolvePlayCard(card);
+    }
 
+    const playTemporaryCard = (card: CardSchema | false, indexInHand: number) => {
+        if(!card || !table.turn.temporary) return;
+        if(card.subtype === "LOCATION" && rules.teleblock) return;
+        upload('PENDING', db, {cardState: card}, joinedGameID);
+        discardTemporaryCard(indexInHand, checkShouldDiscard(card.type));
+        dispatchTurn({
+            type: TURN_REDUCER_ACTION.TEMPORARY_PLAY_CHANGE,
+            payload: {
+                amount: table.turn.temporary.play - 1,
+                upload: uploadProps
+            }
+        });
+        resolvePlayCard(card);
+    }
+
+    const resolvePlayCard = (card: CardSchema) => {
         setTimeout(() => {
             resetPending();
             switch(card.type) {
@@ -769,6 +832,23 @@ export default function Game() {
                     upload: uploadProps
                 }
             })
+        } else if(card.effects.includes("DRAW_2_PLAY_2")) {
+            dispatchDeck({
+                type: DECK_REDUCER_ACTIONS.DECK_REMOVE__PURE_TOP,
+                payload: {
+                    pile: [],
+                    amount: 2,
+                    upload: uploadProps,
+                }
+            })
+            dispatchTurn({
+                type: TURN_REDUCER_ACTION.TEMPORARY_HAND__BEGIN,
+                payload: {
+                    cards: [...deck.pure.slice(deck.pure.length - 2)],
+                    amount: 2,
+                    upload: uploadProps
+                }
+            });
         }
     }
 
@@ -804,7 +884,9 @@ export default function Game() {
                     // playActionCards({effects: ["TRADE_HANDS"]} as CardSchema);
                     // playActionCards({effects: ["KEEPERS_TO_HAND"]} as CardSchema);
                     // playActionCards({effects: ["KEEPER_EXCHANGE_CHOOSE"]} as CardSchema);
-                    playActionCards({effects: ["KEEPER_STEAL_CHOOSE"]} as CardSchema);
+                    // playActionCards({effects: ["KEEPER_STEAL_CHOOSE"]} as CardSchema);
+                    playActionCards({effects: ["DRAW_2_PLAY_2"]} as CardSchema);
+                    
                 }}
             >
                 action card function test
@@ -843,8 +925,9 @@ export default function Game() {
                 cardState={selectedCard}
                 table={table}
                 localPlayer={localPlayer}
-                playCard={playCard}
+                playCard={turn.temporary.hand.length ? playTemporaryCard : playCard }
                 discardCard={discardCardFromHand}
+                fromWormhole={turn.temporary.hand.length ? true : false}
             />
             }
             {
@@ -856,13 +939,21 @@ export default function Game() {
                 />
             }
             {
-            localPlayer.hand.length
+            localPlayer.hand.length && !turn.temporary.hand.length
             ?
             <HandOfCards 
                 selectCard={selectCard}
                 hand={localPlayer.hand}
             />
             : null
+            }
+            {
+                turn.temporary.hand.length
+                &&
+                <HandOfCards
+                    selectCard={selectCard}
+                    hand={turn.temporary.hand}
+                />
             }
             <EndTurn 
                 table={table}

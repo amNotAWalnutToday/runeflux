@@ -12,6 +12,7 @@ type Props = {
     localPlayer: PlayerSchema,
     playCard: (card: CardSchema | false, indexInHand: number) => void,
     discardCard: (cardIndex: number) => void,
+    fromWormhole?: boolean,
 }
 
 export default function PlayCard({
@@ -19,27 +20,41 @@ export default function PlayCard({
     table, 
     localPlayer,  
     playCard, 
-    discardCard
+    discardCard,
+    fromWormhole,
 }: Props) {
     const [playErrors, setPlayErrors] = useState<string[]>([]);
     const [discardErrors, setDiscardErrors] = useState<string[]>([]);
     const { user } = useContext(UserContext);
 
     const checkIfPlayDisabled = () => {
-        const hasPlayed = table.turn.played >= table.rules.playAmount;
-        const isTurn    = table.turn.player === user?.uid;
+        const { player, played, temporary } = table.turn;
+        if(!fromWormhole) {
+            const hasPlayed = table.turn.played >= table.rules.playAmount;
+            const isTurn    = table.turn.player === user?.uid;
 
-        if(hasPlayed || !isTurn) {
-            return [hasPlayed, isTurn];
-        }
-        else return false;
+            if(hasPlayed || !isTurn) {
+                return [hasPlayed, isTurn];
+            }
+        } else {
+            if(!temporary) return false;
+            const hasPlayed = temporary?.play <= 0;
+
+            if(hasPlayed) {
+                return [hasPlayed];
+            }
+        } 
+
+        return false;
     }
 
     const displayPlayErrors = (errors: boolean[]) => {
         const errorMessages: string[] = [];
         console.log(playErrors);
         if(errors[0]) {
-            errorMessages.push("Play limit reached! End turn.");
+            !fromWormhole 
+                ? errorMessages.push("Play limit reached! End turn.")
+                : errorMessages.push(`Must play ${table.turn.temporary ? table.turn.temporary.play : "" } more.`);
         }
         if(!errors[1]) {
             errorMessages.push("Please wait for your turn.");
