@@ -189,12 +189,14 @@ const enum PLAYER_REDUCER_ACTIONS {
     HAND_CARDS__REMOVE,
     KEEPER_CARDS__ADD,
     KEEPER_CARDS__REMOVE,
+    TRADE_HANDS,
 }
 
 type PLAYER_ACTIONS = {
     type: PLAYER_REDUCER_ACTIONS,
     payload: {
         playerId: string,
+        targetPlayerId?: string,
         init?: PlayerSchema[],
         cards?: CardSchema[],
         cardIndex?: number,
@@ -206,10 +208,11 @@ type PLAYER_ACTIONS = {
 }
 
 const playerReducer = (state: PlayerSchema[], action: PLAYER_ACTIONS) => {
-    const { playerId, init, cards } = action.payload;
+    const { playerId, init, cards, targetPlayerId } = action.payload;
     const { db, gameId } = action.payload.upload;
     const players = [...state];
     const player = getPlayer(state, playerId);
+    const targetPlayer = targetPlayerId ? getPlayer(state, targetPlayerId) : { state: {} as PlayerSchema, index: 0};
     switch(action.type) {
         case PLAYER_REDUCER_ACTIONS.INIT:
             return init ? [...init] : [];
@@ -228,6 +231,12 @@ const playerReducer = (state: PlayerSchema[], action: PLAYER_ACTIONS) => {
         case PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__REMOVE:
             players[player.index].keepers = cards ? [...cards] : [];
             upload("PLAYER", db, {playersState: players, playerId}, gameId);
+            return [...players];
+        case PLAYER_REDUCER_ACTIONS.TRADE_HANDS:
+            players[player.index]             = Object.assign({}, player.state, {hand: [...targetPlayer.state.hand]});
+            players[targetPlayer?.index ?? 0] = Object.assign({}, targetPlayer?.state, {hand: [...player.state.hand]});
+            upload("PLAYER", db, {playersState: players, playerId}, gameId);
+            upload("PLAYER", db, {playersState: players, playerId: targetPlayerId}, gameId);
             return [...players];
         default:
             return state;
@@ -693,7 +702,16 @@ export default function Game() {
                     }
                 });
             }
-        } 
+        } else if(card.effects.includes("TRADE_HANDS")) {
+            dispatchPlayers({
+                type: PLAYER_REDUCER_ACTIONS.TRADE_HANDS,
+                payload: {
+                    playerId: user?.uid ?? "",
+                    targetPlayerId: selectedPlayerGroup[0].user.uid,
+                    upload: uploadProps
+                }
+            });
+        }
     }
 
     const endTurnHandler = () => {
@@ -724,8 +742,8 @@ export default function Game() {
             <button
                 className='menu_link'
                 onClick={() => {
-                    playActionCards({effects: ["RULE_RESET_CHOOSE"]} as CardSchema);
-
+                    // playActionCards({effects: ["RULE_RESET_CHOOSE"]} as CardSchema);
+                    // playActionCards({effects: ["TRADE_HANDS"]} as CardSchema);
                 }}
             >
                 action card function test
