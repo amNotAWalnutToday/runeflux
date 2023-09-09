@@ -767,6 +767,15 @@ export default function Game() {
     const playGoalCard = (card: CardSchema) => {
         const newGoals = [];
         newGoals.push(card);
+        if(goal.length) {
+            dispatchDeck({
+                type: DECK_REDUCER_ACTIONS.DECK_ADD__DISCARD_BOT,
+                payload: {
+                    pile: [goal[0]],
+                    upload: uploadProps
+                }
+            });
+        }
         dispatchGoal({
             type: GOAL_REDUCER_ACTIONS.GOAL_REPLACE__SINGLE,
             payload: {

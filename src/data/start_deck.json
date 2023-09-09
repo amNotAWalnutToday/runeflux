@@ -33,12 +33,59 @@
             "text": "Once per turn, choose to draw 1 and play it."
         },
         {
-            "id": "G01",
+            "id": "G00",
             "type": "GOAL",
             "subtype": "",
             "name": "Draynor Manor",
             "effects": [],
             "text": ""
+        },
+        {
+            "id": "G01",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Your First Spell",
+            "effects": [],
+            "text": "To cast your first spell you must acquire the following reagents: |air rune|, |mind rune|."
+        },
+        {
+            "id": "G02",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Restless Ghost",
+            "effects": [],
+            "text": "In the cemetary of lumbridge you must put the |ghost| to rest. QUEST REQUIREMENTS: |ghost|, |ghostspeak amulet|, |father aereck|"
+        },
+        {
+            "id": "G03",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Ready To Slay A Dragon",
+            "effects": [],
+            "text": "Speak to |Duke Horacio| to get your |antifire shield|, then you can believe you can fight a dragon."
+        },
+        {
+            "id": "G04",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Dragon Slayer",
+            "effects": [],
+            "text": "Find your way to crandor, off the coast of |misthalin| and fight the dragon known as |Elvarg|. |antifire shield| is required."
+        },
+        {
+            "id": "G05",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Cook's Assistant",
+            "effects": [],
+            "text": "For most new adventurers, they end up helping |Cook| get ingredients for his |Cake| for the eternal duke's birthday."
+        },
+        {
+            "id": "G06",
+            "type": "Lumbridge Citizens",
+            "subtype": "",
+            "effects": [],
+            "text": "Collection type: lumbridge residents including the likes of |Duke Horacio|, |Cook| and |Father Aereck|"
         },
         {
             "id": "RL01",

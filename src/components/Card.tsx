@@ -21,6 +21,19 @@ export default function Card({cardState, position, numberInLine, selectCard}: Pr
     const origin = `translate(calc(-50% * ${numberInLine}), -250px)`;
     const handPosition = `translate(calc(-50% * ${numberInLine}), ${isHover ? "-50px" : "0"})`
     
+    const mapGoalText = () => {
+        return cardState.state.text.split("|").map((segment, ind) => {
+            return (
+                <span
+                    key={`card_text__${ind}`}
+                    style={{color: ind % 2 === 1 ? 'pink' : 'white'}}
+                >
+                    {segment}
+                </span>
+            )
+        });
+    }
+
     return(
         <div 
             className={`card ${cardState.state.type.toLowerCase()} ${position === "PENDING" ? "pending" : ""} ${position === "HAND" ? "hand_card": ""}`} 
@@ -46,7 +59,7 @@ export default function Card({cardState, position, numberInLine, selectCard}: Pr
                 <p>Attaches to Living</p>
                 <h3>{cardState.state.name}</h3>
                 <hr className='card_hr__thick' />
-                <p>{cardState.state.text.specialEffects}</p>
+                <p>{cardState.state.type === "GOAL" ? mapGoalText() : cardState.state.text }</p>
             </div>
         </div>
     )
