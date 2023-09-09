@@ -197,6 +197,10 @@ a:hover,
   background-color: var(--black);
 }
 
+.card.goal_selected {
+  outline: 2px dashed var(--light-pink);
+}
+
 .card.rule .card_header__background {
   background-color: var(--gold);
 }

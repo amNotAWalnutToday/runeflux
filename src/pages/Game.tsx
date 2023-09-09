@@ -275,12 +275,15 @@ const playerReducer = (state: PlayerSchema[], action: PLAYER_ACTIONS) => {
 const enum GOAL_REDUCER_ACTIONS {
     INIT,
     GOAL_REPLACE__SINGLE,
+    GOAL_ADD__MULTI,
+    GOAL_REPLACE__MULTI,
 }
 
 type GOAL_ACTIONS = {
     type: GOAL_REDUCER_ACTIONS,
     payload: {
         goals: CardSchema[],
+        replaceIndex?: number,
         upload: {
             db: Database,
             gameId: string,
@@ -289,7 +292,7 @@ type GOAL_ACTIONS = {
 }
 
 const goalReducer = (state: CardSchema[], action: GOAL_ACTIONS) => {
-    const { goals } = action.payload;
+    const { goals, replaceIndex } = action.payload;
     const { db, gameId } = action.payload.upload;
 
     switch(action.type) {
@@ -298,7 +301,13 @@ const goalReducer = (state: CardSchema[], action: GOAL_ACTIONS) => {
         case GOAL_REDUCER_ACTIONS.GOAL_REPLACE__SINGLE:
             upload("GOAL", db, {goalState: goals?.length ? [...goals] : []}, gameId);
             return [...goals]; 
-        
+        case GOAL_REDUCER_ACTIONS.GOAL_ADD__MULTI:
+            upload("GOAL",  db, {goalState: goals?.length ? [...state, ...goals] : []}, gameId);
+            return [...state, ...goals];
+        case GOAL_REDUCER_ACTIONS.GOAL_REPLACE__MULTI:
+            console.log(replaceIndex, goals, "goal replace");
+            upload("GOAL", db, {goalState: replaceIndex === 0 ? [...goals, state[1]] : [state[0], ...goals]}, gameId);
+            return replaceIndex === 0 ? [...goals, state[1]] : [state[0], ...goals];
         default:
             return state;
     }
@@ -327,6 +336,7 @@ export default function Game() {
     const [selectedRuleGroup, setSelectedRuleGroup] = useState<string[]>([]);
     const [selectedPlayerGroup, setSelectedPlayerGroup] = useState<PlayerSchema[]>([]);
     const [selectedKeeperGroup, setSelectedKeeperGroup] = useState<{ state: CardSchema, index: number, playerIndex: number }[]>([]);
+    const [selectedGoalGroup, setSelectedGoalGroup] = useState<{ state: CardSchema, index: number }[]>([]);
     const [localPlayer, setLocalPlayer] = useState(getPlayer(table.players, user?.uid ?? '').state)
 
     const selectCard = (card: { state: CardSchema, index: number } | null) => {
@@ -353,6 +363,7 @@ export default function Game() {
         if(exception !== "KEEPERS") setSelectedKeeperGroup(() => []);
         if(exception !== "PLAYERS") setSelectedPlayerGroup(() => []);
         if(exception !== "RULES") setSelectedRuleGroup(() => []);
+        if(exception !== "GOALS") setSelectedGoalGroup(() => []);
     }
 
     const selectRuleGroup = (rule: string) => {
@@ -381,6 +392,16 @@ export default function Game() {
             return [...prev, player];
         });
         resetGroups("PLAYERS");
+    }
+
+    const selectGoalGroup = (goal: { state: CardSchema, index: number }) => {
+        setSelectedGoalGroup((prev) => {
+            for(const g of prev) {
+                if(g.state.id === goal.state.id) return [];
+            }
+            return [...prev, goal];
+        });
+        resetGroups("GOALS");
     }
 
     useEffect(() => {
@@ -767,22 +788,38 @@ export default function Game() {
     const playGoalCard = (card: CardSchema) => {
         const newGoals = [];
         newGoals.push(card);
-        if(goal.length) {
+        if((goal.length && rules.location !== "ASGARNIA"    ) 
+        || (rules.location === "ASGARNIA" && goal.length > 1)) {
             dispatchDeck({
                 type: DECK_REDUCER_ACTIONS.DECK_ADD__DISCARD_BOT,
                 payload: {
-                    pile: [goal[0]],
+                    pile: [goal[selectedGoalGroup[0]?.index ?? 0]],
                     upload: uploadProps
                 }
             });
         }
-        dispatchGoal({
-            type: GOAL_REDUCER_ACTIONS.GOAL_REPLACE__SINGLE,
-            payload: {
-                goals: newGoals,
-                upload: uploadProps
-            } 
-        });
+        if(rules.location === "ASGARNIA") {
+            console.log("happen asg");
+            dispatchGoal({
+                type: goal.length < 2 
+                    ? GOAL_REDUCER_ACTIONS.GOAL_ADD__MULTI 
+                    : GOAL_REDUCER_ACTIONS.GOAL_REPLACE__MULTI,
+                payload: {
+                    replaceIndex: selectedGoalGroup[0]?.index ?? 0,
+                    goals: newGoals,
+                    upload: uploadProps
+                } 
+            });
+        } else {
+            console.log("normal");
+            dispatchGoal({
+                type: GOAL_REDUCER_ACTIONS.GOAL_REPLACE__SINGLE,
+                payload: {
+                    goals: newGoals,
+                    upload: uploadProps
+                } 
+            });
+        }
     }
 
     const playRuleCard = (card: CardSchema) => {
@@ -984,6 +1021,8 @@ export default function Game() {
                     inspectKeeper={inspectKeeper}
                     selectKeeperGroup={selectKeeperGroup}
                     selectedKeeperGroup={selectedKeeperGroup}
+                    selectGoalGroup={selectGoalGroup}
+                    selectedGoalGroup={selectedGoalGroup}
                 />
             }
             <UserAccountBox />

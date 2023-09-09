@@ -8,6 +8,8 @@ type Props = {
     inspectKeeper: (card: {state: CardSchema, index: number} | null) => void,
     selectedKeeperGroup: { state: CardSchema, index: number, playerIndex: number }[],
     selectKeeperGroup: (card: { state: CardSchema, index: number, playerIndex: number }) => void,
+    selectedGoalGroup: { state: CardSchema, index: number }[],
+    selectGoalGroup: (goal: { state: CardSchema, index: number }) => void,
 }
 
 export default function Table({
@@ -15,6 +17,8 @@ export default function Table({
     inspectKeeper, 
     selectKeeperGroup, 
     selectedKeeperGroup,
+    selectGoalGroup,
+    selectedGoalGroup,
 }: Props) {
     const { players, goal } = table;
 
@@ -41,6 +45,8 @@ export default function Table({
                     key={`table_goals__${index}`}
                     position={"TABLE"}
                     cardState={{state: goal, index}}
+                    selectGoalGroup={selectGoalGroup}
+                    selectedGoalGroup={selectedGoalGroup}
                 />
             )
         });

@@ -6,9 +6,18 @@ type Props = {
     position: "HAND" | "SELECT" | "PENDING" | "TABLE",
     numberInLine?: number,
     selectCard?: (card: { state: CardSchema, index: number } | null) => void,
+    selectGoalGroup?: (goal: { state: CardSchema, index: number }) => void,
+    selectedGoalGroup?: { state: CardSchema, index: number}[],
 }
 
-export default function Card({cardState, position, numberInLine, selectCard}: Props) {
+export default function Card({
+    cardState, 
+    position, 
+    numberInLine, 
+    selectCard,
+    selectedGoalGroup,
+    selectGoalGroup,
+}: Props) {
     const [isHover, setIsHover] = useState(false);
     const [animation, setAnimation] = useState(position === "HAND");
 
@@ -21,6 +30,14 @@ export default function Card({cardState, position, numberInLine, selectCard}: Pr
     const origin = `translate(calc(-50% * ${numberInLine}), -250px)`;
     const handPosition = `translate(calc(-50% * ${numberInLine}), ${isHover ? "-50px" : "0"})`
     
+    const checkGoalIsSelected = () => {
+        if(!selectedGoalGroup) return false;
+        for(const goal of selectedGoalGroup) {
+            if(goal.state.id === cardState.state.id) return true;
+        }
+        return false;
+    }
+
     const mapGoalText = () => {
         return cardState.state.text.split("|").map((segment, ind) => {
             return (
@@ -36,7 +53,7 @@ export default function Card({cardState, position, numberInLine, selectCard}: Pr
 
     return(
         <div 
-            className={`card ${cardState.state.type.toLowerCase()} ${position === "PENDING" ? "pending" : ""} ${position === "HAND" ? "hand_card": ""}`} 
+            className={`card ${cardState.state.type.toLowerCase()} ${position === "PENDING" ? "pending" : ""} ${position === "HAND" ? "hand_card": ""} ${checkGoalIsSelected() ? "goal_selected" : ""}`} 
             style={ position === "HAND" ? {transform: animation ?  origin : handPosition} : {} } 
             onMouseEnter={((e) => {
                 if(animation) return;
@@ -48,6 +65,11 @@ export default function Card({cardState, position, numberInLine, selectCard}: Pr
                 setIsHover(false);
             })}
             onClick={() => selectCard && selectCard(cardState)}
+            onContextMenu={(e) => {
+                e.preventDefault();
+                if(!selectGoalGroup || cardState.state.type !== "GOAL") return;
+                selectGoalGroup(cardState);
+            }}
         >
             <div className='card_container__inner_left'>
                 <div className='card_header__background' >

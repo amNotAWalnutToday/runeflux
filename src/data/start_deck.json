@@ -82,8 +82,9 @@
         },
         {
             "id": "G06",
-            "type": "Lumbridge Citizens",
+            "type": "GOAL",
             "subtype": "",
+            "name": "Lumbridge Citizens",
             "effects": [],
             "text": "Collection type: lumbridge residents including the likes of |Duke Horacio|, |Cook| and |Father Aereck|"
         },
@@ -102,6 +103,14 @@
             "name": "Abyss",
             "effects": ["LOCATION", "ABYSS"],
             "text": "When this card is in play, each player has to discard down to 1 card to end their turn."
+        },
+        {
+            "id": "RL03",
+            "type": "RULE",
+            "subtype": "LOCATION",
+            "name": "Asgarnia",
+            "effects": ["LOCATION", "ASGARNIA"],
+            "text": "When this card is in play, there can be 2 different goals in play. Only 1 is required to win."
         },
         {
             "id": "RB01",
