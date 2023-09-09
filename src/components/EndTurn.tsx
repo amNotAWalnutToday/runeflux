@@ -13,15 +13,16 @@ export default function EndTurn({table, localPlayer, endTurn}: Props) {
     const [errors, setErrors] = useState<string[]>([]);
     
     const checkIfDisabled = () => {
-        const hasDrawn      = table.turn.drawn           >= table.rules.drawAmount;
-        const hasPlayed     = table.turn.played          >= table.rules.playAmount
-                           || !localPlayer.hand.length;
-        const isHandFull    = localPlayer.hand.length    >  table.rules.handLimit;
-        const isKeepersFull = localPlayer.keepers.length > table.rules.keeperLimit;
-        const isTurn        = table.turn.player === localPlayer.user.uid; 
+        const hasDrawn        = table.turn.drawn           >= table.rules.drawAmount;
+        const hasPlayed       = table.turn.played          >= table.rules.playAmount
+                             || !localPlayer.hand.length;
+        const isHandFull      = localPlayer.hand.length    >  table.rules.handLimit;
+        const isKeepersFull   = localPlayer.keepers.length > table.rules.keeperLimit;
+        const isTurn          = table.turn.player === localPlayer.user.uid; 
+        const isUsingWormhole = table.turn.temporary.hand.length > 0;
 
-        if(!hasDrawn || !hasPlayed || isHandFull || isKeepersFull || !isTurn) {
-            return [hasDrawn, hasPlayed, isHandFull, isKeepersFull, isTurn];
+        if(!hasDrawn || !hasPlayed || isHandFull || isKeepersFull || !isTurn || isUsingWormhole) {
+            return [hasDrawn, hasPlayed, isHandFull, isKeepersFull, isTurn, isUsingWormhole];
         }
         else return false;
     }
@@ -42,6 +43,9 @@ export default function EndTurn({table, localPlayer, endTurn}: Props) {
         }
         if(!errors[4]) {
             errorMessages.push("Please wait your turn.");
+        }
+        if(errors[5]) {
+            errorMessages.push("Finish using all the cards in hand.");
         }
         setErrors(() => ([...errorMessages]));
     }

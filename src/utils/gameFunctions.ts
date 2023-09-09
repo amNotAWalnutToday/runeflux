@@ -149,7 +149,6 @@ export default (() => {
 
     const uploadTurn = async (db: Database, turn: TurnSchema, gameId: string) => {
         try {     
-            console.log(turn, "upload")
             const turnRef = ref(db, `/games/${gameId}/game/turn`);
             await set(turnRef, Object.assign({}, turn, {temporary: { ...turn.temporary, hand: turn.temporary.hand.length ? turn.temporary.hand : false }}));
         } catch(e) {

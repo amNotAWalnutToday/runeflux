@@ -38,7 +38,7 @@ export default function PlayCard({
             }
         } else {
             if(!temporary) return false;
-            const hasPlayed = temporary?.play <= 0;
+            const hasPlayed = temporary?.play < 1;
 
             if(hasPlayed) {
                 return [hasPlayed];
@@ -54,9 +54,9 @@ export default function PlayCard({
         if(errors[0]) {
             !fromWormhole 
                 ? errorMessages.push("Play limit reached! End turn.")
-                : errorMessages.push(`Must play ${table.turn.temporary ? table.turn.temporary.play : "" } more.`);
+                : errorMessages.push(`Play limit reached! Discard down to 0.`);
         }
-        if(!errors[1]) {
+        if(errors[1] === false) {
             errorMessages.push("Please wait for your turn.");
         }
         setPlayErrors(() => [...errorMessages]);
@@ -65,18 +65,29 @@ export default function PlayCard({
     const clearPlayErrors = () => setPlayErrors(() => []);
 
     const checkIfDiscardDisabled = () => {
-        const isHandFull = localPlayer.hand.length > table.rules.handLimit;
+        if(!fromWormhole) {
+            const isHandFull = localPlayer.hand.length > table.rules.handLimit;
 
-        if(!isHandFull) {
-            return [isHandFull];
+            if(!isHandFull) {
+                return [isHandFull];
+            }
+        } else {
+            const hasPlayed = table.turn.temporary.play < 1;
+
+            if(!hasPlayed) {
+                return [hasPlayed];
+            }
         }
-        else return false;
+
+        return false;
     }
 
     const displayDiscardErrors = (errors: boolean[]) => {
         const errorMessages: string[] = [];
         if(!errors[0]) {
-            errorMessages.push("Hand limit has not been reached.")
+            !fromWormhole
+                ? errorMessages.push("Hand limit has not been reached.")
+                : errorMessages.push(`Play ${table.turn.temporary.play} more.`)
         }
         setDiscardErrors(() => [...errorMessages]);
     }

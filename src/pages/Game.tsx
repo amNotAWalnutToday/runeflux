@@ -849,6 +849,23 @@ export default function Game() {
                     upload: uploadProps
                 }
             });
+        } else if(card.effects.includes("DRAW_5_PLAY_3")) {
+            dispatchDeck({
+                type: DECK_REDUCER_ACTIONS.DECK_REMOVE__PURE_TOP,
+                payload: {
+                    pile: [],
+                    amount: 5,
+                    upload: uploadProps,
+                }
+            })
+            dispatchTurn({
+                type: TURN_REDUCER_ACTION.TEMPORARY_HAND__BEGIN,
+                payload: {
+                    cards: [...deck.pure.slice(deck.pure.length - 5)],
+                    amount: 3,
+                    upload: uploadProps
+                }
+            });
         }
     }
 
@@ -885,7 +902,8 @@ export default function Game() {
                     // playActionCards({effects: ["KEEPERS_TO_HAND"]} as CardSchema);
                     // playActionCards({effects: ["KEEPER_EXCHANGE_CHOOSE"]} as CardSchema);
                     // playActionCards({effects: ["KEEPER_STEAL_CHOOSE"]} as CardSchema);
-                    playActionCards({effects: ["DRAW_2_PLAY_2"]} as CardSchema);
+                    // playActionCards({effects: ["DRAW_2_PLAY_2"]} as CardSchema);
+                    playActionCards({effects: ["DRAW_5_PLAY_3"]} as CardSchema);
                     
                 }}
             >
@@ -926,7 +944,7 @@ export default function Game() {
                 table={table}
                 localPlayer={localPlayer}
                 playCard={turn.temporary.hand.length ? playTemporaryCard : playCard }
-                discardCard={discardCardFromHand}
+                discardCard={turn.temporary.hand.length ? discardTemporaryCard : discardCardFromHand}
                 fromWormhole={turn.temporary.hand.length ? true : false}
             />
             }
