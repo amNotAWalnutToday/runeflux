@@ -1,6 +1,6 @@
 import { useEffect, useState, useReducer, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Database } from 'firebase/database';
+import { Database, remove } from 'firebase/database';
 import start_rules from '../data/start_rules.json';
 import UserContext from '../data/Context';
 import GameSchema from '../schemas/gameSchema';
@@ -555,6 +555,58 @@ export default function Game() {
             }
         });
     }
+
+    const drawCardsForPlayer = (playerId: string, amount: number, fromTop: number) => {
+        const player = getPlayer(players, playerId);
+        let updatedDeck = Array.from(deck.pure.slice(deck.pure.length - (amount + fromTop)));
+        if(fromTop > 0) {
+            const ud3 = removeCard(updatedDeck, updatedDeck.length - 1);
+            let ud2;
+            let ud1;
+            if(fromTop > 1) {
+                ud2 = removeCard(ud3, updatedDeck.length - 2);
+                if(fromTop > 2) {
+                    ud1 = removeCard(ud2, updatedDeck.length - 3);
+                }
+            }
+            updatedDeck = ud1 ? ud1 : ud2 ? ud2 : ud3;
+        }
+        dispatchDeck({
+            type: DECK_REDUCER_ACTIONS.DECK_REMOVE__PURE_TOP,
+            payload: {
+                pile: [],
+                amount,
+                upload: uploadProps
+            }
+        });
+        dispatchPlayers({
+            type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
+            payload: {
+                playerId: player.state.user.uid ?? '',
+                cards: updatedDeck,
+                upload: uploadProps
+            }
+        });
+    }
+
+    const wormhole = (playAmount = 1, discardAmount = 0) => {
+        dispatchDeck({
+            type: DECK_REDUCER_ACTIONS.DECK_REMOVE__PURE_TOP,
+            payload: {
+                pile: [],
+                amount: playAmount,
+                upload: uploadProps,
+            }
+        })
+        dispatchTurn({
+            type: TURN_REDUCER_ACTION.TEMPORARY_HAND__BEGIN,
+            payload: {
+                cards: [...deck.pure.slice(deck.pure.length - (playAmount + discardAmount))],
+                amount: playAmount,
+                upload: uploadProps
+            }
+        });
+    }
     
     const discardCardFromHand = (cardIndex: number, addToDiscard = true) => {
         const updatedHand = removeCard(localPlayer.hand, cardIndex);
@@ -600,6 +652,29 @@ export default function Game() {
                 upload: uploadProps
             }
         });
+
+        setSelectedCard(() => null);
+    }
+
+    const discardCardFromPlayer = (cardIndex: number, playerId: string) => {
+        const player = getPlayer(players, playerId);
+        dispatchDeck({
+            type: DECK_REDUCER_ACTIONS.DECK_ADD__DISCARD_BOT,
+            payload: {
+                pile: [player.state.hand[cardIndex]],
+                upload: uploadProps
+            }
+        });
+
+        const updatedHand = removeCard(player.state.hand, cardIndex);
+        dispatchPlayers({
+            type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__REMOVE,
+            payload: {
+                playerId,
+                cards: [...updatedHand],
+                upload: uploadProps
+            }
+        })
 
         setSelectedCard(() => null);
     }
@@ -833,38 +908,19 @@ export default function Game() {
                 }
             })
         } else if(card.effects.includes("DRAW_2_PLAY_2")) {
-            dispatchDeck({
-                type: DECK_REDUCER_ACTIONS.DECK_REMOVE__PURE_TOP,
-                payload: {
-                    pile: [],
-                    amount: 2,
-                    upload: uploadProps,
-                }
-            })
-            dispatchTurn({
-                type: TURN_REDUCER_ACTION.TEMPORARY_HAND__BEGIN,
-                payload: {
-                    cards: [...deck.pure.slice(deck.pure.length - 2)],
-                    amount: 2,
-                    upload: uploadProps
-                }
-            });
+            wormhole(2);
         } else if(card.effects.includes("DRAW_5_PLAY_3")) {
-            dispatchDeck({
-                type: DECK_REDUCER_ACTIONS.DECK_REMOVE__PURE_TOP,
-                payload: {
-                    pile: [],
-                    amount: 5,
-                    upload: uploadProps,
-                }
-            })
-            dispatchTurn({
-                type: TURN_REDUCER_ACTION.TEMPORARY_HAND__BEGIN,
-                payload: {
-                    cards: [...deck.pure.slice(deck.pure.length - 5)],
-                    amount: 3,
-                    upload: uploadProps
-                }
+            wormhole(3, 2);
+        } else if(card.effects.includes("DRAW_3_PLAY_2")) {
+            wormhole(2, 1);
+        } else if(card.effects.includes("DISCARD_1")) {
+            players.forEach((player) => {
+                const cardToDiscard = Math.floor(Math.random() * player.hand.length);
+                discardCardFromPlayer(cardToDiscard, player.user.uid);
+            });
+        } else if(card.effects.includes("DRAW_1")) {
+            players.forEach((player, index) => {
+                drawCardsForPlayer(player.user.uid, 1, index);
             });
         }
     }
@@ -903,7 +959,9 @@ export default function Game() {
                     // playActionCards({effects: ["KEEPER_EXCHANGE_CHOOSE"]} as CardSchema);
                     // playActionCards({effects: ["KEEPER_STEAL_CHOOSE"]} as CardSchema);
                     // playActionCards({effects: ["DRAW_2_PLAY_2"]} as CardSchema);
-                    playActionCards({effects: ["DRAW_5_PLAY_3"]} as CardSchema);
+                    // playActionCards({effects: ["DRAW_3_PLAY_2"]} as CardSchema);
+                    // playActionCards({effects: ["DISCARD_1"]} as CardSchema);
+                    playActionCards({effects: ["DRAW_1"]} as CardSchema);
                     
                 }}
             >
