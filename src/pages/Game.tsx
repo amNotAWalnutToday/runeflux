@@ -32,7 +32,7 @@ const {
     upload,
     shuffleDeck,
     drawPhase,
-    removeCardFromHand
+    removeCard,
 } = gameFunctions;
 
 const enum RULE_REDUCER_ACTIONS {
@@ -189,6 +189,7 @@ const enum PLAYER_REDUCER_ACTIONS {
     HAND_CARDS__REMOVE,
     KEEPER_CARDS__ADD,
     KEEPER_CARDS__REMOVE,
+    KEEPER_CARDS__EXCHANGE,
     TRADE_HANDS,
 }
 
@@ -199,6 +200,7 @@ type PLAYER_ACTIONS = {
         targetPlayerId?: string,
         init?: PlayerSchema[],
         cards?: CardSchema[],
+        keepersToExchange?: {state: CardSchema, index: number, playerIndex: number}[], 
         cardIndex?: number,
         upload: {
             db: Database,
@@ -208,7 +210,7 @@ type PLAYER_ACTIONS = {
 }
 
 const playerReducer = (state: PlayerSchema[], action: PLAYER_ACTIONS) => {
-    const { playerId, init, cards, targetPlayerId } = action.payload;
+    const { playerId, init, cards, targetPlayerId, keepersToExchange } = action.payload;
     const { db, gameId } = action.payload.upload;
     const players = [...state];
     const player = getPlayer(state, playerId);
@@ -231,6 +233,14 @@ const playerReducer = (state: PlayerSchema[], action: PLAYER_ACTIONS) => {
         case PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__REMOVE:
             players[player.index].keepers = cards ? [...cards] : [];
             upload("PLAYER", db, {playersState: players, playerId}, gameId);
+            return [...players];
+        case PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__EXCHANGE:
+            if(!keepersToExchange) return [...players];
+            console.log(keepersToExchange);
+            players[keepersToExchange[0].playerIndex] = Object.assign({}, players[keepersToExchange[0].playerIndex], {keepers: [...removeCard([...players[keepersToExchange[0].playerIndex].keepers], keepersToExchange[0].index), cards ? cards[1] : {}]});
+            players[keepersToExchange[1].playerIndex] = Object.assign({}, players[keepersToExchange[1].playerIndex], {keepers: [...removeCard([...players[keepersToExchange[1].playerIndex].keepers], keepersToExchange[1].index), cards ? cards[0] : {}]});
+            upload("PLAYER", db, {playersState: players, playerId: players[keepersToExchange[0].playerIndex].user.uid}, gameId);
+            upload("PLAYER", db, {playersState: players, playerId: players[keepersToExchange[1].playerIndex].user.uid}, gameId);
             return [...players];
         case PLAYER_REDUCER_ACTIONS.TRADE_HANDS:
             players[player.index]             = Object.assign({}, player.state, {hand: [...targetPlayer.state.hand]});
@@ -527,7 +537,7 @@ export default function Game() {
     }
     
     const discardCardFromHand = (cardIndex: number, addToDiscard = true) => {
-        const updatedHand = removeCardFromHand(localPlayer.hand, cardIndex);
+        const updatedHand = removeCard(localPlayer.hand, cardIndex);
         if(addToDiscard){
             dispatchDeck({
                 type: DECK_REDUCER_ACTIONS.DECK_ADD__DISCARD_BOT,
@@ -550,7 +560,7 @@ export default function Game() {
     }
 
     const discardKeeper = (cardIndex: number, addToDiscard = true) => {
-        const updatedKeepers = removeCardFromHand(localPlayer.keepers, cardIndex);
+        const updatedKeepers = removeCard(localPlayer.keepers, cardIndex);
         if(addToDiscard) {
             dispatchDeck({
                 type: DECK_REDUCER_ACTIONS.DECK_ADD__DISCARD_BOT,
@@ -601,6 +611,7 @@ export default function Game() {
                 case "ACTION":
                     return playActionCards(card);
             }
+            resetGroups();
         }, 1000);
     }
 
@@ -711,6 +722,53 @@ export default function Game() {
                     upload: uploadProps
                 }
             });
+        } else if(card.effects.includes("KEEPERS_TO_HAND")) {
+            players.forEach((player) => {
+                dispatchPlayers({
+                    type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
+                    payload: {
+                        playerId: player.user.uid,
+                        cards: [...player.keepers.slice(0)],
+                        upload: uploadProps
+                    }
+                });
+                dispatchPlayers({
+                    type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__REMOVE,
+                    payload: {
+                        playerId: player.user.uid,
+                        cards: [],
+                        upload: uploadProps
+                    }
+                });
+            });
+        } else if(card.effects.includes("KEEPER_EXCHANGE_CHOOSE")) {
+            dispatchPlayers({
+                type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__EXCHANGE,
+                payload: {
+                    playerId: "",
+                    keepersToExchange: [...selectedKeeperGroup.slice(0, 2)], 
+                    cards: [selectedKeeperGroup[0].state, selectedKeeperGroup[1].state],
+                    upload: uploadProps
+                }
+            });
+        } else if(card.effects.includes("KEEPER_STEAL_CHOOSE")) {
+            dispatchPlayers({
+                type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__ADD,
+                payload: {
+                    playerId: user?.uid ?? "",
+                    cards: [selectedKeeperGroup[0].state],
+                    upload: uploadProps
+                }
+            });
+            const updatedKeepers = removeCard(players[selectedKeeperGroup[0].playerIndex].keepers, selectedKeeperGroup[0].index);
+            dispatchPlayers({
+                type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__REMOVE,
+                payload: {
+                    playerId: players[selectedKeeperGroup[0].playerIndex].user.uid,
+                    cards: updatedKeepers,
+                    upload: uploadProps
+                }
+            })
         }
     }
 
@@ -744,6 +802,9 @@ export default function Game() {
                 onClick={() => {
                     // playActionCards({effects: ["RULE_RESET_CHOOSE"]} as CardSchema);
                     // playActionCards({effects: ["TRADE_HANDS"]} as CardSchema);
+                    // playActionCards({effects: ["KEEPERS_TO_HAND"]} as CardSchema);
+                    // playActionCards({effects: ["KEEPER_EXCHANGE_CHOOSE"]} as CardSchema);
+                    playActionCards({effects: ["KEEPER_STEAL_CHOOSE"]} as CardSchema);
                 }}
             >
                 action card function test

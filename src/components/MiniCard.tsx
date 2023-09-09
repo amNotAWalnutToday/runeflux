@@ -18,9 +18,9 @@ export default function MiniCard({
     playerNum,
 }: Props) {
     const checkSelected = () => {
-        if(!selectedKeeperGroup) return false;
+        if(!selectedKeeperGroup || !playerNum) return false;
         for(const keeper of selectedKeeperGroup) {
-            if(keeper.playerIndex === playerNum && keeper.index === cardState.index) {
+            if(keeper.playerIndex === (playerNum - 1) && keeper.index === cardState.index) {
                 return true;
             }
         }
@@ -34,7 +34,7 @@ export default function MiniCard({
             onContextMenu={(e) => {
                 e.preventDefault();
                 if(!selectKeeperGroup) return;
-                selectKeeperGroup({state: cardState.state, index: cardState.index, playerIndex: playerNum ?? 0});
+                selectKeeperGroup({state: cardState.state, index: cardState.index, playerIndex: playerNum ? playerNum - 1 : 0});
             }}
         >
             <div className='card_container__inner_left'>

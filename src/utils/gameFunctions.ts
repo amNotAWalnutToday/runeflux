@@ -244,9 +244,10 @@ export default (() => {
         }
     }
 
-    const removeCardFromHand = (hand: CardSchema[], cardIndex: number) => {
-        const firstHalf = hand.slice(0, cardIndex);
-        const lastHalf = hand.slice(cardIndex + 1);
+    const removeCard = (cards: CardSchema[], cardIndex: number) => {
+        const firstHalf = cards.slice(0, cardIndex);
+        const lastHalf = cards.slice(cardIndex + 1);
+        console.log(firstHalf, lastHalf);
         return firstHalf.concat(lastHalf);
     }
 
@@ -298,7 +299,7 @@ export default (() => {
         chooseWhoGoesFirst,
         checkShouldDiscard,
         drawPhase,
-        removeCardFromHand,
+        removeCard,
         shuffleDeck,
         endTurn,
     }
