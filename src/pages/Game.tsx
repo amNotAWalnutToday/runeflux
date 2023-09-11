@@ -30,6 +30,7 @@ const {
     checkShouldDiscard,
     endTurn,
     upload,
+    uploadTable,
     shuffleDeck,
     drawPhase,
     removeCard,
@@ -277,6 +278,7 @@ const enum GOAL_REDUCER_ACTIONS {
     GOAL_REPLACE__SINGLE,
     GOAL_ADD__MULTI,
     GOAL_REPLACE__MULTI,
+    GOAL_RESET
 }
 
 type GOAL_ACTIONS = {
@@ -305,9 +307,11 @@ const goalReducer = (state: CardSchema[], action: GOAL_ACTIONS) => {
             upload("GOAL",  db, {goalState: goals?.length ? [...state, ...goals] : []}, gameId);
             return [...state, ...goals];
         case GOAL_REDUCER_ACTIONS.GOAL_REPLACE__MULTI:
-            console.log(replaceIndex, goals, "goal replace");
             upload("GOAL", db, {goalState: replaceIndex === 0 ? [...goals, state[1]] : [state[0], ...goals]}, gameId);
             return replaceIndex === 0 ? [...goals, state[1]] : [state[0], ...goals];
+        case GOAL_REDUCER_ACTIONS.GOAL_RESET:
+            upload("GOAL", db, {goalState: []}, gameId);
+            return [];
         default:
             return state;
     }
@@ -456,6 +460,7 @@ export default function Game() {
         turnData: TurnSchema,
         roundData: number,
         pendingData: CardSchema | false,
+        counterData: CardSchema | false,
     ) => {
         if(!deckData.discard) deckData.discard = [];
         if(!deckData.pure) deckData.pure = [];
@@ -504,7 +509,7 @@ export default function Game() {
                 upload: uploadProps
             }
         });
-        setTable((prev) => ({...prev, round: roundData, pending: pendingData}));
+        setTable((prev) => ({...prev, round: roundData, pending: pendingData, counter: counterData}));
         setLocalPlayer((prev) => {
             return { ...prev, ...getPlayer(playerData, user?.uid ?? '').state }
         });
@@ -730,34 +735,44 @@ export default function Game() {
     const playCard = (card: CardSchema | false, indexInHand: number) => {
         if(!card) return;
         if(card.subtype === "LOCATION" && rules.teleblock) return;
+        const prevPending = table.pending ?? null;
+        if(turn.player !== user?.uid) {
+            upload("COUNTER", db, {cardState: card}, joinedGameID);
+            return resolvePlayCard(card, prevPending);
+        }
         upload('PENDING', db, {cardState: card}, joinedGameID);
         discardCardFromHand(indexInHand, checkShouldDiscard(card.type));
-        dispatchTurn({
-            type: TURN_REDUCER_ACTION.PLAYED_ADD,
-            payload: {
-                amount: turn.played + 1,
-                upload: uploadProps
-            }
-        });
-        resolvePlayCard(card);
+        if(turn.player === user?.uid) {
+            dispatchTurn({
+                type: TURN_REDUCER_ACTION.PLAYED_ADD,
+                payload: {
+                    amount: turn.played + 1,
+                    upload: uploadProps
+                }
+            });
+        }
+        resolvePlayCard(card, prevPending);
     }
 
     const playTemporaryCard = (card: CardSchema | false, indexInHand: number) => {
         if(!card || !table.turn.temporary) return;
         if(card.subtype === "LOCATION" && rules.teleblock) return;
+        const prevPending = table.pending ?? null;
         upload('PENDING', db, {cardState: card}, joinedGameID);
         discardTemporaryCard(indexInHand, checkShouldDiscard(card.type));
-        dispatchTurn({
-            type: TURN_REDUCER_ACTION.TEMPORARY_PLAY_CHANGE,
-            payload: {
-                amount: table.turn.temporary.play - 1,
-                upload: uploadProps
-            }
-        });
-        resolvePlayCard(card);
+        if(turn.player === user?.uid) {
+            dispatchTurn({
+                type: TURN_REDUCER_ACTION.TEMPORARY_PLAY_CHANGE,
+                payload: {
+                    amount: table.turn.temporary.play - 1,
+                    upload: uploadProps
+                }
+            });
+        }
+        resolvePlayCard(card, prevPending);
     }
 
-    const resolvePlayCard = (card: CardSchema) => {
+    const resolvePlayCard = (card: CardSchema, prevPending: typeof table.pending | null) => {
         setTimeout(() => {
             resetPending();
             switch(card.type) {
@@ -769,9 +784,119 @@ export default function Game() {
                     return playGoalCard(card);
                 case "ACTION":
                     return playActionCards(card);
+                case "COUNTER":
+                    return playCounterCard(card, prevPending);
             }
             resetGroups();
-        }, 1000);
+        }, 3000);
+    }
+
+    const playCounterCard = (card: CardSchema, prevPending: typeof table.pending | null) => {
+        const isYourTurn = user?.uid === turn.player;
+        if(card.effects.includes("TELESTOP_OR_LOCATION_MISTHALIN")) {
+            if(isYourTurn) {
+                dispatchRules({
+                    type: RULE_REDUCER_ACTIONS.RULE_CHANGE__LOCATION,
+                    payload: {
+                        location: "MISTHALIN",
+                        upload: uploadProps
+                    }
+                });
+            } else {
+                upload("RULE", db, {ruleState: rules}, joinedGameID);
+            }
+        } else if(card.effects.includes("GOALSTOP_OR_GOALS_NONE")) {
+            if(isYourTurn) {
+                dispatchGoal({
+                    type: GOAL_REDUCER_ACTIONS.GOAL_RESET,
+                    payload: { goals: [], upload: uploadProps }
+                });
+            } else {
+                upload("GOAL", db, {goalState: goal}, joinedGameID);
+            }
+        } else if(card.effects.includes("ACTIONSTOP_OR_DISCARD_1_ALL")) {
+            if(isYourTurn) {
+                players.forEach((player) => {
+                    const cardToDiscard = Math.floor(Math.random() * player.hand.length);
+                    discardCardFromPlayer(cardToDiscard, player.user.uid);
+                });
+            } else {
+                uploadTable(db, table, joinedGameID);
+                upload("PENDING", db, {cardState: false}, joinedGameID);
+            }
+        } else if(card.effects.includes("KEEPER_STEALSTOP_OR_KEEPER_STEAL")) {
+            if(isYourTurn) {
+                dispatchPlayers({
+                    type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__ADD,
+                    payload: {
+                        playerId: user.uid,
+                        cards: [selectedKeeperGroup[0].state],
+                        upload: uploadProps,
+                    }
+                });
+                const updatedKeepers = removeCard(players[selectedKeeperGroup[0].playerIndex].keepers, selectedKeeperGroup[0].index);
+                dispatchPlayers({
+                    type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__REMOVE,
+                    payload: {
+                        playerId: players[selectedKeeperGroup[0].playerIndex].user.uid,
+                        cards: [...updatedKeepers],
+                        upload: uploadProps
+                    }
+                });
+            } else {
+                uploadTable(db, table, joinedGameID);
+                upload("PENDING", db, {cardState: false}, joinedGameID);
+                dispatchPlayers({
+                    type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__ADD,
+                    payload: {
+                        playerId: user?.uid ?? '',
+                        cards: prevPending && prevPending !== true ? [prevPending] : [],
+                        upload: uploadProps
+                    }
+                });
+            }
+        } else if(card.effects.includes("RULESTOP_OR_RULE_RESET_2")) {
+            if(isYourTurn) {
+                for(let i = 0; i < 1; i++) {
+                    if(i < selectedRuleGroup.length - 1) break;
+                    dispatchRules({
+                        type: RULE_REDUCER_ACTIONS.RULE_RESET__CHOICE,
+                        payload: {
+                            ruleKey: selectedRuleGroup[i],
+                            upload: uploadProps
+                        }
+                    });
+                }
+            } else {
+                upload("RULE", db, {ruleState: rules}, joinedGameID);
+            }
+        } else if(card.effects.includes("KEEPER_DISCARD_REFLECT_OR_KEEPER_DISCARD")) {
+            if(isYourTurn) {
+                const updatedKeepers = removeCard(players[selectedKeeperGroup[0].playerIndex].keepers, selectedKeeperGroup[0].index);
+                dispatchPlayers({
+                    type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__REMOVE,
+                    payload: {
+                        playerId: players[selectedKeeperGroup[0].playerIndex].user.uid,
+                        cards: [...updatedKeepers],
+                        upload: uploadProps
+                    }
+                });
+            } else {
+                uploadTable(db, table, joinedGameID);
+                upload("PENDING", db, {cardState: false}, joinedGameID);
+                const playerWhoGotCountered = getPlayer(players, turn.player !== true && turn.player ? turn.player : '');
+                const randomCardIndex = Math.floor(Math.random() * playerWhoGotCountered.state.keepers.length);
+                const updatedKeepers = removeCard(playerWhoGotCountered.state.keepers, randomCardIndex);
+                dispatchPlayers({
+                    type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__REMOVE,
+                    payload: {
+                        playerId: playerWhoGotCountered.state.user.uid,
+                        cards: [...updatedKeepers],
+                        upload: uploadProps,
+                    }
+                })
+            }
+        }
     }
 
     const playKeeperCard = (card: CardSchema) => {
@@ -799,7 +924,6 @@ export default function Game() {
             });
         }
         if(rules.location === "ASGARNIA") {
-            console.log("happen asg");
             dispatchGoal({
                 type: goal.length < 2 
                     ? GOAL_REDUCER_ACTIONS.GOAL_ADD__MULTI 
@@ -811,7 +935,6 @@ export default function Game() {
                 } 
             });
         } else {
-            console.log("normal");
             dispatchGoal({
                 type: GOAL_REDUCER_ACTIONS.GOAL_REPLACE__SINGLE,
                 payload: {
@@ -1007,7 +1130,15 @@ export default function Game() {
                     // playActionCards({effects: ["DRAW_2_PLAY_2"]} as CardSchema);
                     // playActionCards({effects: ["DRAW_3_PLAY_2"]} as CardSchema);
                     // playActionCards({effects: ["DISCARD_1"]} as CardSchema);
-                    playActionCards({effects: ["DRAW_1"]} as CardSchema);
+                    // playActionCards({effects: ["DRAW_1"]} as CardSchema);
+                    playCard(        {
+                        "id": "CO06",
+                        "type": "COUNTER",
+                        "subtype": "",
+                        "name": "It's a Trap!",
+                        "effects": ["KEEPER_DISCARD_REFLECT_OR_KEEPER_DISCARD"],
+                        "text": "Out of turn, when another player trys to destroy one of your keepers destroy a random one of theirs instead, during your turn, choose a keeper to discard."
+                    }, 0);
                     
                 }}
             >

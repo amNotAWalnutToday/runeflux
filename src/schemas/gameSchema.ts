@@ -11,6 +11,7 @@ interface GameSchema {
     players: PlayerSchema[],
     turn: TurnSchema,
     pending: CardSchema | boolean,
+    counter: CardSchema | boolean,
     round: number,
 }
 

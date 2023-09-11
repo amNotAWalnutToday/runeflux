@@ -21,10 +21,11 @@ export default (() => {
                 pure: [] as CardSchema[],
                 discard: [] as CardSchema[],
             },
-            players: [{user: user ?? { username: 'hal', uid: '000001', isReady: true }, hand: [], keepers: []}] as PlayerSchema[],
+            players: [{user: user ?? { username: 'hal', uid: '000001', isReady: true }, hand: [], keepers: [], isReady: false}] as PlayerSchema[],
             goal: [] as CardSchema[],
             round: 0,
             pending: false,
+            counter: false,
         }
         for(const card of startDeckData.startDeck) {
             game.deck.pure.push(card);
@@ -52,6 +53,7 @@ export default (() => {
             turnData: TurnSchema,
             roundData: number,
             pendingData: CardSchema | false,
+            counterData: CardSchema | false,
         ) => void,
     ) => {
         try {
@@ -65,6 +67,7 @@ export default (() => {
                     data.turn,
                     data.round,
                     data.pending,
+                    data.counter,
                 );
             });
             await onValue(gameRef, async (snapshot) => {
@@ -75,7 +78,8 @@ export default (() => {
                     data.players,
                     data.turn,
                     data.round,
-                    data.pending
+                    data.pending,
+                    data.counter,
                 );
             });
         } catch(e) {
@@ -120,6 +124,8 @@ export default (() => {
                 return uploadRound(db, roundState ?? 0, gameId);
             case "PENDING":
                 return uploadPending(db, cardState ?? false, gameId);
+            case "COUNTER":
+                return uploadCounter(db, cardState ?? false, gameId)
             case "GOAL":
                 return uploadGoal(db, goalState ?? [], gameId);
             default:
@@ -189,6 +195,15 @@ export default (() => {
         try {
             const pendingRef = ref(db, `/games/${gameId}/game/pending`);
             await set(pendingRef, card);
+        } catch(e) {
+            return console.error(e);
+        }
+    }
+
+    const uploadCounter = async (db: Database, card: CardSchema | false, gameId: string) => {
+        try {
+            const counterRef = ref(db, `/games/${gameId}/game/counter`);
+            await set(counterRef, card);
         } catch(e) {
             return console.error(e);
         }
