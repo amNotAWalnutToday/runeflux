@@ -1,0 +1,52 @@
+{
+    "counter_cards": [
+        {
+            "id": "CO01",
+            "type": "COUNTER",
+            "subtype": "",
+            "name": "telestop",
+            "effects": ["TELESTOP_OR_LOCATION_MISTHALIN"],
+            "text": "Out of turn stop an opposing players teleport, during your turn teleport to misthalin."
+        },
+        {
+            "id": "CO02",
+            "type": "COUNTER",
+            "subtype": "",
+            "name": "Canceled Plans",
+            "effects": ["GOALSTOP_OR_GOALS_NONE"],
+            "text": "Out of turn, stop another player while they are playing a goal card, during your turn discard all goals in play."
+        },
+        {
+            "id": "CO03",
+            "type": "COUNTER",
+            "subtype": "",
+            "name": "Belay That!",
+            "effects": ["ACTIONSTOP_OR_DISCARD_1_ALL"],
+            "text": "Out of turn, stop another player while they are playing an action card, during your turn every discards one."
+        },
+        {
+            "id": "CO04",
+            "type": "COUNTER",
+            "subtype": "",
+            "name": "That's Mine!",
+            "effects": ["KEEPER_STEALSTOP_OR_KEEPER_STEAL"],
+            "text": "Out of turn, when another player trys to steal a keeper you steal it instead, during your turn choose a keeper to steal."
+        },
+        {
+            "id": "CO05",
+            "type": "COUNTER",
+            "subtype": "",
+            "name": "Veto!",
+            "effects": ["RULESTOP_OR_RULE_RESET_2"],
+            "text": "Out of turn, stop another player while they are playing a rule card, during your turn reset up to 2 rules."
+        },
+        {
+            "id": "CO06",
+            "type": "COUNTER",
+            "subtype": "",
+            "name": "It's a Trap!",
+            "effects": ["KEEPER_DISCARD_REFLECT_OR_KEEPER_DISCARD"],
+            "text": "Out of turn, when another player trys to destroy one of your keepers destroy a random one of theirs instead, during your turn, choose a keeper to discard."
+        } 
+    ]
+}

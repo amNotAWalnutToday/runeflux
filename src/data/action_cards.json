@@ -1,0 +1,108 @@
+{
+    "action_cards": [
+        {
+            "id": "A01",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Teleport",
+            "effects": ["LOCATION_CHOOSE"],
+            "text": "teleport to an available location of your choosing."
+        },
+        {
+            "id": "A02",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Rules Reset",
+            "effects": ["RULES_RESET"],
+            "text": "When played, all rules will be returned to their base values from the start of the game."
+        },
+        {
+            "id": "A03",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Pick up all keepers",
+            "effects": ["KEEPERS_TO_HAND"],
+            "text": "When played, all players must pick up all their keepers in play."
+        },
+        {
+            "id": "A04",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Trade Hands",
+            "effects": ["TRADE_HANDS"],
+            "text": "When played, choose a player to trade hands with."
+        },
+        {
+            "id": "A05",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Reset One Rule",
+            "effects": ["RULE_RESET_CHOOSE"],
+            "text": "When played, choose 1 rule to reset."
+        },
+        {
+            "id": "A06",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Reset half of rules(upto)",
+            "effects": ["RULE_RESET_CHOOSE", "HALF", "OPTIONAL"],
+            "text": "When played, choose up to half the rules to reset."
+        },
+        {
+            "id": "A07",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Draw 3, Play 2",
+            "effects": ["DRAW_3_PLAY_2"],
+            "text": "Draw 3 cards, out of those 3 cards you must choose 2 to play and finally discard the remaining card."
+        },
+        {
+            "id": "A08",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Draw 2, Use'em",
+            "effects": ["DRAW_2_PLAY_2"],
+            "text": "Draw 2 cards and immediately use them."
+        },
+        {
+            "id": "A09",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Draw 5, discard 2",
+            "effects": ["DRAW_5_PLAY_3"],
+            "text": "Draw 5 cards, out of those 5 cards you must choose 3 to play and finally discard the remaining cards."
+        },
+        {
+            "id": "A10",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Everyone draw 1",
+            "effects": ["DRAW_1", "ALL_PLAYERS"],
+            "text": "All players draw 1 card."
+        },
+        {
+            "id": "A11",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Steal A Keeper",
+            "effects": ["KEEPER_STEAL_CHOOSE"],
+            "text": "Choose a keeper on field to take into your possession."
+        },
+        {
+            "id": "A12",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Exchange Keepers",
+            "effects": ["KEEPER_EXCHANGE_CHOOSE"],
+            "text": "Choose 2 keepers on the field and swap their locations."
+        },
+        {
+            "id": "A13",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Everyone Discard 1",
+            "effects": ["DISCARD_1", "ALL_PLAYERS"],
+            "text": "Draw 2 cards and immediately use them."
+        }
+    ]
+}

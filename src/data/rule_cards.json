@@ -1,0 +1,44 @@
+{
+    "rule_cards": [
+        {
+            "id": "RB01",
+            "type": "RULE",
+            "subtype": "BASIC",
+            "name": "Draw 2",
+            "effects": ["RULE_DRAW", "2"],
+            "text": "When this card is in play, each player will draw 2 cards per turn."
+        },
+        {
+            "id": "RB05",
+            "type": "RULE",
+            "subtype": "BASIC",
+            "name": "Play 2",
+            "effects": ["RULE_PLAY", "2"],
+            "text": "When this card is in play, each player will play 2 cards per turn."
+        },
+        {
+            "id": "RB09",
+            "type": "RULE",
+            "subtype": "BASIC",
+            "name": "Hand Limit 1",
+            "effects": ["RULE_HAND_LIMIT", "1"],
+            "text": "When this card is in play, each player has to discard down to 1 card to end their turn."
+        },
+        {
+            "id": "RB12",
+            "type": "RULE",
+            "subtype": "BASIC",
+            "name": "Keeper Limit 3",
+            "effects": ["RULE_KEEPER_LIMIT", "3"],
+            "text": "When this card is in play, each player can have 3 keepers in play."
+        },
+        {
+            "id": "RB15",
+            "type": "RULE",
+            "subtype": "BASIC",
+            "name": "Teleblock",
+            "effects": ["TELEBLOCK"],
+            "text": "When this card is in play, location can not be changed."
+        }
+    ]
+}

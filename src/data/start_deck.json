@@ -165,7 +165,7 @@
             "type": "RULE",
             "subtype": "BASIC",
             "name": "Draw 2",
-            "effects": ["RULE_DRAW", 2],
+            "effects": ["RULE_DRAW", "2"],
             "text": "When this card is in play, each player will draw 2 cards per turn."
         },
         {
@@ -173,7 +173,7 @@
             "type": "RULE",
             "subtype": "BASIC",
             "name": "Play 2",
-            "effects": ["RULE_PLAY", 2],
+            "effects": ["RULE_PLAY", "2"],
             "text": "When this card is in play, each player will play 2 cards per turn."
         },
         {
@@ -181,7 +181,7 @@
             "type": "RULE",
             "subtype": "BASIC",
             "name": "Hand Limit 1",
-            "effects": ["RULE_HAND_LIMIT", 1],
+            "effects": ["RULE_HAND_LIMIT", "1"],
             "text": "When this card is in play, each player has to discard down to 1 card to end their turn."
         },
         {
@@ -189,7 +189,7 @@
             "type": "RULE",
             "subtype": "BASIC",
             "name": "Keeper Limit 3",
-            "effects": ["RULE_KEEPER_LIMIT", 3],
+            "effects": ["RULE_KEEPER_LIMIT", "3"],
             "text": "When this card is in play, each player can have 3 keepers in play."
         },
         {

@@ -51,7 +51,7 @@ export default function Card({
         });
     }
 
-    return(
+    return cardState.state ? (
         <div 
             className={`card ${cardState.state.type.toLowerCase()} ${position === "PENDING" ? "pending" : ""} ${position === "HAND" ? "hand_card": ""} ${checkGoalIsSelected() ? "goal_selected" : ""}`} 
             style={ position === "HAND" ? {transform: animation ?  origin : handPosition} : {} } 
@@ -84,5 +84,5 @@ export default function Card({
                 <p>{cardState.state.type === "GOAL" ? mapGoalText() : cardState.state.text }</p>
             </div>
         </div>
-    )
+    ) : null
 }
