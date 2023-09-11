@@ -1,6 +1,6 @@
 import { useEffect, useState, useReducer, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Database, remove } from 'firebase/database';
+import { Database } from 'firebase/database';
 import start_rules from '../data/start_rules.json';
 import UserContext from '../data/Context';
 import GameSchema from '../schemas/gameSchema';
@@ -738,6 +738,7 @@ export default function Game() {
         const prevPending = table.pending ?? null;
         if(turn.player !== user?.uid) {
             upload("COUNTER", db, {cardState: card}, joinedGameID);
+            discardCardFromHand(indexInHand, checkShouldDiscard(card.type));
             return resolvePlayCard(card, prevPending);
         }
         upload('PENDING', db, {cardState: card}, joinedGameID);
@@ -894,9 +895,10 @@ export default function Game() {
                         cards: [...updatedKeepers],
                         upload: uploadProps,
                     }
-                })
+                });
             }
         }
+        upload("COUNTER", db, {cardState: false}, joinedGameID);
     }
 
     const playKeeperCard = (card: CardSchema) => {
@@ -1223,6 +1225,16 @@ export default function Game() {
                 <Card 
                     position={"PENDING"}
                     cardState={{state:  table.pending , index: 0}}
+                />
+            }
+            {
+                table.counter !== false
+                && 
+                table.counter !== true
+                &&
+                <Card
+                    position={"PENDING"}
+                    cardState={{state: table.counter, index: 0}}
                 />
             }
         </div>

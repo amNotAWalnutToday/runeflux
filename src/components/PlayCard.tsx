@@ -28,6 +28,7 @@ export default function PlayCard({
     const { user } = useContext(UserContext);
 
     const checkIfPlayDisabled = () => {
+        if(cardState.state.type === "COUNTER" && table.turn.player !== user?.uid) return checkIfCounterPlayDisabled();
         const { player, played, temporary } = table.turn;
         if(!fromWormhole) {
             const hasPlayed = table.turn.played >= table.rules.playAmount;
@@ -48,16 +49,35 @@ export default function PlayCard({
         return false;
     }
 
+    const checkIfCounterPlayDisabled = () => {
+        const { type, subtype } = table.pending && table.pending !== true ? table.pending : {type: "", subtype: ""};
+        const isCardNotInPlay = table.pending ? false : true;
+        const canCounter = [];
+        if(cardState.state.id === "CO01" && subtype === "LOCATION") canCounter.push(false);
+        if(cardState.state.id === "CO02" && type === "GOAL") canCounter.push(false);
+        if(cardState.state.id === "CO03" && type === "ACTION") canCounter.push(false);
+        if(cardState.state.id === "CO04" && type === "ACTION") canCounter.push(false);
+        if(cardState.state.id === "CO05" && subtype === "BASIC") canCounter.push(false);
+        if(cardState.state.id === "CO06" && type === "ACTION") canCounter.push(false);
+    
+        if(isCardNotInPlay || !canCounter.length) {
+            return [isCardNotInPlay, !canCounter.length ? false : true];
+        }
+        return false;
+    }
+
     const displayPlayErrors = (errors: boolean[]) => {
         const errorMessages: string[] = [];
-        console.log(playErrors);
         if(errors[0]) {
-            !fromWormhole 
-                ? errorMessages.push("Play limit reached! End turn.")
-                : errorMessages.push(`Play limit reached! Discard down to 0.`);
+            if(!fromWormhole && user?.uid === table.turn.player) errorMessages.push("Play limit reached! End turn.")
+            if(fromWormhole) errorMessages.push(`Play limit reached! Discard down to 0.`)
+            if(user?.uid !== table.turn.player/*))*/
+            && cardState.state.type === "COUNTER") errorMessages.push("No card to counter.");
         }
         if(errors[1] === false) {
-            errorMessages.push("Please wait for your turn.");
+            cardState.state.type === "COUNTER"
+                ? errorMessages.push("Doesn't counter that type of card.")
+                : errorMessages.push("Please wait for your turn.");
         }
         setPlayErrors(() => [...errorMessages]);
     }
@@ -121,9 +141,9 @@ export default function PlayCard({
                     }
                 </div>
                 <button 
-                    className={`play_btn__card ${table.pending || checkIfPlayDisabled() ? "disabled" : ""}`}
+                    className={`play_btn__card ${(table.pending && cardState.state.type !== "COUNTER") || checkIfPlayDisabled() ? "disabled" : ""}`}
                     onClick={() => {
-                        if(table.pending) return;
+                        if(table.pending && cardState.state.type !== "COUNTER") return;
                         const isError = checkIfPlayDisabled();
                         if(isError) return displayPlayErrors(isError);
                         playCard(cardState.state, cardState.index);
