@@ -33,9 +33,10 @@ export default function InspectKeeper({
         const isYours       = (localPlayer.keepers.length > cardState.index 
             ?  localPlayer.keepers[cardState.index].id === cardState.state.id
             : false);
+        const isTurn = table.turn.player === localPlayer.user.uid;
 
-        if(isOnCooldown || !hasEffect || !isYours) {
-            return [isOnCooldown, hasEffect, isYours];
+        if(isOnCooldown || !hasEffect || !isYours || !isTurn) {
+            return [isOnCooldown, hasEffect, isYours, isTurn];
         }
 
         return false;
@@ -51,6 +52,9 @@ export default function InspectKeeper({
         }
         if(errors[2] === false) {
             errorMessages.push("That Keeper is not yours!");
+        }
+        if(errors[3] === false) {
+            errorMessages.push("Please wait your turn..");
         }
         setPlayErrors(() => [...errorMessages]);
     }
