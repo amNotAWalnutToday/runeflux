@@ -1266,6 +1266,7 @@ export default function Game() {
                     table={table}
                     localPlayer={localPlayer}
                     discardKeeper={discardKeeper}
+                    inspectKeeper={inspectKeeper}
                 />
             }
             {

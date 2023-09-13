@@ -10,9 +10,16 @@ type Props = {
     table: GameSchema,
     localPlayer: PlayerSchema,
     discardKeeper: (cardIndex: number, addToDiscard?: boolean) => void,
+    inspectKeeper: (card: {state: CardSchema, index: number} | null) => void,
 }
 
-export default function InspectKeeper({cardState, table, localPlayer, discardKeeper}: Props) {
+export default function InspectKeeper({
+    cardState, 
+    table, 
+    localPlayer, 
+    discardKeeper,
+    inspectKeeper,
+}: Props) {
     const [playErrors, setPlayErrors] = useState<string[]>([]);
     const [discardErrors, setDiscardErrors] = useState<string[]>([]);
     const clearPlayErrors = () => setPlayErrors(() => []);
@@ -31,9 +38,13 @@ export default function InspectKeeper({cardState, table, localPlayer, discardKee
         const isTurn        = table.turn.player === localPlayer.user.uid;
         const isCreeper     = cardState.state.type === "CREEPER";
         const hasCreeperAttached = cardState.state.attachment ? true : false;
+        const isYours       = (localPlayer.keepers.length > cardState.index 
+                                ?  localPlayer.keepers[cardState.index].id === cardState.state.id
+                                : false);
 
-        if(!isKeepersFull || !isTurn || isCreeper || hasCreeperAttached) {
-            return [isKeepersFull, isTurn, isCreeper, hasCreeperAttached];
+
+        if(!isKeepersFull || !isTurn || isCreeper || hasCreeperAttached || !isYours) {
+            return [isKeepersFull, isTurn, isCreeper, hasCreeperAttached, isYours];
         }
 
         return false;
@@ -53,6 +64,9 @@ export default function InspectKeeper({cardState, table, localPlayer, discardKee
         if(errors[3]) {
             errorMessages.push("Cannot discard a keeper with a creeper attached.");
         }
+        if(errors[4] === false) {
+            errorMessages.push("That Keeper is not yours!");
+        }
         setDiscardErrors(() => [...errorMessages]);
     }
 
@@ -69,49 +83,54 @@ export default function InspectKeeper({cardState, table, localPlayer, discardKee
     }
 
     return ( 
-        <div className="popup" >
-            <Card 
-                cardState={cardState}
-                position={"SELECT"}
-            />
-            <div className="play_btn_group__card">
-                <div className="errors_container__play" >
-                    {
-                        playErrors.length
-                            ? mapErrors(playErrors, clearPlayErrors)
-                            : null
-                    }
+        <>
+            <div className="underlay" onClick={() => {
+                inspectKeeper(null);
+            }} />
+            <div className="popup" >
+                <Card
+                    cardState={cardState}
+                    position={"SELECT"}
+                />
+                <div className="play_btn_group__card">
+                    <div className="errors_container__play" >
+                        {
+                            playErrors.length
+                                ? mapErrors(playErrors, clearPlayErrors)
+                                : null
+                        }
+                    </div>
+                    <button
+                        className="play_btn__card"
+                        onClick={() => {
+                            if(table.pending) return;
+                            const isError = checkIfPlayDisabled();
+                            if(isError) return;
+            
+                        }}
+                    >
+                        Use Effect
+                    </button>
+                    <div className="errors_container__discard" >
+                        {
+                            discardErrors.length
+                                ? mapErrors(discardErrors, clearDiscardErrors)
+                                : null
+                        }
+                    </div>
+                    <button
+                        className={`discard_btn__card ${table.pending || checkIfDiscardDisabled() ? "disabled" : ""}`}
+                        onClick={() => {
+                            if(table.pending) return;
+                            const isError = checkIfDiscardDisabled();
+                            if(isError) return displayDiscardErrors(isError);
+                            discardKeeper(cardState.index);
+                        }}
+                    >
+                        Discard Card
+                    </button>
                 </div>
-                <button
-                    className="play_btn__card"
-                    onClick={() => {
-                        if(table.pending) return;
-                        const isError = checkIfPlayDisabled();
-                        if(isError) return;
-                        
-                    }}
-                >
-                    Use Effect
-                </button>
-                <div className="errors_container__discard" >
-                    {
-                        discardErrors.length
-                            ? mapErrors(discardErrors, clearDiscardErrors) 
-                            : null
-                    }
-                </div>
-                <button 
-                    className={`discard_btn__card ${table.pending || checkIfDiscardDisabled() ? "disabled" : ""}`}
-                    onClick={() => {
-                        if(table.pending) return;
-                        const isError = checkIfDiscardDisabled();
-                        if(isError) return displayDiscardErrors(isError);
-                        discardKeeper(cardState.index);
-                    }}
-                >
-                    Discard Card
-                </button>
             </div>
-        </div>
+        </>
     )
 }
