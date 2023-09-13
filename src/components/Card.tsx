@@ -5,7 +5,7 @@ type Props = {
     cardState: { state: CardSchema, index: number },
     position: "HAND" | "SELECT" | "PENDING" | "TABLE" | "CREEPER",
     numberInLine?: number,
-    inspectKeeper: (card: { state: CardSchema, index: number } | null) => void,
+    inspectKeeper?: (card: { state: CardSchema, index: number } | null) => void,
     selectCard?: (card: { state: CardSchema, index: number } | null) => void,
     selectGoalGroup?: (goal: { state: CardSchema, index: number }) => void,
     selectedGoalGroup?: { state: CardSchema, index: number}[],

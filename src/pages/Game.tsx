@@ -1263,6 +1263,8 @@ export default function Game() {
                 &&
                 <InspectKeeper
                     cardState={inspectedKeeper}
+                    table={table}
+                    localPlayer={localPlayer}
                     discardKeeper={discardKeeper}
                 />
             }

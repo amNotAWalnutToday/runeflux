@@ -31,8 +31,8 @@ export default function PlayCard({
         if(cardState.state.type === "COUNTER" && table.turn.player !== user?.uid) return checkIfCounterPlayDisabled();
         const { player, played, temporary } = table.turn;
         if(!fromWormhole) {
-            const hasPlayed = table.turn.played >= table.rules.playAmount;
-            const isTurn    = table.turn.player === user?.uid;
+            const hasPlayed = played >= table.rules.playAmount;
+            const isTurn    = player === user?.uid;
 
             if(hasPlayed || !isTurn) {
                 return [hasPlayed, isTurn];
