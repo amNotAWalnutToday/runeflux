@@ -28,6 +28,7 @@ const {
     connectGame, 
     chooseWhoGoesFirst,
     checkShouldDiscard,
+    checkForCreepers,
     endTurn,
     upload,
     uploadTable,
@@ -443,6 +444,13 @@ export default function Game() {
         setLocalPlayer((prev) => {
             return { ...prev, ...getPlayer(players, user?.uid ?? '').state }
         });
+        const player = getPlayer(players, user?.uid ?? '');
+        player.state.hand.forEach((card, ind) => {
+            if(card.type === "CREEPER" && !table.pending) return playCard(card, ind);
+        })
+        turn.temporary.hand.forEach((card, ind) => {
+            if(card.type === "CREEPER" && !table.pending) playTemporaryCard(card, ind);
+        });
         /*eslint-disable-next-line*/
     }, [players]);
 
@@ -527,7 +535,7 @@ export default function Game() {
         await connectGame(joinedGameID, db, tableStateInit);
         if(user.uid === joinedGameID) {
             if(await checkGameInProgress(db, joinedGameID)) return;
-            const firstTurn = chooseWhoGoesFirst(table.players);
+            const firstTurn = chooseWhoGoesFirst(players);
             const updatedDeck = shuffleDeck(table.deck.pure);
             dispatchDeck({
                 type: DECK_REDUCER_ACTIONS.DECK_REPLACE__PURE, 
@@ -561,6 +569,7 @@ export default function Game() {
             });
             return;
         }
+        const creepers = checkForCreepers([...deck.pure.slice(deck.pure.length - drawn)]);
         dispatchDeck({
             type: DECK_REDUCER_ACTIONS.DECK_REMOVE__PURE_TOP,
             payload: {
@@ -576,7 +585,8 @@ export default function Game() {
                 cards: Array.from(deck.pure.slice(deck.pure.length - drawn)),
                 upload: uploadProps
             }
-        })
+        });
+        if(creepers.length) return;
         dispatchTurn({
             type: TURN_REDUCER_ACTION.DRAWN_ADD, 
             payload: { 
@@ -750,7 +760,8 @@ export default function Game() {
         }
         upload('PENDING', db, {cardState: card}, joinedGameID);
         discardCardFromHand(indexInHand, checkShouldDiscard(card.type));
-        if(turn.player === user?.uid) {
+        if(turn.player === user?.uid
+        && card.type !== "CREEPER") {
             dispatchTurn({
                 type: TURN_REDUCER_ACTION.PLAYED_ADD,
                 payload: {
@@ -794,9 +805,55 @@ export default function Game() {
                     return playActionCards(card);
                 case "COUNTER":
                     return playCounterCard(card, prevPending);
+                case "CREEPER":
+                    return playCreeperCard(card);
             }
             resetGroups();
         }, 3000);
+    }
+
+    const attachCreeper = (keeper: { state: CardSchema, index: number }) => {
+        const thisPlayer = getPlayer(players, user?.uid ?? '');
+        const updatedKeepers = removeCard([...thisPlayer.state.keepers], keeper.index);
+        dispatchPlayers({
+            type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__REMOVE,
+            payload: {
+                playerId: user?.uid ?? '',
+                cards: [...updatedKeepers],
+                upload: uploadProps
+            }
+        });
+        dispatchPlayers({
+            type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__ADD,
+            payload: {
+                playerId: user?.uid ?? '',
+                cards: [keeper.state],
+                upload: uploadProps
+            }
+        });
+    }
+
+    const playCreeperCard = (card: CardSchema) => {
+        const thisPlayer = getPlayer(players, user?.uid ?? '');
+        if(card.subtype === "LIVING_CREEPER") {
+            let livingKeeper: {state: CardSchema, index: number} | undefined;
+            thisPlayer.state.keepers.forEach((keeper, index) => {
+                if(keeper.subtype === "LIVING"
+                && !keeper.attachment         ) livingKeeper = {state: {...keeper}, index};
+            });
+            if(!livingKeeper) return playKeeperCard(card);
+            livingKeeper.state.attachment = card;
+            attachCreeper(livingKeeper);
+        } else if(card.subtype === "EQUIPMENT_CREEPER") {
+            let equipmentKeeper: {state: CardSchema, index: number} | undefined;
+            thisPlayer.state.keepers.forEach((keeper, index) => {
+                if(keeper.subtype === "EQUIPMENT"
+                && !keeper.attachment             ) equipmentKeeper = { state: {...keeper}, index };
+            });
+            if(!equipmentKeeper) return playKeeperCard(card);
+            equipmentKeeper.state.attachment = card;
+            attachCreeper(equipmentKeeper);
+        }
     }
 
     const playCounterCard = (card: CardSchema, prevPending: typeof table.pending | null) => {
@@ -1019,11 +1076,10 @@ export default function Game() {
                     upload: uploadProps,
                 }
             });
-        } else if(card.effects.includes("TELEPORT")) {
+        } else if(card.effects.includes("LOCATION_RANDOM")) {
             dispatchRules({
-                type: RULE_REDUCER_ACTIONS.RULE_CHANGE__LOCATION,
+                type: RULE_REDUCER_ACTIONS.RULE_CHANGE__LOCATION_RANDOM,
                 payload: {
-                    location: '',
                     upload: uploadProps
                 }
             }) 

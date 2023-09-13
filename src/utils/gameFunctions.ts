@@ -242,15 +242,23 @@ export default (() => {
         switch(cardType) {
             case "GOAL":
             case "KEEPER":
+            case "CREEPER":
                 return false;
             case "ACTION":
             case "COUNTER":
             case "RULE":
-            case "CREEPER":
                 return true;
             default:
                 return true;
         }
+    }
+
+    const checkForCreepers = (cards: CardSchema[]) => {
+        const creepers: CardSchema[] = [];
+        for(const card of cards) {
+            if(card.type === "CREEPER") creepers.push(card);
+        }
+        return creepers;
     }
 
     const drawPhase = (
@@ -317,6 +325,7 @@ export default (() => {
         getInitRule,
         chooseWhoGoesFirst,
         checkShouldDiscard,
+        checkForCreepers,
         drawPhase,
         removeCard,
         shuffleDeck,

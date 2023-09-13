@@ -3,8 +3,9 @@ import CardSchema from "../schemas/cardSchema";
 
 type Props = {
     cardState: { state: CardSchema, index: number },
-    position: "HAND" | "SELECT" | "PENDING" | "TABLE",
+    position: "HAND" | "SELECT" | "PENDING" | "TABLE" | "CREEPER",
     numberInLine?: number,
+    inspectKeeper: (card: { state: CardSchema, index: number } | null) => void,
     selectCard?: (card: { state: CardSchema, index: number } | null) => void,
     selectGoalGroup?: (goal: { state: CardSchema, index: number }) => void,
     selectedGoalGroup?: { state: CardSchema, index: number}[],
@@ -13,7 +14,8 @@ type Props = {
 export default function Card({
     cardState, 
     position, 
-    numberInLine, 
+    numberInLine,
+    inspectKeeper,
     selectCard,
     selectedGoalGroup,
     selectGoalGroup,
@@ -54,7 +56,9 @@ export default function Card({
     return cardState.state ? (
         <div 
             className={`card ${cardState.state.type.toLowerCase()} ${position === "PENDING" ? "pending" : ""} ${position === "HAND" ? "hand_card": ""} ${checkGoalIsSelected() ? "goal_selected" : ""}`} 
-            style={ position === "HAND" ? {transform: animation ?  origin : handPosition} : {} } 
+            style={ position === "HAND" ? {transform: animation ?  origin : handPosition} 
+                : position === "CREEPER" ? {transform: "scale(0.3) translate(-300px, -100px)"} : {} 
+            } 
             onMouseEnter={((e) => {
                 if(animation) return;
                 e.stopPropagation();
@@ -64,7 +68,11 @@ export default function Card({
                 e.stopPropagation();
                 setIsHover(false);
             })}
-            onClick={() => selectCard && selectCard(cardState)}
+            onClick={
+                (!inspectKeeper 
+                    ? () => selectCard && selectCard(cardState)
+                    : () => inspectKeeper(cardState))
+            }
             onContextMenu={(e) => {
                 e.preventDefault();
                 if(!selectGoalGroup || cardState.state.type !== "GOAL") return;

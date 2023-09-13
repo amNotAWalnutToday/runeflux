@@ -214,7 +214,7 @@ a:hover,
   border-color: var(--gold);
 }
 
-.card__mini .card_header__background,
+.card__mini.keeper .card_header__background,
 .card.keeper .card_header__background {
   background-color: var(--light-green);
 }
@@ -226,6 +226,11 @@ a:hover,
 
 .card.keeper hr {
   border-color: var(--light-green);
+}
+
+.card__mini.creeper .card__header__background,
+.card.creeper .card_header__background {
+  background-color: #fff;
 }
 
 .card.goal .card_header__background {

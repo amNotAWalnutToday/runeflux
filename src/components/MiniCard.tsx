@@ -1,4 +1,5 @@
 import CardSchema from "../schemas/cardSchema"
+import Card from "./Card";
 
 type Props = {
     isSideWays: boolean,
@@ -30,7 +31,9 @@ export default function MiniCard({
     return isSideWays ? (
         <div  
             className={`card__mini ${cardState.state.type.toLowerCase()} ${checkSelected() ? "selected" : ""}`}
-            onClick={() => inspectKeeper(cardState)}
+            onClick={!cardState.state.attachment ? () => inspectKeeper(cardState)
+                : (e) => e.preventDefault()
+            }
             onContextMenu={(e) => {
                 e.preventDefault();
                 if(!selectKeeperGroup) return;
@@ -45,6 +48,15 @@ export default function MiniCard({
             <div className="card_container__inner_right" >
 
             </div>
+            {
+            cardState.state.attachment
+            &&
+            <Card
+                position="CREEPER"
+                cardState={{state: cardState.state.attachment ?? {} as CardSchema, index: 0}}
+                inspectKeeper={inspectKeeper}
+            />
+            }
         </div>
     ) : (
         <div  
