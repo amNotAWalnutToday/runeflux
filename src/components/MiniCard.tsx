@@ -31,6 +31,7 @@ export default function MiniCard({
     return isSideWays ? (
         <div  
             className={`card__mini ${cardState.state.type.toLowerCase()} ${checkSelected() ? "selected" : ""}`}
+            style={(cardState.state.effects && !cardState.state.cooldown) ? {boxShadow: "0px 4px 8px springgreen"} : {}}
             onClick={!cardState.state.attachment ? () => inspectKeeper(cardState)
                 : (e) => e.preventDefault()
             }

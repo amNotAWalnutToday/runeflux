@@ -6,6 +6,7 @@ interface CardSchema {
     effects: string[],
     text: string,
     attachment?: CardSchema,
+    cooldown?: boolean,
 }
 
 export default CardSchema;

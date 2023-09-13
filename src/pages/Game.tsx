@@ -218,6 +218,7 @@ const enum PLAYER_REDUCER_ACTIONS {
     KEEPER_CARDS__ADD,
     KEEPER_CARDS__REMOVE,
     KEEPER_CARDS__EXCHANGE,
+    KEEPER_COOLDOWN__SET,
     TRADE_HANDS,
 }
 
@@ -230,6 +231,7 @@ type PLAYER_ACTIONS = {
         cards?: CardSchema[],
         keepersToExchange?: {state: CardSchema, index: number, playerIndex: number}[], 
         cardIndex?: number,
+        cooldown?: boolean,
         upload: {
             db: Database,
             gameId: string,
@@ -238,7 +240,11 @@ type PLAYER_ACTIONS = {
 }
 
 const playerReducer = (state: PlayerSchema[], action: PLAYER_ACTIONS) => {
-    const { playerId, init, cards, targetPlayerId, keepersToExchange } = action.payload;
+    const { 
+        playerId, init, cards, 
+        targetPlayerId, keepersToExchange, cardIndex, 
+        cooldown,
+    } = action.payload;
     const { db, gameId } = action.payload.upload;
     const players = [...state];
     const player = getPlayer(state, playerId);
@@ -269,6 +275,10 @@ const playerReducer = (state: PlayerSchema[], action: PLAYER_ACTIONS) => {
             players[keepersToExchange[1].playerIndex] = Object.assign({}, players[keepersToExchange[1].playerIndex], {keepers: [...removeCard([...players[keepersToExchange[1].playerIndex].keepers], keepersToExchange[1].index), cards ? cards[0] : {}]});
             upload("PLAYER", db, {playersState: players, playerId: players[keepersToExchange[0].playerIndex].user.uid}, gameId);
             upload("PLAYER", db, {playersState: players, playerId: players[keepersToExchange[1].playerIndex].user.uid}, gameId);
+            return [...players];
+        case PLAYER_REDUCER_ACTIONS.KEEPER_COOLDOWN__SET:
+            players[player.index].keepers[cardIndex ?? 0].cooldown = cooldown;
+            upload("PLAYER", db, {playersState: players, playerId}, gameId);
             return [...players];
         case PLAYER_REDUCER_ACTIONS.TRADE_HANDS:
             players[player.index]             = Object.assign({}, player.state, {hand: [...targetPlayer.state.hand]});
@@ -445,9 +455,11 @@ export default function Game() {
             return { ...prev, ...getPlayer(players, user?.uid ?? '').state }
         });
         const player = getPlayer(players, user?.uid ?? '');
-        player.state.hand.forEach((card, ind) => {
-            if(card.type === "CREEPER" && !table.pending) return playCard(card, ind);
-        })
+        if(player.state.hand.length) {
+            player.state.hand.forEach((card, ind) => {
+                if(card.type === "CREEPER" && !table.pending) return playCard(card, ind);
+            })
+        }
         turn.temporary.hand.forEach((card, ind) => {
             if(card.type === "CREEPER" && !table.pending) playTemporaryCard(card, ind);
         });
@@ -1167,7 +1179,48 @@ export default function Game() {
         }
     }
 
+    const playKeeperEffect = (keeperId: string, keeperIndex: number) => {
+        const thisPlayer = getPlayer(players, user?.uid ?? '');
+        if(keeperId === "KL06") {
+            const discardOrDraw = Math.ceil(Math.random() * 2);
+            const amount = Math.ceil(Math.random() * 2);
+            if(discardOrDraw === 1) {
+                drawCardsForPlayer(thisPlayer.state.user.uid, amount, 0);
+            }
+            else {
+                for(let i = 0; i < amount; i++) { 
+                    discardCardFromHand(Math.floor(Math.random() * thisPlayer.state.hand.length));
+                }
+            }
+        }
+
+        dispatchPlayers({
+            type: PLAYER_REDUCER_ACTIONS.KEEPER_COOLDOWN__SET,
+            payload: {
+                playerId: user?.uid ?? '',
+                cooldown: true,
+                cardIndex: keeperIndex,
+                upload: uploadProps
+            }
+        });
+    }
+
     const endTurnHandler = () => {
+        const thisPlayer = getPlayer(players, user?.uid ?? '');
+        thisPlayer.state.keepers.forEach((keeper, ind) => {
+            if(keeper.cooldown) {
+                dispatchPlayers({
+                    type: PLAYER_REDUCER_ACTIONS.KEEPER_COOLDOWN__SET,
+                    payload: {
+                        playerId: user?.uid ?? '',
+                        cooldown: false,
+                        cardIndex: ind,
+                        upload: uploadProps
+                    }
+                })
+            } 
+        });
+
         const isEndOfRound = endTurn(db, table.players, table.turn, dispatchTurn, joinedGameID);
         if(isEndOfRound) {
             setTable((prev) => ({...prev, round: prev.round++}));
@@ -1204,14 +1257,21 @@ export default function Game() {
                     // playActionCards({effects: ["DRAW_3_PLAY_2"]} as CardSchema);
                     // playActionCards({effects: ["DISCARD_1"]} as CardSchema);
                     // playActionCards({effects: ["DRAW_1"]} as CardSchema);
-                    playCard(        {
-                        "id": "CO06",
-                        "type": "COUNTER",
-                        "subtype": "",
-                        "name": "It's a Trap!",
-                        "effects": ["KEEPER_DISCARD_REFLECT_OR_KEEPER_DISCARD"],
-                        "text": "Out of turn, when another player trys to destroy one of your keepers destroy a random one of theirs instead, during your turn, choose a keeper to discard."
-                    }, 0);
+                    dispatchPlayers({
+                        type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
+                        payload: {
+                            playerId: user?.uid ?? '',
+                            cards: [        {
+                                "id": "KL06",
+                                "type": "KEEPER",
+                                "subtype": "LIVING",
+                                "name": "Drunken Dwarf",
+                                "effects": ["DISCARD_OR_DRAW_RANDOM_1_2"],
+                                "text": "Once per turn, randomly draw or discard between 1 - 2 cards"
+                            },],
+                            upload: uploadProps
+                        }
+                    })
                     
                 }}
             >
@@ -1265,6 +1325,7 @@ export default function Game() {
                     cardState={inspectedKeeper}
                     table={table}
                     localPlayer={localPlayer}
+                    playEffect={playKeeperEffect}
                     discardKeeper={discardKeeper}
                     inspectKeeper={inspectKeeper}
                 />

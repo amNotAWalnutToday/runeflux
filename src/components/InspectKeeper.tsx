@@ -9,6 +9,7 @@ type Props = {
     cardState: { state: CardSchema, index: number },
     table: GameSchema,
     localPlayer: PlayerSchema,
+    playEffect: (keeperId: string, keeperIndex: number) => void,
     discardKeeper: (cardIndex: number, addToDiscard?: boolean) => void,
     inspectKeeper: (card: {state: CardSchema, index: number} | null) => void,
 }
@@ -17,6 +18,7 @@ export default function InspectKeeper({
     cardState, 
     table, 
     localPlayer, 
+    playEffect,
     discardKeeper,
     inspectKeeper,
 }: Props) {
@@ -26,11 +28,25 @@ export default function InspectKeeper({
     const clearDiscardErrors = () => setDiscardErrors(() => []);
 
     const checkIfPlayDisabled = () => {
+        const isOnCooldown = cardState.state.cooldown ? true : false;
+        const hasEffect = cardState.state.effects ? true : false;
+
+        if(isOnCooldown || !hasEffect) {
+            return [isOnCooldown, hasEffect];
+        }
+
         return false;
     }
 
-    const displayPlayErrors = () => {
-
+    const displayPlayErrors = (errors: boolean[]) => {
+        const errorMessages: string[] = [];
+        if(errors[0]) {
+            errorMessages.push("On Cooldown.");
+        }
+        if(errors[1] === false) {
+            errorMessages.push("This Keeper has no effects.")
+        }
+        setPlayErrors(() => [...errorMessages]);
     }
 
     const checkIfDiscardDisabled = () => {
@@ -101,12 +117,12 @@ export default function InspectKeeper({
                         }
                     </div>
                     <button
-                        className="play_btn__card"
+                        className={`play_btn__card ${table.pending || checkIfPlayDisabled() ? "disabled" : ""}`}
                         onClick={() => {
                             if(table.pending) return;
                             const isError = checkIfPlayDisabled();
-                            if(isError) return;
-            
+                            if(isError) return displayPlayErrors(isError);
+                            playEffect(cardState.state.id, cardState.index);
                         }}
                     >
                         Use Effect
