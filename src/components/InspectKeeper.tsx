@@ -30,9 +30,12 @@ export default function InspectKeeper({
     const checkIfPlayDisabled = () => {
         const isOnCooldown = cardState.state.cooldown ? true : false;
         const hasEffect = cardState.state.effects ? true : false;
+        const isYours       = (localPlayer.keepers.length > cardState.index 
+            ?  localPlayer.keepers[cardState.index].id === cardState.state.id
+            : false);
 
-        if(isOnCooldown || !hasEffect) {
-            return [isOnCooldown, hasEffect];
+        if(isOnCooldown || !hasEffect || !isYours) {
+            return [isOnCooldown, hasEffect, isYours];
         }
 
         return false;
@@ -44,7 +47,10 @@ export default function InspectKeeper({
             errorMessages.push("On Cooldown.");
         }
         if(errors[1] === false) {
-            errorMessages.push("This Keeper has no effects.")
+            errorMessages.push("This Keeper has no effects.");
+        }
+        if(errors[2] === false) {
+            errorMessages.push("That Keeper is not yours!");
         }
         setPlayErrors(() => [...errorMessages]);
     }

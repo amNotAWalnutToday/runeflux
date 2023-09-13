@@ -975,6 +975,7 @@ export default function Game() {
             }
         }
         upload("COUNTER", db, {cardState: false}, joinedGameID);
+        resetGroups();
     }
 
     const playKeeperCard = (card: CardSchema) => {
@@ -1021,6 +1022,7 @@ export default function Game() {
                 } 
             });
         }
+        resetGroups();
     }
 
     const playRuleCard = (card: CardSchema) => {
@@ -1078,6 +1080,7 @@ export default function Game() {
                 }
             });
         }
+        resetGroups();
     }
 
     const playActionCards = (card: CardSchema) => {
@@ -1089,12 +1092,7 @@ export default function Game() {
                 }
             });
         } else if(card.effects.includes("LOCATION_RANDOM")) {
-            dispatchRules({
-                type: RULE_REDUCER_ACTIONS.RULE_CHANGE__LOCATION_RANDOM,
-                payload: {
-                    upload: uploadProps
-                }
-            }) 
+            teleport();
         } else if(card.effects.includes("RULE_RESET_CHOOSE")) {
             for(let i = 0; i <= (card.effects.length > 1 ? 2 : 0); i++) {
                 dispatchRules({
@@ -1177,6 +1175,16 @@ export default function Game() {
                 drawCardsForPlayer(player.user.uid, 1, index);
             });
         }
+        resetGroups();
+    }
+
+    const teleport = () => {
+        dispatchRules({
+            type: RULE_REDUCER_ACTIONS.RULE_CHANGE__LOCATION_RANDOM,
+            payload: {
+                upload: uploadProps
+            }
+        });  
     }
 
     const playKeeperEffect = (keeperId: string, keeperIndex: number) => {
@@ -1192,6 +1200,20 @@ export default function Game() {
                     discardCardFromHand(Math.floor(Math.random() * thisPlayer.state.hand.length));
                 }
             }
+        } else if(keeperId === "K01") {
+            drawCardsForPlayer(thisPlayer.state.user.uid, 1, 0);
+        } else if(keeperId === "CR01") {
+            dispatchRules({
+                type: RULE_REDUCER_ACTIONS.RULE_CHANGE__LOCATION,
+                payload: {
+                    location: "CRANDOR",
+                    upload: uploadProps,
+                }
+            });
+        } else if(keeperId === "KR08") {
+            teleport();
+        } else if(keeperId === "KR02") {
+            wormhole(1, 0);
         }
 
         dispatchPlayers({
@@ -1203,6 +1225,7 @@ export default function Game() {
                 upload: uploadProps
             }
         });
+        resetGroups();
     }
 
     const endTurnHandler = () => {
@@ -1261,13 +1284,13 @@ export default function Game() {
                         type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
                         payload: {
                             playerId: user?.uid ?? '',
-                            cards: [        {
-                                "id": "KL06",
+                            cards: [         {
+                                "id": "KR02",
                                 "type": "KEEPER",
-                                "subtype": "LIVING",
-                                "name": "Drunken Dwarf",
-                                "effects": ["DISCARD_OR_DRAW_RANDOM_1_2"],
-                                "text": "Once per turn, randomly draw or discard between 1 - 2 cards"
+                                "subtype": "RUNE",
+                                "name": "Chaos Rune",
+                                "effects": ["WORMHOLE"],
+                                "text": "Once per turn, choose to draw 1 and play it."
                             },],
                             upload: uploadProps
                         }
