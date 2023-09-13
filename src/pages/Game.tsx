@@ -43,6 +43,7 @@ const enum RULE_REDUCER_ACTIONS {
     RULE_CHANGE__KEEPER_LIMIT,
     RULE_CHANGE__HAND_LIMIT,
     RULE_CHANGE__LOCATION,
+    RULE_CHANGE__LOCATION_RANDOM,
     RULE_CHANGE__TELEBLOCK,
     RULE_RESET__CHOICE,
     RULE_RESET__ALL,
@@ -66,6 +67,9 @@ type RULE_ACTIONS = {
 const rulesReducer = (state: RuleSchema, action: RULE_ACTIONS) => {
     const { init, ruleKey, amount, location, teleblock } = action.payload;
     const { db, gameId } = action.payload.upload;
+    const locations = ["MISTHALIN", "ASGARNIA", "MORYTANIA", "ABYSS", "ENTRANA", "CRANDOR"];
+    const ran = Math.floor(Math.random() * locations.length);
+
     switch(action.type) {
         case RULE_REDUCER_ACTIONS.INIT:
             return Object.assign({}, state, {...init});
@@ -84,6 +88,9 @@ const rulesReducer = (state: RuleSchema, action: RULE_ACTIONS) => {
         case RULE_REDUCER_ACTIONS.RULE_CHANGE__LOCATION:
             upload("RULES", db, {ruleState: {...state, location: location ?? "MISTHALIN"}}, gameId);
             return Object.assign({}, state, {location: location ?? "MISTHALIN"});
+        case RULE_REDUCER_ACTIONS.RULE_CHANGE__LOCATION_RANDOM: 
+            upload("RULES", db, {ruleState: {...state, location: locations[ran]}}, gameId);
+            return Object.assign({}, state, {location: locations[ran]});
         case RULE_REDUCER_ACTIONS.RULE_CHANGE__TELEBLOCK:
             upload("RULES", db, {ruleState: {...state, teleblock: teleblock ?? false}}, gameId);
             return Object.assign({}, state, {teleblock: teleblock ?? false});
@@ -1012,6 +1019,14 @@ export default function Game() {
                     upload: uploadProps,
                 }
             });
+        } else if(card.effects.includes("TELEPORT")) {
+            dispatchRules({
+                type: RULE_REDUCER_ACTIONS.RULE_CHANGE__LOCATION,
+                payload: {
+                    location: '',
+                    upload: uploadProps
+                }
+            }) 
         } else if(card.effects.includes("RULE_RESET_CHOOSE")) {
             for(let i = 0; i <= (card.effects.length > 1 ? 2 : 0); i++) {
                 dispatchRules({

@@ -158,7 +158,7 @@
             "subtype": "RUNE",
             "name": "Law Rune",
             "effects": ["TELEPORT"],
-            "text": "Once per turn, choose a location to teleport to."
+            "text": "Once per turn, teleport to a random location."
         },
         {
             "id": "KR09",
@@ -717,8 +717,8 @@
             "type": "ACTION",
             "subtype": "",
             "name": "Teleport",
-            "effects": ["LOCATION_CHOOSE"],
-            "text": "teleport to an available location of your choosing."
+            "effects": ["LOCATION_RANDOM"],
+            "text": "teleport to a random location."
         },
         {
             "id": "A02",
