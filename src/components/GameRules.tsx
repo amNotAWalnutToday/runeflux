@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import RuleSchema from "../schemas/ruleSchema";
 
 type Props = {
@@ -7,6 +8,18 @@ type Props = {
 }
 
 export default function GameRules({rules, selectedRuleGroup, selectRuleGroup}: Props) {
+    const [isHover, setIsHover] = useState(false);
+    
+    const locationDescriptions = [
+        "No special effects here.",
+        "Double agenda(two goals) is in play here.",
+        "At the end of every turn discard 1 random card",
+        "Once per turn, Challenge an other players keeper for the chance to steal them",
+        "Upon arriving here discard all current equipment and rune keepers in play.",
+        "10% chance to summon a ghost at the end of your turn.",
+        "Once per turn, You have the option to draw 1 and play it."
+    ];
+
     return (
         <div style={{zIndex: 20}} className="rules_container box_border " >
             <h2>Rules</h2>
@@ -20,6 +33,28 @@ export default function GameRules({rules, selectedRuleGroup, selectRuleGroup}: P
                     }}
                 >
                     Location: {rules.location}
+                    <span
+                        className="location_tooltip__btn"
+                        onMouseEnter={() => setIsHover(() => true)}
+                        onMouseLeave={() => setIsHover(() => false)}
+                    >
+                        i
+                    </span>
+                    {
+                    isHover
+                    &&
+                    <span
+                        className="location_tooltip__text"
+                    >
+                        { rules.location === "MISTHALIN" ? locationDescriptions[0] : "" }
+                        { rules.location === "ASGARNIA"  ? locationDescriptions[1] : "" }
+                        { rules.location === "CRANDOR"   ? locationDescriptions[2] : "" }
+                        { rules.location === "WILDERNESS"? locationDescriptions[3] : "" }
+                        { rules.location === "ENTRANA"   ? locationDescriptions[4] : "" }
+                        { rules.location === "MORYTANIA" ? locationDescriptions[5] : "" }
+                        { rules.location === "ABYSS"     ? locationDescriptions[6] : "" }
+                    </span>
+                    }
                 </li>
                 <li 
                     className={`rule ${selectedRuleGroup.includes("drawAmount") ? "highlight" : ""}`}

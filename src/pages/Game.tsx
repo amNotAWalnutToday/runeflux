@@ -476,6 +476,16 @@ export default function Game() {
         if(!user) return navigate('/');
         if(!loading) return;
         tableInit();
+
+        const escapeHandler = (e: KeyboardEvent) => {
+            if(e.key === "Escape") {
+                resetGroups();
+                selectCard(null);
+                inspectKeeper(null);
+            } 
+        }
+        window.addEventListener("keydown", escapeHandler);
+        return (() => window.removeEventListener("keydown", escapeHandler));
         /*eslint-disable-next-line*/
     }, []);
 
@@ -1226,6 +1236,7 @@ export default function Game() {
             }
         });
         resetGroups();
+        inspectKeeper(null);
     }
 
     const endTurnHandler = () => {
