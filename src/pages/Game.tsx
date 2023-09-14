@@ -1085,6 +1085,7 @@ export default function Game() {
                     upload: uploadProps
                 }
             });
+            if(location === "ENTRANA") entranaHandler();
         } else if(card.effects.includes("TELEBLOCK")) {
             dispatchRules({
                 type: RULE_REDUCER_ACTIONS.RULE_CHANGE__TELEBLOCK,
@@ -1095,6 +1096,25 @@ export default function Game() {
             });
         }
         resetGroups();
+    }
+
+    const entranaHandler = () => {
+        players.forEach((player) => {
+            let keepers = [...player.keepers];
+            player.keepers.forEach((keeper, index) => {
+                if(keeper.subtype === "RUNE" || keeper.subtype === "EQUIPMENT") {
+                    keepers = removeCard(keepers, index);    
+                }
+            });
+            dispatchPlayers({
+                type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__REMOVE,
+                payload: {
+                    playerId: player.user.uid,
+                    cards: [...keepers],
+                    upload: uploadProps
+                }
+            });
+        });
     }
 
     const playActionCards = (card: CardSchema) => {
@@ -1343,7 +1363,7 @@ export default function Game() {
                 cards: [...updatedKeepers],
                 upload: uploadProps
             }
-        })
+        });
     }
 
     const isTurn = () => {
@@ -1359,6 +1379,19 @@ export default function Game() {
         if(rules.location === "CRANDOR") {
             const ran = Math.floor(Math.random() * thisPlayer.state.hand.length);
             discardCardFromHand(ran, true);
+        }
+        if(rules.location === "MORYTANIA") {
+            const chance = Math.floor(Math.random() * 101);
+            if(chance <= 20) {
+                dispatchPlayers({
+                    type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__ADD,
+                    payload: {
+                        playerId: user?.uid ?? '',
+                        cards: [getCardById("KL02")],
+                        upload: uploadProps,
+                    }
+                });
+            }
         }
         
         thisPlayer.state.keepers.forEach((keeper, ind) => {
@@ -1415,13 +1448,13 @@ export default function Game() {
                         type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
                         payload: {
                             playerId: user?.uid ?? '',
-                            cards: [         {
-                                "id": "CO05",
-                                "type": "COUNTER",
-                                "subtype": "",
-                                "name": "Veto!",
-                                "effects": ["RULESTOP_OR_RULE_RESET_2"],
-                                "text": "Out of turn, stop another player while they are playing a rule card, during your turn reset up to 2 rules."
+                            cards: [          {
+                                "id": "RL06",
+                                "type": "RULE",
+                                "subtype": "LOCATION",
+                                "name": "Entrana",
+                                "effects": ["LOCATION", "ENTRANA"],
+                                "text": "When this card is in play, on arrival everyone must discard all equipment/rune keepers in play."
                             },],
                             upload: uploadProps
                         }
@@ -1509,7 +1542,7 @@ export default function Game() {
             : null
             }
             {
-                turn.temporary.hand.length
+                turn.temporary.hand.length > 0
                 &&
                 isTurn()
                 &&
