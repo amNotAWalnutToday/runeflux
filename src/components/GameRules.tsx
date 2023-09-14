@@ -5,9 +5,21 @@ type Props = {
     rules: RuleSchema,
     selectedRuleGroup: string[],
     selectRuleGroup: (rule: string) => void,
+    isTurn: boolean,
+    cooldown: boolean,
+    setCooldown: React.Dispatch<React.SetStateAction<boolean>>,
+    wormhole: (playAmount?: number, discardAmount?: number) => void,
 }
 
-export default function GameRules({rules, selectedRuleGroup, selectRuleGroup}: Props) {
+export default function GameRules({
+    rules, 
+    selectedRuleGroup, 
+    selectRuleGroup,
+    isTurn,
+    cooldown,
+    setCooldown,
+    wormhole,
+}: Props) {
     const [isHover, setIsHover] = useState(false);
     
     const locationDescriptions = [
@@ -26,7 +38,13 @@ export default function GameRules({rules, selectedRuleGroup, selectRuleGroup}: P
             <hr />
             <ul>
                 <li 
-                    className={`rule ${selectedRuleGroup.includes("location") ? "highlight" : ""}`}
+                    className={`rule ${selectedRuleGroup.includes("location") ? "highlight" : ""} ${rules.location === "ABYSS" ? `location_btn ${cooldown || !isTurn ? "disabled" : ""}` : ""}`}
+                    onClick={() => {
+                        if(rules.location !== "ABYSS"
+                        || cooldown || !isTurn) return;
+                        wormhole(1, 0);
+                        setCooldown(() => true);
+                    }}
                     onContextMenu={(e) => {
                         e.preventDefault();
                         selectRuleGroup("location");

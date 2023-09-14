@@ -355,6 +355,7 @@ export default function Game() {
 
     /*LOCAL STATE*/
     const [loading, setLoading] = useState(true);
+    const [locationCooldown, setLocationCooldown] = useState(false);
     const [selectedCard, setSelectedCard] = useState<{state: CardSchema, index: number} | null>(null);
     const [inspectedKeeper, setInspectedKeeper] = useState<{state: CardSchema, index: number} | null>(null);
     const [selectedRuleGroup, setSelectedRuleGroup] = useState<string[]>([]);
@@ -947,8 +948,8 @@ export default function Game() {
             }
         } else if(card.effects.includes("RULESTOP_OR_RULE_RESET_2")) {
             if(isYourTurn) {
-                for(let i = 0; i < 1; i++) {
-                    if(i < selectedRuleGroup.length - 1) break;
+                const selectedAmount = selectedRuleGroup.length > 2 ? 2 : 1;
+                for(let i = 0; i <= selectedAmount; i++) {
                     dispatchRules({
                         type: RULE_REDUCER_ACTIONS.RULE_RESET__CHOICE,
                         payload: {
@@ -1345,9 +1346,21 @@ export default function Game() {
         })
     }
 
+    const isTurn = () => {
+        if(user?.uid === turn.player) return true;
+        return false;
+    }
+
     const endTurnHandler = () => {
         warp();
+        setLocationCooldown(() => false);
+
         const thisPlayer = getPlayer(players, user?.uid ?? '');
+        if(rules.location === "CRANDOR") {
+            const ran = Math.floor(Math.random() * thisPlayer.state.hand.length);
+            discardCardFromHand(ran, true);
+        }
+        
         thisPlayer.state.keepers.forEach((keeper, ind) => {
             if(keeper.cooldown) {
                 dispatchPlayers({
@@ -1402,17 +1415,25 @@ export default function Game() {
                         type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
                         payload: {
                             playerId: user?.uid ?? '',
-                            cards: [        {
-                                "id": "KL12",
-                                "type": "KEEPER",
-                                "subtype": "LIVING",
-                                "name": "Imp",
-                                "effects": ["WARP"],
-                                "text": "At the end of a players turn or when discarded teleport to another player."
+                            cards: [         {
+                                "id": "CO05",
+                                "type": "COUNTER",
+                                "subtype": "",
+                                "name": "Veto!",
+                                "effects": ["RULESTOP_OR_RULE_RESET_2"],
+                                "text": "Out of turn, stop another player while they are playing a rule card, during your turn reset up to 2 rules."
                             },],
                             upload: uploadProps
                         }
-                    })
+                    });
+                    // playCard(        {
+                    //     "id": "RL02",
+                    //     "type": "RULE",
+                    //     "subtype": "LOCATION",
+                    //     "name": "Abyss",
+                    //     "effects": ["LOCATION", "ABYSS"],
+                    //     "text": "When this card is in play, each player has to discard down to 1 card to end their turn."
+                    // }, -1);
                     
                 }}
             >
@@ -1438,6 +1459,10 @@ export default function Game() {
                 rules={table.rules}
                 selectRuleGroup={selectRuleGroup}
                 selectedRuleGroup={selectedRuleGroup}
+                wormhole={wormhole}
+                isTurn={isTurn()}
+                cooldown={locationCooldown}
+                setCooldown={setLocationCooldown}
             />
             {
             user?.uid === table.turn.player
@@ -1474,7 +1499,8 @@ export default function Game() {
                 />
             }
             {
-            localPlayer.hand.length && !turn.temporary.hand.length
+            (localPlayer.hand.length && !turn.temporary.hand.length)
+            || !isTurn()
             ?
             <HandOfCards 
                 selectCard={selectCard}
@@ -1484,6 +1510,8 @@ export default function Game() {
             }
             {
                 turn.temporary.hand.length
+                &&
+                isTurn()
                 &&
                 <HandOfCards
                     selectCard={selectCard}

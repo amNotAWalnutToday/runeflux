@@ -861,8 +861,8 @@
             "type": "COUNTER",
             "subtype": "",
             "name": "Veto!",
-            "effects": ["RULESTOP_OR_RULE_RESET_2"],
-            "text": "Out of turn, stop another player while they are playing a rule card, during your turn reset up to 2 rules."
+            "effects": ["RULESTOP_OR_RULE_RESET_3"],
+            "text": "Out of turn, stop another player while they are playing a rule card, during your turn reset up to 3 rules."
         },
         {
             "id": "CO06",
