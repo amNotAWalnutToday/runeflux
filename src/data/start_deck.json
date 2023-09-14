@@ -817,6 +817,14 @@
             "text": "Draw 2 cards and immediately use them."
         },
         {
+            "id": "A14",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Summon Ghost",
+            "effects": ["SUMMON_GHOST"],
+            "text": "Summon a ghost to add to your keepers."
+        },
+        {
             "id": "CO01",
             "type": "COUNTER",
             "subtype": "",

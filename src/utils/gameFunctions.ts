@@ -225,6 +225,15 @@ export default (() => {
         return {state: players[0], index: 0};
     }
 
+    const getCardById = (cardId: string) => {
+        for(const card of startDeckData.startDeck) {
+            if(cardId === card.id) {
+                return card;
+            }
+        }
+        return startDeckData.startDeck[0];
+    }
+
     const getInitRule = (key: string): number | string | boolean => {
         const startingRules: {[key: string]: number | string | boolean} = startRuleData
         for(const rule in startingRules) {
@@ -259,6 +268,20 @@ export default (() => {
             if(card.type === "CREEPER") creepers.push(card);
         }
         return creepers;
+    }
+
+    const checkPlayersForKeeper = (players: PlayerSchema[], keeperId: string) => {
+        const match = { keeper: <CardSchema | null> null, index: 0, playerIndex: 0 }; 
+        players.forEach((player, playerIndex) => {
+            player.keepers.forEach((keeper, cardIndex) => {
+                if(keeper.id === keeperId) {
+                    match.keeper = keeper;
+                    match.index = cardIndex;
+                    match.playerIndex = playerIndex;
+                }
+            });
+        });
+        return match;
     }
 
     const drawPhase = (
@@ -322,10 +345,12 @@ export default (() => {
         upload,
         uploadTable,
         getPlayer,
+        getCardById,
         getInitRule,
         chooseWhoGoesFirst,
         checkShouldDiscard,
         checkForCreepers,
+        checkPlayersForKeeper,
         drawPhase,
         removeCard,
         shuffleDeck,

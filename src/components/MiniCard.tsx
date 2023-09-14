@@ -31,7 +31,7 @@ export default function MiniCard({
     return isSideWays ? (
         <div  
             className={`card__mini ${cardState.state.type.toLowerCase()} ${checkSelected() ? "selected" : ""}`}
-            style={(cardState.state.effects && !cardState.state.cooldown) ? {boxShadow: "0px 4px 8px springgreen"} : {}}
+            style={(cardState.state.effects && !cardState.state.cooldown) ? {background: "var(--black-shine)"} : {} }
             onClick={!cardState.state.attachment ? () => inspectKeeper(cardState)
                 : (e) => e.preventDefault()
             }
@@ -43,7 +43,11 @@ export default function MiniCard({
         >
             <div className='card_container__inner_left'>
                 <div className={`card_header__background`} >
-                    <h4 className='card_header__text' >{cardState.state.name.split(" ").join("_")}</h4>
+                    <h4 className='card_header__text'
+                        style={cardState.state.name.length > 10 ? {fontSize: "10px"} : {}}
+                    >
+                        {cardState.state.name.split(" ").join("_")}
+                    </h4>
                 </div>
             </div>
             <div className="card_container__inner_right" >

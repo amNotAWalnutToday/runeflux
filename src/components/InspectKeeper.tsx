@@ -17,6 +17,7 @@ type Props = {
     discardKeeper: (cardIndex: number, addToDiscard?: boolean) => void,
     inspectKeeper: (card: {state: CardSchema, index: number} | null) => void,
     selectedKeeperGroup: { state: CardSchema, index: number, playerIndex: number }[],
+    selectedPlayerGroup: PlayerSchema[],
 }
 
 export default function InspectKeeper({
@@ -27,6 +28,7 @@ export default function InspectKeeper({
     discardKeeper,
     inspectKeeper,
     selectedKeeperGroup,
+    selectedPlayerGroup,
 }: Props) {
     const { user } = useContext(UserContext);
 
@@ -39,7 +41,6 @@ export default function InspectKeeper({
         const player = getPlayer(table.players, user?.uid ?? '');
 
         if(cardState.state.id === "KE04") {
-            console.log(selectedKeeperGroup[0]);
             if(!selectedKeeperGroup.length) return false;
             if(selectedKeeperGroup[0].state.subtype !== "LIVING"
             || selectedKeeperGroup[0].playerIndex === player.index) return false;
@@ -51,6 +52,9 @@ export default function InspectKeeper({
             if(!selectedKeeperGroup.length) return false;
             if(selectedKeeperGroup[0].state.subtype !== "RUNE"
             || selectedKeeperGroup[0].playerIndex === player.index) return false;
+        } else if(cardState.state.id === "KE05") {
+            if(!selectedPlayerGroup.length) return false;
+            if(selectedPlayerGroup[0].user.uid === player.state.user.uid) return false;
         }
 
         return true;

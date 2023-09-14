@@ -3,6 +3,7 @@
   --black: #111;
   --black-fade: #1119;
   --black-fade-light: #121212df;
+  --black-shine: radial-gradient(#121212, #122);
   --white-fade: #fbfdfb99;
   --white: #fbfdfe;
   --light-pink: #faf;
@@ -468,7 +469,7 @@ a:hover,
   white-space: nowrap;
   padding: 0 1rem;
   background-color: #1238;
-  box-shadow: 0px 0px 1px black;
+  box-shadow: inset 0px 1px 32px black;
 }
 
 .errors_container {

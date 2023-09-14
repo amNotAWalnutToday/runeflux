@@ -24,11 +24,13 @@ import InspectKeeper from '../components/InspectKeeper';
 const { 
     loadGame, 
     getPlayer,
+    getCardById,
     getInitRule, 
     connectGame, 
     chooseWhoGoesFirst,
     checkShouldDiscard,
     checkForCreepers,
+    checkPlayersForKeeper,
     endTurn,
     upload,
     uploadTable,
@@ -1195,7 +1197,36 @@ export default function Game() {
                     upload: uploadProps
                 }
             });
-        }
+        } else if(card.effects.includes("STEAL_RUNE_CROSSBOW")) {
+            const keeper = checkPlayersForKeeper(players, "KE04");
+            if(!keeper.keeper) return;
+            const updatedKeepers = removeCard(players[keeper.playerIndex].keepers, keeper.index);
+            dispatchPlayers({
+                type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__REMOVE,
+                payload: {
+                    playerId: players[keeper.playerIndex].user.uid,
+                    cards: updatedKeepers,
+                    upload: uploadProps
+                }
+            });
+            dispatchPlayers({
+                type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__ADD,
+                payload: {
+                    playerId: user?.uid ?? '',
+                    cards: [keeper.keeper],
+                    upload: uploadProps,
+                }
+            });
+        } else if(card.effects.includes("SUMMON_GHOST")) {
+            dispatchPlayers({
+                type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__ADD,
+                payload: {
+                    playerId: user?.uid ?? '',
+                    cards: [getCardById("KL02")],
+                    upload: uploadProps
+                }
+            });
+        } 
         resetGroups();
     }
 
@@ -1235,6 +1266,26 @@ export default function Game() {
             teleport();
         } else if(keeperId === "KR02") {
             wormhole(1, 0);
+        } else if(keeperId === "KE05") {
+            const ran = Math.floor(Math.random() * selectedPlayerGroup[0].hand.length);
+            const card = selectedPlayerGroup[0].hand[ran];
+            dispatchPlayers({
+                type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
+                payload: {
+                    playerId: user?.uid ?? '',
+                    cards: [card],
+                    upload: uploadProps
+                }
+            });
+            const updatedHand = removeCard(selectedPlayerGroup[0].hand, ran);
+            dispatchPlayers({
+                type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__REMOVE,
+                payload: {
+                    playerId: selectedPlayerGroup[0].user.uid,
+                    cards: [...updatedHand],
+                    upload: uploadProps
+                }
+            });
         } else if(keeperId === "KL07" || keeperId === "KR07" || keeperId === "KE04") {
             playCard({
                 "id": "AF01",
@@ -1244,6 +1295,17 @@ export default function Game() {
                 "effects": ["DESTROY_1"],
                 "text": "DESTROY!"
             }, -1);
+        } else if(keeperId === "KL10") {
+            playCard({
+                "id": "AF02",
+                "type": "ACTION",
+                "subtype": "",
+                "name": "STEAL RCB",
+                "effects": ["STEAL_RUNE_CROSSBOW"],
+                "text": "STEAL!, STEAL!, STEAL!"
+            }, -1);
+        } else if(keeperId === "KE01") {
+            playCard(getCardById("A14"), -1);
         }
 
         dispatchPlayers({
@@ -1259,7 +1321,32 @@ export default function Game() {
         inspectKeeper(null);
     }
 
+    const warp = () => {
+        const warper = checkPlayersForKeeper(players, "KL12");
+        if(!warper.keeper) return;
+        const ran = Math.floor(Math.random() * players.length);
+        if(ran === warper.playerIndex) return;
+        dispatchPlayers({
+            type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__ADD,
+            payload: {
+                playerId: players[ran].user.uid,
+                cards: [warper.keeper],
+                upload: uploadProps
+            }
+        });
+        const updatedKeepers = removeCard(players[warper.playerIndex].keepers, warper.index);
+        dispatchPlayers({
+            type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__REMOVE,
+            payload: {
+                playerId: players[warper.playerIndex].user.uid,
+                cards: [...updatedKeepers],
+                upload: uploadProps
+            }
+        })
+    }
+
     const endTurnHandler = () => {
+        warp();
         const thisPlayer = getPlayer(players, user?.uid ?? '');
         thisPlayer.state.keepers.forEach((keeper, ind) => {
             if(keeper.cooldown) {
@@ -1315,13 +1402,13 @@ export default function Game() {
                         type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
                         payload: {
                             playerId: user?.uid ?? '',
-                            cards: [         {
-                                "id": "KL07",
+                            cards: [        {
+                                "id": "KL12",
                                 "type": "KEEPER",
                                 "subtype": "LIVING",
-                                "name": "Archmage Sedridor",
-                                "effects": ["DESTROY_1"],
-                                "text": "Once per turn, choose one rune keeper to destroy."
+                                "name": "Imp",
+                                "effects": ["WARP"],
+                                "text": "At the end of a players turn or when discarded teleport to another player."
                             },],
                             upload: uploadProps
                         }
@@ -1383,6 +1470,7 @@ export default function Game() {
                     discardKeeper={discardKeeper}
                     inspectKeeper={inspectKeeper}
                     selectedKeeperGroup={selectedKeeperGroup}
+                    selectedPlayerGroup={selectedPlayerGroup}
                 />
             }
             {
