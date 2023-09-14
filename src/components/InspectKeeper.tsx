@@ -1,9 +1,13 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import CardSchema from "../schemas/cardSchema";
 import Card from "./Card";
 import ErrorMessage from "./ErrorMessage";
 import GameSchema from "../schemas/gameSchema";
 import PlayerSchema from "../schemas/playerSchema";
+import gameFunctions from "../utils/gameFunctions";
+import UserContext from "../data/Context";
+
+const { getPlayer } = gameFunctions;
 
 type Props = {
     cardState: { state: CardSchema, index: number },
@@ -12,6 +16,7 @@ type Props = {
     playEffect: (keeperId: string, keeperIndex: number) => void,
     discardKeeper: (cardIndex: number, addToDiscard?: boolean) => void,
     inspectKeeper: (card: {state: CardSchema, index: number} | null) => void,
+    selectedKeeperGroup: { state: CardSchema, index: number, playerIndex: number }[],
 }
 
 export default function InspectKeeper({
@@ -21,11 +26,35 @@ export default function InspectKeeper({
     playEffect,
     discardKeeper,
     inspectKeeper,
+    selectedKeeperGroup,
 }: Props) {
+    const { user } = useContext(UserContext);
+
     const [playErrors, setPlayErrors] = useState<string[]>([]);
     const [discardErrors, setDiscardErrors] = useState<string[]>([]);
     const clearPlayErrors = () => setPlayErrors(() => []);
     const clearDiscardErrors = () => setDiscardErrors(() => []);
+
+    const checkUseIfNeedSelect = () => {
+        const player = getPlayer(table.players, user?.uid ?? '');
+
+        if(cardState.state.id === "KE04") {
+            console.log(selectedKeeperGroup[0]);
+            if(!selectedKeeperGroup.length) return false;
+            if(selectedKeeperGroup[0].state.subtype !== "LIVING"
+            || selectedKeeperGroup[0].playerIndex === player.index) return false;
+        } else if(cardState.state.id === "KR07") {
+            if(!selectedKeeperGroup.length) return false;
+            if(selectedKeeperGroup[0].state.subtype !== "EQUIPMENT"
+            || selectedKeeperGroup[0].playerIndex === player.index) return false;
+        } else if(cardState.state.id === "KL07") {
+            if(!selectedKeeperGroup.length) return false;
+            if(selectedKeeperGroup[0].state.subtype !== "RUNE"
+            || selectedKeeperGroup[0].playerIndex === player.index) return false;
+        }
+
+        return true;
+    }
 
     const checkIfPlayDisabled = () => {
         const isOnCooldown = cardState.state.cooldown ? true : false;
@@ -34,9 +63,9 @@ export default function InspectKeeper({
             ?  localPlayer.keepers[cardState.index].id === cardState.state.id
             : false);
         const isTurn = table.turn.player === localPlayer.user.uid;
-
-        if(isOnCooldown || !hasEffect || !isYours || !isTurn) {
-            return [isOnCooldown, hasEffect, isYours, isTurn];
+        const areConditionsCorrect = checkUseIfNeedSelect();
+        if(isOnCooldown || !hasEffect || !isYours || !isTurn || !areConditionsCorrect) {
+            return [isOnCooldown, hasEffect, isYours, isTurn, areConditionsCorrect];
         }
 
         return false;
@@ -55,6 +84,9 @@ export default function InspectKeeper({
         }
         if(errors[3] === false) {
             errorMessages.push("Please wait your turn..");
+        }
+        if(errors[4] === false) {
+            errorMessages.push("Select the correct kind of target.");
         }
         setPlayErrors(() => [...errorMessages]);
     }

@@ -781,9 +781,10 @@ export default function Game() {
             return resolvePlayCard(card, prevPending);
         }
         upload('PENDING', db, {cardState: card}, joinedGameID);
-        discardCardFromHand(indexInHand, checkShouldDiscard(card.type));
+        if(indexInHand > -1) discardCardFromHand(indexInHand, checkShouldDiscard(card.type));
         if(turn.player === user?.uid
-        && card.type !== "CREEPER") {
+        && card.type !== "CREEPER"
+        && indexInHand > -1) {
             dispatchTurn({
                 type: TURN_REDUCER_ACTION.PLAYED_ADD,
                 payload: {
@@ -1184,6 +1185,16 @@ export default function Game() {
             players.forEach((player, index) => {
                 drawCardsForPlayer(player.user.uid, 1, index);
             });
+        } else if(card.effects.includes("DESTROY_1")) {
+            const keepers = removeCard(players[selectedKeeperGroup[0].playerIndex].keepers, selectedKeeperGroup[0].index);
+            dispatchPlayers({
+                type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__REMOVE,
+                payload: {
+                    playerId: players[selectedKeeperGroup[0].playerIndex].user.uid,
+                    cards: [...keepers], 
+                    upload: uploadProps
+                }
+            });
         }
         resetGroups();
     }
@@ -1224,6 +1235,15 @@ export default function Game() {
             teleport();
         } else if(keeperId === "KR02") {
             wormhole(1, 0);
+        } else if(keeperId === "KL07" || keeperId === "KR07" || keeperId === "KE04") {
+            playCard({
+                "id": "AF01",
+                "type": "ACTION",
+                "subtype": "",
+                "name": "DESTROY",
+                "effects": ["DESTROY_1"],
+                "text": "DESTROY!"
+            }, -1);
         }
 
         dispatchPlayers({
@@ -1296,12 +1316,12 @@ export default function Game() {
                         payload: {
                             playerId: user?.uid ?? '',
                             cards: [         {
-                                "id": "KR02",
+                                "id": "KL07",
                                 "type": "KEEPER",
-                                "subtype": "RUNE",
-                                "name": "Chaos Rune",
-                                "effects": ["WORMHOLE"],
-                                "text": "Once per turn, choose to draw 1 and play it."
+                                "subtype": "LIVING",
+                                "name": "Archmage Sedridor",
+                                "effects": ["DESTROY_1"],
+                                "text": "Once per turn, choose one rune keeper to destroy."
                             },],
                             upload: uploadProps
                         }
@@ -1362,6 +1382,7 @@ export default function Game() {
                     playEffect={playKeeperEffect}
                     discardKeeper={discardKeeper}
                     inspectKeeper={inspectKeeper}
+                    selectedKeeperGroup={selectedKeeperGroup}
                 />
             }
             {
