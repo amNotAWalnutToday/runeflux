@@ -5,6 +5,7 @@ import roomFunctions from '../utils/roomFunctions'
 import UserContext from '../data/Context';
 import RoomSchema from '../schemas/RoomSchema';
 import UserSchema from '../schemas/userSchema';
+import Header from '../components/Header';
 
 export default function Lobby() {
     const { createRoom, getRooms, joinRoom, leaveRoom, destroyRoom, readyUp, connectRoom } = roomFunctions;
@@ -89,6 +90,9 @@ export default function Lobby() {
     
     return !joinedGameID ? (
         <div className='main_menu'>
+            <Header
+                pageType='LOBBY'
+            />
             <UserAccountBox />
             <div className='menu lobby'>
                 <div className='refresh_btn__container' >
