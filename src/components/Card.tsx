@@ -86,7 +86,6 @@ export default function Card({
             </div>
             <div className='card_container__inner_right'>
                 <h2>{cardState.state.type}</h2>
-                <p>Attaches to Living</p>
                 <h3>{cardState.state.name}</h3>
                 <hr className='card_hr__thick' />
                 <p>{cardState.state.type === "GOAL" ? mapGoalText() : cardState.state.text }</p>

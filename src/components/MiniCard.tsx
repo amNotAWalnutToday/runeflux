@@ -4,7 +4,7 @@ import Card from "./Card";
 type Props = {
     isSideWays: boolean,
     cardState: { state: CardSchema, index: number },
-    inspectKeeper: (card: { state: CardSchema, index: number } | null) => void,
+    inspectKeeper: (card: { state: CardSchema, index: number, playerIndex: number } | null) => void,
     selectedKeeperGroup?: { state: CardSchema, index: number, playerIndex: number }[],
     selectKeeperGroup?: (card: { state: CardSchema, index: number, playerIndex: number }) => void,
     playerNum?: number,
@@ -32,7 +32,10 @@ export default function MiniCard({
         <div  
             className={`card__mini ${cardState.state.type.toLowerCase()} ${checkSelected() ? "selected" : ""}`}
             style={(cardState.state.effects && !cardState.state.cooldown) ? {background: "var(--black-shine)"} : {} }
-            onClick={!cardState.state.attachment ? () => inspectKeeper(cardState)
+            onClick={!cardState.state.attachment ? () => { 
+                if(!playerNum) return;
+                inspectKeeper({...cardState, playerIndex: playerNum - 1})
+            }
                 : (e) => e.preventDefault()
             }
             onContextMenu={(e) => {

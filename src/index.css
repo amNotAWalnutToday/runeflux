@@ -14,6 +14,7 @@
   --golden: goldenrod;
   --gold: gold;
   --golden_highlight: rgba(184, 142, 35, 0.9);
+  --brown: rgba(114, 87, 18, 0.9);
   
   --outline_gold_inset: 2px inset var(--golden);
   --border_gold_outset: 2px outset var(--gold);
@@ -393,6 +394,10 @@ a:hover,
   border: 2px solid var(--white);
 }
 
+.full_width {
+  width: 100%;
+}
+
 .card_back {
   background-color: var(--black);
   border: 5px solid white;
@@ -403,12 +408,29 @@ a:hover,
   gap: 15rem;
 }
 
+.play_btn_group__card.length_3 {
+  gap: 0rem;
+}
+
 .play_btn__card {
   padding: 0.5rem 2rem 0.5rem 1rem;
   color: white;
   background-color: var(--golden_highlight);
   border: 2px solid var(--white);
   border-radius: 32px 0 0 32px;
+  text-align: center;
+}
+
+.play_btn__card.flipped {
+  border-radius: 0 32px 32px 0;
+}
+
+.challenge_btn__card {
+  padding: 0.5rem 2rem 0.5rem 1rem;
+  color: white;
+  background-color: var(--orange);
+  border: 2px solid var(--white);
+  border-radius: 0px 0 0 0px;
   text-align: center;
 }
 
@@ -444,6 +466,7 @@ a:hover,
 
 .play_btn__card.disabled,
 .discard_btn__card.disabled,
+.challenge_btn__card.disabled,
 .endturn_btn.disabled {
   background-color: #1119;
   opacity: 50%;
@@ -482,6 +505,25 @@ a:hover,
   padding: 0 1rem;
   background-color: #1238;
   box-shadow: inset 0px 1px 32px black;
+}
+
+.duel_group {
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+}
+
+.duel_group__middle {
+  align-self: center;
+}
+
+.duel_group_middle,
+.duel_group__right,
+.duel_group__left {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
 }
 
 .errors_container {

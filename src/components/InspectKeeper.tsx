@@ -10,12 +10,13 @@ import UserContext from "../data/Context";
 const { getPlayer } = gameFunctions;
 
 type Props = {
-    cardState: { state: CardSchema, index: number },
+    cardState: { state: CardSchema, index: number, playerIndex: number },
     table: GameSchema,
     localPlayer: PlayerSchema,
     playEffect: (keeperId: string, keeperIndex: number) => void,
+    startDuel: (victimId: string, card: {state: CardSchema, index: number, playerIndex: number}) => void,
     discardKeeper: (cardIndex: number, addToDiscard?: boolean) => void,
-    inspectKeeper: (card: {state: CardSchema, index: number} | null) => void,
+    inspectKeeper: (card: {state: CardSchema, index: number, playerIndex: number} | null) => void,
     selectedKeeperGroup: { state: CardSchema, index: number, playerIndex: number }[],
     selectedPlayerGroup: PlayerSchema[],
 }
@@ -25,6 +26,7 @@ export default function InspectKeeper({
     table, 
     localPlayer, 
     playEffect,
+    startDuel,
     discardKeeper,
     inspectKeeper,
     selectedKeeperGroup,
@@ -132,6 +134,20 @@ export default function InspectKeeper({
         setDiscardErrors(() => [...errorMessages]);
     }
 
+    const checkIfChallengeDisabled = () => {
+        const isTurn = user?.uid === table.turn.player;
+        const isYours = table.players[cardState.playerIndex].user.uid === user?.uid;
+        const isOnCooldown = table.turn.duel.cooldown;
+        const isCorrectLocation = table.rules.location === "WILDERNESS";
+
+        console.log(isTurn, isYours, isOnCooldown, isCorrectLocation);
+
+        if(!isTurn || isYours || isOnCooldown || !isCorrectLocation) {
+            return [isTurn, isYours, isOnCooldown, isCorrectLocation];
+        }
+        return false;
+    }
+
     const mapErrors = (errors: string[], clearErrors: () => void) => {
         return errors.map((message, ind) => {
             return (
@@ -154,7 +170,7 @@ export default function InspectKeeper({
                     cardState={cardState}
                     position={"SELECT"}
                 />
-                <div className="play_btn_group__card">
+                <div className={`play_btn_group__card length_${table.rules.location === "WILDERNESS" ? "3" : "2"}`}>
                     <div className="errors_container__play" >
                         {
                             playErrors.length
@@ -173,6 +189,21 @@ export default function InspectKeeper({
                     >
                         Use Effect
                     </button>
+                    {
+                    table.rules.location === "WILDERNESS"
+                    &&
+                    <button
+                        className={`challenge_btn__card ${table.pending || checkIfChallengeDisabled() ? "disabled" : ""}`}
+                        onClick={() => { 
+                            if(table.pending) return;
+                            const isError = checkIfChallengeDisabled();
+                            if(isError) return /**add later*/;
+                            startDuel(table.players[cardState.playerIndex].user.uid, cardState);
+                        }}
+                    >
+                        Challenge
+                    </button>
+                    }
                     <div className="errors_container__discard" >
                         {
                             discardErrors.length

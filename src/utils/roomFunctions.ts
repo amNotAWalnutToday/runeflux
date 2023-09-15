@@ -82,6 +82,17 @@ export default (() => {
                 temporary: {
                     hand: [],
                     play: 0,
+                },
+                duel: {
+                    cooldown: false,
+                    player1: {
+                        id: '',
+                        num: 0
+                    },
+                    player2: {
+                        id: '',
+                        num: 0,
+                    }
                 }
             },
             pending: false,

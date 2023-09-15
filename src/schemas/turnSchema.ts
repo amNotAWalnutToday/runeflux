@@ -7,7 +7,19 @@ type TurnSchema = {
     temporary: {
         hand: CardSchema[],
         play: number,
-    } 
+    },
+    duel: {
+        cooldown: boolean,
+        card: { state: CardSchema, index: number, playerIndex: number } | null,
+        player1: {
+            id: string,
+            num: number,
+        },
+        player2: {
+            id: string,
+            num: number,
+        }
+    }
 }
 
 export default TurnSchema;

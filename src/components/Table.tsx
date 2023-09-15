@@ -5,7 +5,7 @@ import MiniCard from "./MiniCard";
 
 type Props = {
     table: GameSchema,
-    inspectKeeper: (card: {state: CardSchema, index: number} | null) => void,
+    inspectKeeper: (card: {state: CardSchema, index: number, playerIndex: number} | null) => void,
     selectedKeeperGroup: { state: CardSchema, index: number, playerIndex: number }[],
     selectKeeperGroup: (card: { state: CardSchema, index: number, playerIndex: number }) => void,
     selectedGoalGroup: { state: CardSchema, index: number }[],

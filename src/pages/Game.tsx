@@ -20,6 +20,7 @@ import DeckSchema from '../schemas/deckSchema';
 import Table from '../components/Table';
 import Card from '../components/Card';
 import InspectKeeper from '../components/InspectKeeper';
+import Duel from '../components/Duel';
 
 const { 
     loadGame, 
@@ -163,6 +164,11 @@ const enum TURN_REDUCER_ACTION {
     TEMPORARY_HAND_CARD__ADD,
     TEMPORARY_HAND_CARD__REMOVE,
     TEMPORARY_PLAY_CHANGE,
+    DUEL_BEGIN,
+    DUEL_ROLL__PLAYER_1,
+    DUEL_ROLL__PLAYER_2,
+    DUEL_END,
+    DUEL_COOLDOWN,
 }
 
 type TURN_ACTIONS = {
@@ -170,7 +176,9 @@ type TURN_ACTIONS = {
     payload: {
         init?: TurnSchema,
         player?: string,
+        victim?: string,
         amount?: number,
+        duelCard?: { state: CardSchema, index: number, playerIndex: number },
         cards?: CardSchema[],
         upload: {
             db: Database,
@@ -180,9 +188,10 @@ type TURN_ACTIONS = {
 }
 
 const turnReducer = (state: TurnSchema, action: TURN_ACTIONS) => {
-    const { player, amount, cards, init } = action.payload;
+    const { player, victim, amount, duelCard, cards, init } = action.payload;
     const { db, gameId } = action.payload.upload; 
     const { temporary } = state;
+    const rollNum = Math.ceil(Math.random() * 100);
 
     switch(action.type) {
         case TURN_REDUCER_ACTION.INIT:
@@ -208,6 +217,21 @@ const turnReducer = (state: TurnSchema, action: TURN_ACTIONS) => {
         case TURN_REDUCER_ACTION.TEMPORARY_PLAY_CHANGE:
             upload("TURN", db, {turnState: Object.assign({}, state, {temporary: {...temporary, play: amount}})}, gameId);
             return Object.assign({}, state, {temporary: { ...temporary, play: amount }});
+        case TURN_REDUCER_ACTION.DUEL_BEGIN: 
+            upload("TURN", db, {turnState: Object.assign({}, state, {duel: {cooldown: true, card: duelCard, player1: {id: player, num: 0}, player2: { id: victim, num: 0 }}})}, gameId);
+            return Object.assign({}, state, {duel: {cooldown: true, card: duelCard, player1: { id: player, num: 0 }, player2: { id: victim, num: 0 }}});
+        case TURN_REDUCER_ACTION.DUEL_ROLL__PLAYER_1:
+            upload("TURN", db, {turnState: Object.assign({}, state, {duel: {...state.duel, player1: {...state.duel.player1, num: rollNum}}})}, gameId);
+            return Object.assign({}, state, {duel: {...state.duel, player1: {...state.duel.player1, num: rollNum}}});
+        case TURN_REDUCER_ACTION.DUEL_ROLL__PLAYER_2:
+            upload("TURN", db, {turnState: Object.assign({}, state, {duel: {...state.duel, player2: {...state.duel.player2, num: rollNum}}})}, gameId);
+            return Object.assign({}, state, {duel: {...state.duel, player2: {...state.duel.player2, num: rollNum}}});
+        case TURN_REDUCER_ACTION.DUEL_END:
+            upload("TURN", db, {turnState: Object.assign({}, state, {duel: {...state.duel, player1: {id: '', num: 0}, player2: {id: '', num: 0}}})}, gameId);
+            return Object.assign({}, state, {duel: {...state.duel, player1: {id: '', num: 0}, player2: {id: '', num: 0}}});
+        case TURN_REDUCER_ACTION.DUEL_COOLDOWN:
+            upload("TURN", db, {turnState: Object.assign({}, state, {duel: {...state.duel, cooldown: false}})}, gameId);
+            return Object.assign({}, state, {duel: {...state.duel, cooldown: false}});
         default:
             return state;
     }
@@ -357,7 +381,7 @@ export default function Game() {
     const [loading, setLoading] = useState(true);
     const [locationCooldown, setLocationCooldown] = useState(false);
     const [selectedCard, setSelectedCard] = useState<{state: CardSchema, index: number} | null>(null);
-    const [inspectedKeeper, setInspectedKeeper] = useState<{state: CardSchema, index: number} | null>(null);
+    const [inspectedKeeper, setInspectedKeeper] = useState<{state: CardSchema, index: number, playerIndex: number} | null>(null);
     const [selectedRuleGroup, setSelectedRuleGroup] = useState<string[]>([]);
     const [selectedPlayerGroup, setSelectedPlayerGroup] = useState<PlayerSchema[]>([]);
     const [selectedKeeperGroup, setSelectedKeeperGroup] = useState<{ state: CardSchema, index: number, playerIndex: number }[]>([]);
@@ -374,7 +398,7 @@ export default function Game() {
         }
     }
 
-    const inspectKeeper = (card: { state: CardSchema, index: number } | null) => {
+    const inspectKeeper = (card: { state: CardSchema, index: number, playerIndex: number } | null) => {
         setInspectedKeeper((prev) => {
             if(prev === null || card === null) return card;
             else return prev.state.name === card.state.name ? null : card;
@@ -579,6 +603,60 @@ export default function Game() {
             await startGame(db, joinedGameID);
         }
         setLoading(() => false);
+    }
+
+    const startDuel = (victimId: string, card: { state: CardSchema, index: number, playerIndex: number }) => {
+        dispatchTurn({
+            type: TURN_REDUCER_ACTION.DUEL_BEGIN,
+            payload: {
+                player: user?.uid, 
+                victim: victimId,
+                duelCard: card,
+                upload: uploadProps
+            }
+        });
+    }
+
+    const rollForDuel = () => {
+        const isPlayer1 = user?.uid === turn.duel.player1.id;
+        dispatchTurn({
+            type: (isPlayer1 
+                ? TURN_REDUCER_ACTION.DUEL_ROLL__PLAYER_1
+                : TURN_REDUCER_ACTION.DUEL_ROLL__PLAYER_2),
+            payload: {
+                upload: uploadProps,
+            }
+        })
+    }
+
+    const endDuel = (winnerId: string) => {
+        if(winnerId === turn.duel.player1.id) {
+            if(!turn.duel.card) return;
+            dispatchPlayers({
+                type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__ADD,
+                payload: {
+                    playerId: winnerId,
+                    cards: [turn.duel.card.state],
+                    upload: uploadProps,
+                }
+            });
+            const updatedKeepers = removeCard(players[turn.duel.card.playerIndex].keepers, turn.duel.card.index);
+            dispatchPlayers({
+                type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__REMOVE,
+                payload: {
+                    playerId: players[turn.duel.card.playerIndex].user.uid,
+                    cards: [...updatedKeepers],
+                    upload: uploadProps
+                }
+            });
+        }
+
+        dispatchTurn({
+            type: TURN_REDUCER_ACTION.DUEL_END,
+            payload: {
+                upload: uploadProps,
+            }
+        });
     }
 
     const drawCards = () => {
@@ -1393,6 +1471,12 @@ export default function Game() {
                 });
             }
         }
+        if(turn.duel.cooldown) {
+            dispatchTurn({
+                type: TURN_REDUCER_ACTION.DUEL_COOLDOWN,
+                payload: { upload: uploadProps }
+            });
+        }
         
         thisPlayer.state.keepers.forEach((keeper, ind) => {
             if(keeper.cooldown) {
@@ -1498,6 +1582,18 @@ export default function Game() {
                 setCooldown={setLocationCooldown}
             />
             {
+                turn.duel.player1.id
+                &&
+                turn.duel.player2.id
+                &&
+                <Duel
+                    turn={turn}
+                    players={players}
+                    rollForDuel={rollForDuel}
+                    endDuel={endDuel}
+                />
+            }
+            {
             user?.uid === table.turn.player
             && table.turn.drawn < table.rules.drawAmount
             &&
@@ -1525,6 +1621,7 @@ export default function Game() {
                     table={table}
                     localPlayer={localPlayer}
                     playEffect={playKeeperEffect}
+                    startDuel={startDuel}
                     discardKeeper={discardKeeper}
                     inspectKeeper={inspectKeeper}
                     selectedKeeperGroup={selectedKeeperGroup}

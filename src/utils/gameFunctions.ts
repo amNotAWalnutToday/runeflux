@@ -38,6 +38,18 @@ export default (() => {
                 hand: [],
                 play: 0,
             },
+            duel: {
+                cooldown: false,
+                card: null,
+                player1: {
+                    id: '',
+                    num: 0
+                },
+                player2: {
+                    id: '',
+                    num: 0,
+                }
+            }
         }
         return Object.assign({}, game, {rules: startRuleData, turn});
     }
