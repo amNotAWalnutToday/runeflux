@@ -10,12 +10,21 @@ import MainMenu from './pages/MainMenu';
 import Lobby from "./pages/Lobby";
 import Game from "./pages/Game";
 import Login from "./pages/Login";
+import Gameover from "./pages/Gameover";
+import PlayerSchema from './schemas/playerSchema';
+import CardSchema from './schemas/cardSchema';
 
 const app = initializeApp(firebaseConfig);
 
 export default function RouteSwitch() {
     const [user, setUser] = useState<UserSchema | undefined>();
     const [joinedGameID, setJoinedGameID] = useState("");
+
+    const [winGameStats, setWinGameStats] = useState<{winner: null | PlayerSchema, round: number, goal: CardSchema | null}>({
+        winner: null,
+        round: 0,
+        goal: null,
+    });
 
     const db = getDatabase(app, "https://flux-bbbdc-default-rtdb.europe-west1.firebasedatabase.app/");
     const auth = getAuth()
@@ -39,13 +48,23 @@ export default function RouteSwitch() {
                     <Route
                         path='/game'
                         element={
-                            <Game />
+                            <Game 
+                                setWinGameStats={setWinGameStats}
+                            />
                         }
                     />
                     <Route
                         path='/login'
                         element={
                             <Login />
+                        }
+                    />
+                    <Route
+                        path='/gameover'
+                        element={
+                            <Gameover 
+                                winGameStats={winGameStats}
+                            />
                         }
                     />
                 </Routes>

@@ -96,6 +96,7 @@ export default (() => {
                 }
             },
             pending: false,
+            isWon: false,
             round: 0,
         }
         for(const card of startDeckData.startDeck) {

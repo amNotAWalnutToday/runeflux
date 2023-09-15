@@ -13,6 +13,7 @@ interface GameSchema {
     pending: CardSchema | boolean,
     counter: CardSchema | boolean,
     round: number,
+    isWon: boolean,
 }
 
 export default GameSchema;

@@ -517,6 +517,14 @@ a:hover,
   align-self: center;
 }
 
+.flex_j {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  text-align: center;
+  justify-content: space-around;
+}
+
 .duel_group_middle,
 .duel_group__right,
 .duel_group__left {

@@ -362,7 +362,15 @@ const goalReducer = (state: CardSchema[], action: GOAL_ACTIONS) => {
     }
 }
 
-export default function Game() {
+type Props = {
+    setWinGameStats: React.Dispatch<React.SetStateAction<{
+        winner: PlayerSchema | null;
+        round: number;
+        goal: CardSchema | null,
+    }>>
+}
+
+export default function Game({setWinGameStats}: Props) {
     const { startGame, checkGameInProgress } = roomFunctions;
 
     const navigate = useNavigate();
@@ -467,12 +475,28 @@ export default function Game() {
     }, [deck]);
 
     useEffect(() => {
+        if(table.isWon) {
+            let winner = { state: {} as PlayerSchema, index: 0 };
+            let goalWon: CardSchema | null = null;
+            const winner1 = checkIfWon(players, goal[0], rules.location);
+            const winner2 = goal.length > 1 ? checkIfWon(players, goal[1], rules.location) : null;
+            if(winner1) winner = getPlayer(players, winner1);
+            else if(winner2) winner = getPlayer(players, winner2);
+            if(winner1) goalWon = goal[0];
+            else if(winner2) goalWon = goal[1]
+
+            setWinGameStats((prev) => {
+                return { ...prev, winner: winner.state ?? null, round: table.round, goal: goalWon }
+            });          
+            navigate('/gameover');
+        }
         setTable((prev) => {
             if(prev.turn.player !== turn.player) {
                 setSelectedCard(() => null);
             }
             return { ...prev, turn }
         });
+        /*eslint-disable-next-line*/
     }, [turn]);
 
     useEffect(() => {
@@ -526,6 +550,7 @@ export default function Game() {
         roundData: number,
         pendingData: CardSchema | false,
         counterData: CardSchema | false,
+        winData: boolean,
     ) => {
         if(!deckData.discard) deckData.discard = [];
         if(!deckData.pure) deckData.pure = [];
@@ -574,7 +599,7 @@ export default function Game() {
                 upload: uploadProps
             }
         });
-        setTable((prev) => ({...prev, round: roundData, pending: pendingData, counter: counterData}));
+        setTable((prev) => ({...prev, round: roundData, pending: pendingData, counter: counterData, isWon: winData}));
         setLocalPlayer((prev) => {
             return { ...prev, ...getPlayer(playerData, user?.uid ?? '').state }
         });
@@ -1509,7 +1534,9 @@ export default function Game() {
             goal2Winner = checkIfWon(players, goal[1], rules.location);
         }
 
-        if(goal1Winner || goal2Winner) navigate("/gameover"); 
+        if(goal1Winner || goal2Winner) {
+            upload('WIN', db, {}, joinedGameID);
+        } 
     }
 
     const mapPlayerBars = () => {

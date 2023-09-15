@@ -28,6 +28,7 @@ export default (() => {
             round: 0,
             pending: false,
             counter: false,
+            isWon: false,
         }
         for(const card of startDeckData.startDeck) {
             game.deck.pure.push(card);
@@ -68,6 +69,7 @@ export default (() => {
             roundData: number,
             pendingData: CardSchema | false,
             counterData: CardSchema | false,
+            winData: boolean,
         ) => void,
     ) => {
         try {
@@ -82,6 +84,7 @@ export default (() => {
                     data.round,
                     data.pending,
                     data.counter,
+                    data.isWon
                 );
             });
             await onValue(gameRef, async (snapshot) => {
@@ -94,6 +97,7 @@ export default (() => {
                     data.round,
                     data.pending,
                     data.counter,
+                    data.isWon,
                 );
             });
         } catch(e) {
@@ -142,6 +146,8 @@ export default (() => {
                 return uploadCounter(db, cardState ?? false, gameId)
             case "GOAL":
                 return uploadGoal(db, goalState ?? [], gameId);
+            case "WIN":
+                return uploadWin(db, gameId);
             default:
                 return uploadTable(db, gameState ?? {} as GameSchema, gameId);
         }
@@ -227,6 +233,15 @@ export default (() => {
         try {
             const goalRef = ref(db, `/games/${gameId}/game/goal`);
             await set(goalRef, cards?.length ? cards : false);
+        } catch(e) {
+            return console.error(e);
+        }
+    }
+
+    const uploadWin = async (db: Database, gameId: string) => {
+        try {
+            const winRef = ref(db, `/games/${gameId}/game/isWon`);
+            await set(winRef, true);
         } catch(e) {
             return console.error(e);
         }
