@@ -1,4 +1,4 @@
-import { Database, child, onValue, ref, set, get } from 'firebase/database';
+import { Database, child, onValue, remove, ref, set, get } from 'firebase/database';
 import startDeckData from '../data/start_deck.json';
 import startRuleData from '../data/start_rules.json';
 import UserSchema from '../schemas/userSchema';
@@ -114,6 +114,22 @@ export default (() => {
         connectRoom(db, user?.uid ?? '', user ?? {} as UserSchema, setRooms, setJoinedGameID, setIsAllReady);
     }
 
+    const destroyRoom = async (
+        db: Database,
+        roomId: string,
+        setJoinedGameID: React.Dispatch<React.SetStateAction<string>>,
+    ) => {
+        try {
+            const roomRef = ref(db, `/games/${roomId}`);
+            await remove(roomRef);
+            setJoinedGameID(() => {
+                return "";
+            });
+        } catch(e) {
+            return console.error(e);
+        }
+    }
+
     const getRooms = async (
         db: Database,
         uid: string,
@@ -163,6 +179,34 @@ export default (() => {
 
             setJoinedGameID(roomId);
             connectRoom(db, roomId, user, setRooms, setJoinedGameID, setIsAllReady);
+        });
+    }
+
+    const removePlayer = (players: PlayerSchema[] | UserSchema[], playerIndex: number) => {
+        const firstHalf = players.slice(0, playerIndex);
+        const lastHalf = players.slice(playerIndex + 1);
+        return firstHalf.concat(lastHalf);
+    }
+
+    const leaveRoom = (
+        db: Database,
+        roomId: string,
+        user: UserSchema,
+        setJoinedGameID: React.Dispatch<React.SetStateAction<string>>,
+    ) => {
+        const roomsRef = ref(db);
+        get(child(roomsRef, `/games/${roomId}/`)).then( async (snapshot) => {
+            const data = await snapshot.val();
+            const players = [...data.game.players];
+            const playerIndex = players.findIndex((e) => e.user.uid === user.uid);
+            const updatedPlayers = removePlayer(players, playerIndex);
+            await set(child(roomsRef, `/games/${roomId}/game/players`), updatedPlayers);
+
+            const users = [...data.users];
+            const userIndex = users.findIndex((e) => e.uid === user.uid);
+            const updatedUsers = removePlayer(users, userIndex);
+            await set(child(roomsRef, `/games/${roomId}/users`), updatedUsers);
+            setJoinedGameID(() => "");
         });
     }
 
@@ -236,8 +280,10 @@ export default (() => {
         convertGameToRoomGame,
         convertToRoomPlayer,
         createRoom,
+        destroyRoom,
         getRooms,
         joinRoom,
+        leaveRoom,
         connectRoom,
         readyUp,
         startGame,

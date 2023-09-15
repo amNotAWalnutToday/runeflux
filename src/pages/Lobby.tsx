@@ -7,7 +7,7 @@ import RoomSchema from '../schemas/RoomSchema';
 import UserSchema from '../schemas/userSchema';
 
 export default function Lobby() {
-    const { createRoom, getRooms, joinRoom, readyUp, connectRoom } = roomFunctions;
+    const { createRoom, getRooms, joinRoom, leaveRoom, destroyRoom, readyUp, connectRoom } = roomFunctions;
     const { db, user, joinedGameID, setJoinedGameID, setUser } = useContext(UserContext);
     const navigate = useNavigate();
 
@@ -56,8 +56,23 @@ export default function Lobby() {
             return (
                 <div
                     key={`lobby_player__${ind}`}
+                    className='lobby_player'
                 >
                     <p>{ind + 1}). {player.username} {player.isReady ? 'Ready' : 'Waiting' }</p>
+                    {
+                    user?.uid === player.uid
+                    &&
+                    <button
+                        className='menu_link'
+                        onClick={() => {
+                            if(!user) return;
+                            if(user.uid === joinedGameID) destroyRoom(db, joinedGameID, setJoinedGameID);
+                            else leaveRoom(db, joinedGameID, user, setJoinedGameID);
+                        }}
+                    >
+                        Leave
+                    </button>
+                    }
                 </div>
             )
         });
