@@ -9,7 +9,9 @@ import UserSchema from '../schemas/userSchema';
 import RuleSchema from '../schemas/ruleSchema';
 import DeckSchema from '../schemas/deckSchema';
 import roomFunctions from './roomFunctions';
+import goalFunctions from './goalFunctions';
 
+const { compareKeepersToGoal } = goalFunctions;
 const { convertGameToRoomGame, convertToRoomPlayer } = roomFunctions;
 
 export default (() => {
@@ -296,6 +298,30 @@ export default (() => {
         return match;
     }
 
+    const checkIfWon = (players: PlayerSchema[], goal: CardSchema, location: string) => {
+        const winner = {
+            playerId: "",
+            hasCreeper: false,
+            bypassCreeper: false,
+            hasWon: false, 
+        }
+
+        players.forEach((player) => {
+            player.keepers.forEach((keeper) => {
+                if(keeper.type === "CREEPER") winner.hasCreeper = true;
+            });
+            const { hasWon, bypassCreeper } = compareKeepersToGoal(player.keepers, goal, location);
+            
+            if(hasWon) {
+                winner.hasWon = hasWon;
+                winner.bypassCreeper = bypassCreeper;
+                winner.playerId = player.user.uid;
+            }
+        });
+
+        return winner.playerId !== "" ? winner.playerId : false;
+    }
+
     const drawPhase = (
         gameState: GameSchema,
     ) => {
@@ -363,6 +389,7 @@ export default (() => {
         checkShouldDiscard,
         checkForCreepers,
         checkPlayersForKeeper,
+        checkIfWon,
         drawPhase,
         removeCard,
         shuffleDeck,

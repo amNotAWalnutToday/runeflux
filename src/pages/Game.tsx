@@ -32,6 +32,7 @@ const {
     checkShouldDiscard,
     checkForCreepers,
     checkPlayersForKeeper,
+    checkIfWon,
     endTurn,
     upload,
     uploadTable,
@@ -1450,6 +1451,8 @@ export default function Game() {
     }
 
     const endTurnHandler = () => {
+        if(goal.length) win();
+
         warp();
         setLocationCooldown(() => false);
 
@@ -1499,6 +1502,16 @@ export default function Game() {
         }
     }
 
+    const win = () => {
+        const goal1Winner = checkIfWon(players, goal[0], rules.location);
+        let goal2Winner;
+        if(rules.location === "ASGARNIA") {
+            goal2Winner = checkIfWon(players, goal[1], rules.location);
+        }
+
+        if(goal1Winner || goal2Winner) navigate("/gameover"); 
+    }
+
     const mapPlayerBars = () => {
         return table.players.map((player: PlayerSchema, ind: number) => {
             return (
@@ -1532,14 +1545,28 @@ export default function Game() {
                         type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
                         payload: {
                             playerId: user?.uid ?? '',
-                            cards: [          {
-                                "id": "RL06",
+                            cards: [         {
+                                "id": "KR02",
+                                "type": "KEEPER",
+                                "subtype": "RUNE",
+                                "name": "Chaos Rune",
+                                "effects": ["WORMHOLE"],
+                                "text": "Once per turn, choose to draw 1 and play it."
+                            },{
+                                "id": "RL02",
                                 "type": "RULE",
                                 "subtype": "LOCATION",
-                                "name": "Entrana",
-                                "effects": ["LOCATION", "ENTRANA"],
-                                "text": "When this card is in play, on arrival everyone must discard all equipment/rune keepers in play."
-                            },],
+                                "name": "Abyss",
+                                "effects": ["LOCATION", "ABYSS"],
+                                text: "",
+                        },        {
+                            "id": "G31",
+                            "type": "GOAL",
+                            "subtype": "",
+                            "name": "Chaos",
+                            "effects": [],
+                            "text": "Collection Type: |Abyss|, |Chaos Rune|"
+                        },],
                             upload: uploadProps
                         }
                     });
