@@ -14,6 +14,7 @@
   --golden: goldenrod;
   --gold: gold;
   --golden_highlight: rgba(184, 142, 35, 0.9);
+  --golden_fade: var(--orange);
   --brown: rgba(114, 87, 18, 0.9);
   
   --outline_gold_inset: 2px inset var(--golden);
@@ -74,12 +75,17 @@ body {
   gap: 1rem;
   padding: 1.5rem 2.5rem;
   min-width: 320px;
+  max-width: 600px;
   outline: var(--outline_gold_inset);
   outline-offset: 2px;
   border: var(--border_gold_outset);
   border-radius: 3px;
   background-color: var(--black);
   box-shadow: 0px 12px 32px var(--black);
+}
+
+.menu.lobby {
+  min-width: 600px;
 }
 
 .menu_link {
@@ -90,9 +96,35 @@ body {
   text-align: center;
 }
 
+.room_link {
+  background-color: var(--golden_highlight);
+  border-radius: 6px;
+  border: 2px solid white;
+  text-align: center;
+  padding: 0.5rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.lobby_link {
+  padding: 0.5rem 2rem;
+  color: white;
+  background-color: var(--golden_fade);
+  border: 2px solid var(--white);
+  border-radius: 32px;
+  text-align: center;
+}
+
+.lobby_link.disabled {
+  background-color: #0000;
+}
+
 button:not(.disabled):hover,
 a:hover,
-.menu_link:hover {
+.menu_link:hover,
+.lobby_link:hover,
+.room_link:hover {
   filter: brightness(80%);
   cursor: pointer;
 }
@@ -115,6 +147,27 @@ a:hover,
 .lobby_player {
   display: flex;
   gap: 2rem;
+}
+
+.refresh_btn__container {
+  display: flex;
+  justify-content: flex-end;
+  height: 0px;
+}
+
+.refresh_btn {
+  background: url('./assets/refresh.png');
+  background-size: contain;
+  width: 25px;
+  height: 25px;
+  background-color: springgreen;
+  border-radius: 50%;
+  transform: translate(30px, -15px);
+}
+
+.refresh_btn.disabled {
+  background-color: crimson;
+  animation: spin 1s infinite linear;
 }
 
 .game_container {
@@ -469,6 +522,7 @@ a:hover,
   transition: padding 0.75s ease-in-out;
 }
 
+.lobby_link.disabled,
 .play_btn__card.disabled,
 .discard_btn__card.disabled,
 .challenge_btn__card.disabled,
@@ -595,6 +649,15 @@ a:hover,
   }
 }
 
+@keyframes spin {
+  from {
+    transform: translate(30px, -15px) rotateZ(0deg);
+  }
+  to {
+    transform: translate(30px, -15px) rotateZ(360deg);
+  }
+}
+
 .hand_card {
   transition: transform ease-out 0.2s;
 }
@@ -606,4 +669,21 @@ a:hover,
 
 .rule.highlight {
   border: 2px dashed var(--golden_highlight);
+}
+
+.ready_mark {
+  background-size: contain;
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  margin: 0 1rem;
+  transform: translateY(5px);
+}
+
+.check {
+  background: url("./assets/check.png");
+}
+
+.cross {
+  background: url("./assets//close.png");
 }
