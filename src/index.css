@@ -554,6 +554,7 @@ a:hover,
   transition: padding 0.75s ease-in-out;
 }
 
+.menu_link.disabled,
 .lobby_link.disabled,
 .play_btn__card.disabled,
 .discard_btn__card.disabled,

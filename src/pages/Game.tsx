@@ -10,6 +10,7 @@ import TurnSchema from '../schemas/turnSchema';
 import PlayerSchema from '../schemas/playerSchema';
 import gameFunctions from '../utils/gameFunctions';
 import roomFunctions from '../utils/roomFunctions';
+import accountFunctions from '../utils/accountFunctions';
 import DrawCard from '../components/DrawCard';
 import UserAccountBox from '../components/UserAccountBox';
 import HandOfCards from '../components/HandOfCards';
@@ -40,6 +41,8 @@ const {
     drawPhase,
     removeCard,
 } = gameFunctions;
+
+const { uploadStats } = accountFunctions;
 
 const enum RULE_REDUCER_ACTIONS {
     INIT,
@@ -375,7 +378,7 @@ export default function Game({setWinGameStats}: Props) {
 
     const navigate = useNavigate();
 
-    const { db, user, joinedGameID } = useContext(UserContext);
+    const { db, user, joinedGameID, setUser } = useContext(UserContext);
     const uploadProps = { db, gameId: joinedGameID }
     
     /*GLOBAL STATE*/
@@ -882,6 +885,14 @@ export default function Game({setWinGameStats}: Props) {
         if(!card) return;
         if(card.subtype === "LOCATION" && rules.teleblock) return;
         const prevPending = table.pending ?? null;
+        if(user && card.type !== "GOAL") {
+            const playedAmount = user.cardCatalog[`${card.id}`] + 1;
+            setUser((prev) => {
+                if(!prev) return;
+                return {...prev, cardCatalog: Object.assign({}, prev?.cardCatalog, {[`${card.id}`]: playedAmount})}
+            });
+            uploadStats("CARD", db, {cardKey: card.id, cardNum: playedAmount}, user?.uid);
+        }
         if(turn.player !== user?.uid) {
             upload("COUNTER", db, {cardState: card}, joinedGameID);
             discardCardFromHand(indexInHand, checkShouldDiscard(card.type));
