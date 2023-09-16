@@ -29,7 +29,7 @@ export default function Header({pageType}: Props) {
                 <button
                     className={`header_btn ${pageType === "CATALOG" ? "selected" : ""}`}
                     onClick={() => {
-                        navigate('/');
+                        navigate('/catalog');
                     }}
                 >
                     Card Catalog

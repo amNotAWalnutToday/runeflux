@@ -3,7 +3,7 @@ import CardSchema from "../schemas/cardSchema";
 
 type Props = {
     cardState: { state: CardSchema, index: number },
-    position: "HAND" | "SELECT" | "PENDING" | "TABLE" | "CREEPER",
+    position: "HAND" | "SELECT" | "PENDING" | "TABLE" | "CREEPER" | "CATALOG",
     numberInLine?: number,
     inspectKeeper?: (card: { state: CardSchema, index: number } | null) => void,
     selectCard?: (card: { state: CardSchema, index: number } | null) => void,

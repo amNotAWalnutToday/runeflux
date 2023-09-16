@@ -2,6 +2,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from "../components/Header"
 import UserContext from '../data/Context';
+import UserAccountBox from '../components/UserAccountBox';
 import accountFunctions from '../utils/accountFunctions';
 
 const { changeName } = accountFunctions;
@@ -55,6 +56,7 @@ export default function Account() {
             <Header 
                 pageType="ACCOUNT"
             />
+            <UserAccountBox/>
             <div className="menu" >
                 <div>
                     <h2 style={{textAlign: "center"}} >{user?.username}</h2>

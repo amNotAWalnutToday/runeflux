@@ -12,6 +12,7 @@ import Game from "./pages/Game";
 import Login from "./pages/Login";
 import Gameover from "./pages/Gameover";
 import Account from './pages/Account';
+import CardCatalog from './pages/CardCatalog';
 import PlayerSchema from './schemas/playerSchema';
 import CardSchema from './schemas/cardSchema';
 
@@ -72,6 +73,12 @@ export default function RouteSwitch() {
                         path='/account'
                         element={
                             <Account />
+                        }
+                    />
+                    <Route
+                        path='/catalog'
+                        element={
+                            <CardCatalog />
                         }
                     />
                 </Routes>
