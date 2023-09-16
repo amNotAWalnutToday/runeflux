@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import CardSchema from "../schemas/cardSchema";
+import UserContext from "../data/Context";
 
 type Props = {
     cardState: { state: CardSchema, index: number },
@@ -20,6 +21,8 @@ export default function Card({
     selectedGoalGroup,
     selectGoalGroup,
 }: Props) {
+    const { user } = useContext(UserContext);
+
     const [isHover, setIsHover] = useState(false);
     const [animation, setAnimation] = useState(position === "HAND");
 
@@ -40,6 +43,17 @@ export default function Card({
         return false;
     }
 
+    const getStyle = () => {
+        if(position === "HAND" || position === "SELECT" || position === "CATALOG") {
+            const playedAmount = user?.cardCatalog[`${cardState.state.id}`];
+            if(!playedAmount) return "";
+            if(playedAmount > 999) return "gtrim twilight";
+            else if(playedAmount > 499) return "gtrim";
+            else if(playedAmount > 249) return "strim";
+            else if(playedAmount > 49) return "btrim"
+        }
+    }
+
     const mapGoalText = () => {
         return cardState.state.text.split("|").map((segment, ind) => {
             return (
@@ -55,7 +69,7 @@ export default function Card({
 
     return cardState.state ? (
         <div 
-            className={`card ${cardState.state.type.toLowerCase()} ${position === "PENDING" ? "pending" : ""} ${position === "HAND" ? "hand_card": ""} ${checkGoalIsSelected() ? "goal_selected" : ""}`} 
+            className={`card ${getStyle()} ${cardState.state.type.toLowerCase()} ${position === "PENDING" ? "pending" : ""} ${position === "HAND" ? "hand_card": ""} ${checkGoalIsSelected() ? "goal_selected" : ""}`} 
             style={ position === "HAND" ? {transform: animation ?  origin : handPosition} 
                 : position === "CREEPER" ? {transform: "scale(0.3) translate(-300px, -100px)"} : {} 
             } 
