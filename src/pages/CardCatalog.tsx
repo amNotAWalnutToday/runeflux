@@ -48,6 +48,7 @@ export default function CardCatalog() {
             />
             <UserAccountBox />
             <CatalogSidebar 
+                filter={filter}
                 filterByType={filterByType}
             />
             <div className='catalog'>
