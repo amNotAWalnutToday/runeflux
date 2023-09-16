@@ -23,6 +23,15 @@ export default function CardCatalog() {
             return type;
         });
     }
+    
+    const getCompletionPercentage = () => {
+        if(!user) return;
+        let cardsPlayed = 0;
+        for(const card in user?.cardCatalog) {
+            if(user?.cardCatalog[card] > 0) cardsPlayed++;
+        }
+        return cardsPlayed ? Math.round(start_deck.length / cardsPlayed) : 0;
+    }
 
     const mapCards = () => {
         if(!user) return;
@@ -50,6 +59,7 @@ export default function CardCatalog() {
             <CatalogSidebar 
                 filter={filter}
                 filterByType={filterByType}
+                completionPercentage={getCompletionPercentage()}
             />
             <div className='catalog'>
                 { mapCards() }

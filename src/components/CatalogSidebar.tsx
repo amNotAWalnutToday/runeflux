@@ -1,12 +1,19 @@
 type Props = {
     filterByType: (type: string) => void;
     filter: string,
+    completionPercentage: number,
 }
 
-export default function CatalogSidebar({filterByType, filter}: Props) {
+export default function CatalogSidebar({filterByType, filter, completionPercentage}: Props) {
     return (
         <div className="sidebar_container" >
             <ul>
+                <li 
+                    className={`maintype_li ${!filter ? "selected" : ""}`} 
+                    onClick={() => filterByType("")}
+                >
+                    {completionPercentage}% Completion
+                </li>
                 <section className="keeper_section" >
                     <li 
                         className={`maintype_li ${filter === "KEEPER" ? "selected" : ""}`}
