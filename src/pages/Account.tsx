@@ -3,9 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import Header from "../components/Header"
 import UserContext from '../data/Context';
 import UserAccountBox from '../components/UserAccountBox';
+import { icons } from '../data/icons.json';
 import accountFunctions from '../utils/accountFunctions';
 
-const { changeName } = accountFunctions;
+const { changeName, changeIcon } = accountFunctions;
 
 export default function Account() {
     const { user, db, setUser } = useContext(UserContext);
@@ -51,6 +52,30 @@ export default function Account() {
         return cardsPlayed;
     }
 
+    const mapIcons = () => {
+        return icons.map((icon, index) => {
+            return (
+                <button
+                    key={`icon__${index}`}
+                    className='icon_pick'
+                    onClick={async () => {
+                        if(!user) return;
+                        await changeIcon(db, icon, user?.uid);
+                        setUser((prev) => {
+                            if(!prev) return;
+                            return { ...prev, icon }
+                        });
+                    }}
+                >
+                    <div
+                        className={`${icon} ready_mark icon`}
+                    >
+                    </div>
+                </button>
+            )
+        })
+    }
+
     return (
         <div className="main_menu" style={{flexDirection: "row", gap: "5rem"}} >
             <Header 
@@ -59,7 +84,10 @@ export default function Account() {
             <UserAccountBox/>
             <div className="menu" >
                 <div>
-                    <h2 style={{textAlign: "center"}} >{user?.username}</h2>
+                    <h2 style={{textAlign: "center"}} >
+                        {user?.username}
+                        <span className={`icon ${user?.icon} ready_mark`} ></span>
+                    </h2>
                     <hr className='card_hr__thick'/>
                     <ul className='stat_list' >
                         <div className='stat_list' >
@@ -103,38 +131,46 @@ export default function Account() {
                     </ul>
                 </div>
             </div>
-            <div className='menu' >
-                {
-                showSetName
-                &&
-                <input 
-                    ref={usernameRef}
-                    style={{padding: "0.25rem"}}
-                    className='form_input'
-                    type="text" 
-                    maxLength={16}
-                    placeholder='Username..'
-                />
-                }
-                <button
-                    className='menu_link'
-                    onClick={() => {
-                        if(!showSetName) return setShowSetName(() => true);
-                        if(!usernameRef.current || !user) return;
-                        if(usernameRef.current.value.length < 3) return;
-                        changeName(db, usernameRef.current?.value, user?.uid);
-                        setShowSetName(() => false);
-                        setUser((prev) => {
-                            if(!prev) return;
-                            return {
-                                ...prev,
-                                username: usernameRef.current?.value ?? 'Anon'
-                            }
-                        });
-                    }}
-                >
-                    Change Name
-                </button>
+            <div className='menu account_options' >
+                <div >
+                    <h2 style={{textAlign: "center", marginBottom: "1rem"}} >Choose Icon</h2>
+                    <div className='icon_picker' >
+                        {mapIcons()}
+                    </div>
+                </div>
+                <div className='username_form' >
+                    {
+                    showSetName
+                    &&
+                    <input
+                        ref={usernameRef}
+                        style={{padding: "0.25rem"}}
+                        className='form_input'
+                        type="text"
+                        maxLength={16}
+                        placeholder='Username..'
+                    />
+                    }
+                    <button
+                        className='menu_link'
+                        onClick={() => {
+                            if(!showSetName) return setShowSetName(() => true);
+                            if(!usernameRef.current || !user) return;
+                            if(usernameRef.current.value.length < 3) return;
+                            changeName(db, usernameRef.current?.value, user?.uid);
+                            setShowSetName(() => false);
+                            setUser((prev) => {
+                                if(!prev) return;
+                                return {
+                                    ...prev,
+                                    username: usernameRef.current?.value ?? 'Anon'
+                                }
+                            });
+                        }}
+                    >
+                        Change Name
+                    </button>
+                </div>
             </div>
         </div>
     )

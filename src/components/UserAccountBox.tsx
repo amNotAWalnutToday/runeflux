@@ -36,7 +36,10 @@ export default function UserAccountBox({
                 selectPlayerGroup(player ?? {} as PlayerSchema);
             }}
         >
-            <p>{player?.user.username ?? "Not Signed In!"}</p>
+            <p>
+                {player?.user.username ?? "Not Signed In!"}
+                <span className={`${player?.user.icon} ready_mark`} ></span>
+            </p>
         </div>
     ) : (
         <div className="user_bar game_user__this_user">

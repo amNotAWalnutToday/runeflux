@@ -191,6 +191,12 @@ a:hover,
   cursor: pointer;
 }
 
+.username_form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 .form_container__inner {
   display: flex;
   justify-content: space-between;
@@ -311,6 +317,11 @@ a:hover,
   background-color: #faf;
 } */
 
+.account_options {
+  justify-content: space-between;
+  min-height: 592px;
+}
+
 .user_bars__container {
   position: absolute;
   left: 0;
@@ -321,7 +332,7 @@ a:hover,
 }
 
 .user_bar {
-  padding: 0.5rem 2.5rem;
+  padding: 0.5rem 2rem;
   background-color: #1119;
   border-radius: 0px 6px 6px 0px;
 }
@@ -825,4 +836,38 @@ a:hover,
 
 .cross {
   background: url("./assets//close.png");
+}
+
+.living_subtype {
+  background: url("./assets/living_subtype.png");
+  background-size: contain;
+}
+
+.rune_subtype {
+  background: url("./assets/rune_subtype.png");
+  background-size: cover;
+}
+
+.equipment_subtype {
+  background: url("./assets/equipment_subtype.png");
+  background-size: cover;
+}
+
+.icon {
+  background-size: contain;
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  margin: 0 1rem;
+}
+
+.icon_picker {
+  display: flex;
+  gap: 1rem;
+}
+
+.icon_pick {
+  padding: 0.5rem 0;
+  border: 1px solid white;
+  background-color: #111;
 }

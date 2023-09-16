@@ -1,6 +1,7 @@
 interface UserSchema {
     username: string,
     uid: string,
+    icon: string,
     isReady: boolean
     stats: {
         wins: number,

@@ -21,6 +21,7 @@ export default (() => {
                     const newUser: UserSchema = {
                         username: "Anon",
                         uid,
+                        icon: "",
                         isReady: false,
                         stats: {
                             wins: 0,
@@ -134,6 +135,15 @@ export default (() => {
         }
     }
 
+    const changeIcon = async (db: Database, icon: string, uid: string) => {
+        try {
+            const iconRef = ref(db, `/users/${uid}/icon`);
+            await set(iconRef, icon);
+        } catch(e) {
+            return console.log(e);
+        }
+    }
+
     const signout = async (auth: Auth) => {
         try {
             await signOut(auth);
@@ -156,6 +166,7 @@ export default (() => {
         createAccountAnon,
         uploadStats,
         changeName,
+        changeIcon,
         signout,
         testUserSignIn,
     }
