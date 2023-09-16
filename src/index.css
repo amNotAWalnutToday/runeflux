@@ -144,6 +144,34 @@ a:hover,
   border-radius: 6px;
 }
 
+.stat_list {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+}
+
+.stat_list li {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 0.5rem;
+}
+
+.stat_list li:hover {
+  background-color: var(--golden_highlight);
+}
+
+.li_header {
+  margin-bottom: 0.5rem;
+}
+
+.text_sm {
+  font-size: 8px;
+}
+
 .lobby_header {
   position: absolute;
   top: 0;
@@ -478,6 +506,11 @@ a:hover,
   color: black;
   transform: rotateZ(0);
   text-align: center;
+}
+
+.card_hr__thin {
+  border: 1px solid var(--white);
+  width: 100%;
 }
 
 .card_hr__thick {

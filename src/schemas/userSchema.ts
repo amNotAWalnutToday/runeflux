@@ -7,7 +7,8 @@ interface UserSchema {
         played: number,
         totalRounds: number,
     },
-    cardCatalog: {[key: string]: number}
+    cardCatalog: {[key: string]: number},
+    goalWins: {[key: string]: number}
 }
 
 export default UserSchema;

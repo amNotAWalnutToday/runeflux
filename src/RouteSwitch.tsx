@@ -11,6 +11,7 @@ import Lobby from "./pages/Lobby";
 import Game from "./pages/Game";
 import Login from "./pages/Login";
 import Gameover from "./pages/Gameover";
+import Account from './pages/Account';
 import PlayerSchema from './schemas/playerSchema';
 import CardSchema from './schemas/cardSchema';
 
@@ -65,6 +66,12 @@ export default function RouteSwitch() {
                             <Gameover 
                                 winGameStats={winGameStats}
                             />
+                        }
+                    />
+                    <Route
+                        path='/account'
+                        element={
+                            <Account />
                         }
                     />
                 </Routes>

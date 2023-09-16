@@ -37,7 +37,7 @@ export default function Gameover({winGameStats}: Props) {
         if(winner?.user.uid === user.uid) {
             const playedAmount = user?.cardCatalog[`${goal?.id}`] + 1;
             const winAmount = user.stats.wins + 1;
-            uploadStats("CARD", db, {cardKey: goal?.id, cardNum: playedAmount}, user.uid);
+            uploadStats("GOALWON", db, {cardKey: goal?.id, cardNum: playedAmount}, user.uid);
             uploadStats("WINS", db, {amount: winAmount}, user.uid);
             setUser((prev) => {
                 if(!prev) return;

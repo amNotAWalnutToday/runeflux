@@ -885,7 +885,7 @@ export default function Game({setWinGameStats}: Props) {
         if(!card) return;
         if(card.subtype === "LOCATION" && rules.teleblock) return;
         const prevPending = table.pending ?? null;
-        if(user && card.type !== "GOAL") {
+        if(user) {
             const playedAmount = user.cardCatalog[`${card.id}`] + 1;
             setUser((prev) => {
                 if(!prev) return;

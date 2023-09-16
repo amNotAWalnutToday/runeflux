@@ -1,4 +1,4 @@
-import { onAuthStateChanged, signInAnonymously, signOut } from 'firebase/auth';
+import { Auth, onAuthStateChanged, signInAnonymously, signOut } from 'firebase/auth';
 import { ref, set, get, child, Database } from 'firebase/database';
 import testsettings from '../../testsettings.json';
 import UserSchema from '../schemas/userSchema';
@@ -27,7 +27,8 @@ export default (() => {
                             played: 0,
                             totalRounds: 0
                         },
-                        cardCatalog: {}
+                        cardCatalog: {},
+                        goalWins: {}
                     }
                     for(const card of start_deck) {
                         newUser.cardCatalog[`${card.id}`] = 0;
@@ -74,6 +75,8 @@ export default (() => {
                 return uploadRounds(db, amount ?? NaN, uid);
             case "PLAYED":
                 return uploadPlayed(db, amount ?? NaN, uid);
+            case "GOALWON":
+                return uploadGoalWon(db, cardKey ?? '', cardNum ?? NaN, uid);
         }
     }
 
@@ -113,6 +116,32 @@ export default (() => {
         }
     }
 
+    const uploadGoalWon = async(db: Database, cardKey: string, cardNum: number, uid: string) => {
+        try {
+            const goalRef = ref(db, `/users/${uid}/goalWins/${cardKey}`);
+            await set(goalRef, cardNum);
+        } catch(e) {
+            return console.log(e);
+        }
+    }
+
+    const changeName = async (db: Database, name: string, uid: string) => {
+        try {
+            const usernameRef = ref(db, `users/${uid}/username`);
+            await set(usernameRef, name);
+        } catch(e) {
+            return console.log(e);
+        }
+    }
+
+    const signout = async (auth: Auth) => {
+        try {
+            await signOut(auth);
+        } catch(e) {
+            return console.error(e);
+        }
+    }
+
     const testUserSignIn = (username: string, pass: string, setter) => {
         let isUser = false;
         for(const user of testsettings.users) {
@@ -126,6 +155,8 @@ export default (() => {
     return {
         createAccountAnon,
         uploadStats,
-        testUserSignIn
+        changeName,
+        signout,
+        testUserSignIn,
     }
 })();
