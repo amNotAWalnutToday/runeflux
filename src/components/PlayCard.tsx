@@ -65,18 +65,31 @@ export default function PlayCard({
     }
 
     const checkIfCounterPlayDisabled = () => {
-        const { type, subtype } = table.pending && table.pending !== true ? table.pending : {type: "", subtype: ""};
+        const { type, subtype } = table.pending && table.pending !== true ? table.pending : {type: "", subtype: "", effects: []};
         const isCardNotInPlay = table.pending ? false : true;
         const canCounter = [];
         if(cardState.state.id === "CO01" && subtype === "LOCATION") canCounter.push(false);
         if(cardState.state.id === "CO02" && type === "GOAL") canCounter.push(false);
         if(cardState.state.id === "CO03" && type === "ACTION") canCounter.push(false);
-        if(cardState.state.id === "CO04" && type === "ACTION") canCounter.push(false);
+        if(cardState.state.id === "CO04" && checkKeeperCounterEffects()) canCounter.push(false);
         if(cardState.state.id === "CO05" && subtype === "BASIC") canCounter.push(false);
-        if(cardState.state.id === "CO06" && type === "ACTION") canCounter.push(false);
+        if(cardState.state.id === "CO06" && checkKeeperCounterEffects()) canCounter.push(false);
     
         if(isCardNotInPlay || !canCounter.length) {
             return [isCardNotInPlay, !canCounter.length ? false : true];
+        }
+        return false;
+    }
+
+    const checkKeeperCounterEffects = () => {
+        if(!cardState.state.effects) return;
+        if(!cardState.state.effects.length) return;
+        if(cardState.state.id === "CO04") {
+            if(cardState.state.effects.includes("STEAL_RUNE_CROSSBOW")
+            || cardState.state.effects.includes("KEEPER_STEAL_CHOOSE")) return true;
+        }
+        if(cardState.state.id === "CO06") {
+            if(cardState.state.effects.includes("DESTROY_1")) return true;
         }
         return false;
     }
@@ -90,11 +103,11 @@ export default function PlayCard({
         if(cardId === "A11" && !selectedKeeperGroup.length) return {error: false, warning: true};
         if(cardId === "A11" && table.players[selectedKeeperGroup[0].playerIndex].user.uid === user?.uid) return {error: true, warning: false};
         if(cardId === "A12" && selectedKeeperGroup.length < 2) return {warning: true, error: false};
-        if(cardId === "C04" && !selectedKeeperGroup.length) return {warning: true, error: false};
-        if(cardId === "C04" && table.players[selectedKeeperGroup[0].playerIndex].user.uid === user?.uid) return {error: true, warning: false};
-        if(cardId === "C05" && !selectedRuleGroup.length) return {warning: true, error: false};
-        if(cardId === "C06" && !selectedKeeperGroup.length) return {warning: true, error: false};
-        if(cardId === "C06" && table.players[selectedKeeperGroup[0].playerIndex].user.uid === user?.uid) return {error: true, warning: false};
+        if(cardId === "CO04" && !selectedKeeperGroup.length) return {warning: true, error: false};
+        if(cardId === "CO04" && table.players[selectedKeeperGroup[0].playerIndex].user.uid === user?.uid) return {error: true, warning: false};
+        if(cardId === "CO05" && !selectedRuleGroup.length) return {warning: true, error: false};
+        if(cardId === "CO06" && !selectedKeeperGroup.length) return {warning: true, error: false};
+        if(cardId === "CO06" && table.players[selectedKeeperGroup[0].playerIndex].user.uid === user?.uid) return {error: true, warning: false};
         
         return { warning: false, error: false };
     }
