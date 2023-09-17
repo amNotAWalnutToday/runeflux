@@ -1487,7 +1487,7 @@ export default function Game({setWinGameStats}: Props) {
 
     return (
         <div className='game_container' >
-            {/* <button
+            <button
                 className='menu_link'
                 onClick={() => {
                     // playActionCards({effects: ["RULE_RESET_CHOOSE"]} as CardSchema);
@@ -1503,29 +1503,27 @@ export default function Game({setWinGameStats}: Props) {
                         type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
                         payload: {
                             playerId: user?.uid ?? '',
-                            cards: [        {
-                                "id": "A04",
-                                "type": "ACTION",
+                            cards: [         {
+                                "id": "KL03",
+                                "type": "KEEPER",
+                                "subtype": "LIVING",
+                                "name": "Duke Horacio",
+                                "effects": [],
+                                "text": ""
+                            },        {
+                                "id": "KL08",
+                                "type": "KEEPER",
+                                "subtype": "LIVING",
+                                "name": "King Roald",
+                                "effects": [],
+                                "text": ""
+                            },        {
+                                "id": "G21",
+                                "type": "GOAL",
                                 "subtype": "",
-                                "name": "Trade Hands",
-                                "effects": ["TRADE_HANDS"],
-                                "text": "When played, choose a player to trade hands with."
-                            },
-                            {
-                                "id": "A05",
-                                "type": "ACTION",
-                                "subtype": "",
-                                "name": "Reset One Rule",
-                                "effects": ["RULE_RESET_CHOOSE"],
-                                "text": "When played, choose 1 rule to reset."
-                            },
-                            {
-                                "id": "A06",
-                                "type": "ACTION",
-                                "subtype": "",
-                                "name": "Reset half of rules(upto)",
-                                "effects": ["RULE_RESET_CHOOSE", "HALF", "OPTIONAL"],
-                                "text": "When played, choose up to half the rules to reset."
+                                "name": "Misthalins Nobility",
+                                "effects": [],
+                                "text": "Collection Type: |King Roald|, |Duke Horacio|"
                             },],
                             upload: uploadProps
                         }
@@ -1566,7 +1564,29 @@ export default function Game({setWinGameStats}: Props) {
                 }}
             >
                 action card function test
-            </button> */}
+            </button>
+            <button
+                onClick={() => {
+                    dispatchPlayers({
+                        type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
+                        payload: {
+                            playerId: "tqVobwETqdQmDbugQ8NIoGZA1ko2" ?? '',
+                            cards: [        {
+                                "id": "CR03",
+                                "type": "CREEPER",
+                                "subtype": "LIVING_CREEPER",
+                                "name": "Wizard Mind Bomb",
+                                "effects": [],
+                                "text": "A creeper that attaches to a living keeper disabling any use effects and preventing that player from winning."
+                            },
+                    ],
+                            upload: uploadProps
+                        }
+                    });
+                }}
+            >
+                seocnd coming
+            </button>
             {   
                 // !loading
                 // &&

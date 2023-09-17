@@ -389,18 +389,17 @@ export default (() => {
         }
 
         players.forEach((player) => {
-            player.keepers.forEach((keeper) => {
-                if(keeper.type === "CREEPER") winner.hasCreeper = true;
-            });
             const { hasWon, bypassCreeper } = compareKeepersToGoal(player.keepers, goal, location);
             
             if(hasWon) {
+                player.keepers.forEach((keeper) => {
+                    if(keeper.type === "CREEPER") winner.hasCreeper = true;
+                });
                 winner.hasWon = hasWon;
                 winner.bypassCreeper = bypassCreeper;
                 winner.playerId = player.user.uid;
             }
         });
-
         return (
             (winner.playerId !== "")
             && (!winner.hasCreeper)

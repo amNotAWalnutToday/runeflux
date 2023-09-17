@@ -54,10 +54,10 @@ export default function CardCatalog() {
 
     return (
         <div className='main_menu' >
+            <UserAccountBox />
             <Header 
                 pageType="CATALOG"
             />
-            <UserAccountBox />
             <CatalogSidebar 
                 filter={filter}
                 filterByType={filterByType}

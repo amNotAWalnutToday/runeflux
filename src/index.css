@@ -315,6 +315,7 @@ a:hover,
 
 .game_user__this_user {
   position: absolute;
+  z-index: 2;
   top: 0px;
   right: 0px;
 }

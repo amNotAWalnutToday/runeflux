@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { useNavigate, useBeforeUnload } from 'react-router-dom';
 import CardSchema from "../schemas/cardSchema";
 import PlayerSchema from "../schemas/playerSchema"
@@ -31,6 +31,25 @@ export default function Gameover({winGameStats}: Props) {
             destroyRoom(db, joinedGameID, setJoinedGameID);
         }
     });
+
+    useEffect(() => {
+        if(!user || !winner || !round || !goal) { 
+            continueHandler();
+            return navigate('/lobby');
+        }
+        /*eslint-disable-next-line*/
+    }, []);
+
+    const continueHandler = () => {
+        if(!user) return;
+        updateUser();
+        if(user?.uid === joinedGameID) {
+            destroyRoom(db, joinedGameID, setJoinedGameID);
+        } else {
+            leaveRoom(db, joinedGameID, user, setJoinedGameID);
+        }
+        navigate('/lobby');    
+    }
 
     const updateUser = () => {
         if(!user || !goal) return;
@@ -77,16 +96,7 @@ export default function Gameover({winGameStats}: Props) {
                         </div>
                         <button 
                             className="play_btn__card flipped" 
-                            onClick={() => {
-                                if(!user) return;
-                                updateUser();
-                                if(user?.uid === joinedGameID) {
-                                    destroyRoom(db, joinedGameID, setJoinedGameID);
-                                } else {
-                                    leaveRoom(db, joinedGameID, user, setJoinedGameID);
-                                }
-                                navigate('/lobby');
-                            }}
+                            onClick={continueHandler}
                         >
                             Continue
                         </button>
