@@ -5,6 +5,9 @@ import GameSchema from "../schemas/gameSchema"
 import Card from "./Card"
 import ErrorMessage from './ErrorMessage';
 import PlayerSchema from '../schemas/playerSchema';
+import gameFunctions from '../utils/gameFunctions';
+
+const { getInitRule } = gameFunctions;
 
 type Props = {
     cardState: { state: CardSchema, index: number },
@@ -13,6 +16,9 @@ type Props = {
     playCard: (card: CardSchema | false, indexInHand: number) => void,
     discardCard: (cardIndex: number) => void,
     fromWormhole?: boolean,
+    selectedKeeperGroup: { state: CardSchema, index: number, playerIndex: number }[],
+    selectedPlayerGroup: PlayerSchema[],
+    selectedRuleGroup: string[],
 }
 
 export default function PlayCard({
@@ -22,6 +28,9 @@ export default function PlayCard({
     playCard, 
     discardCard,
     fromWormhole,
+    selectedKeeperGroup,
+    selectedPlayerGroup,
+    selectedRuleGroup,
 }: Props) {
     const [playErrors, setPlayErrors] = useState<string[]>([]);
     const [discardErrors, setDiscardErrors] = useState<string[]>([]);
@@ -33,16 +42,22 @@ export default function PlayCard({
         if(!fromWormhole) {
             const hasPlayed = played >= table.rules.playAmount;
             const isTurn    = player === user?.uid;
+            const actionHasError = ((cardState.state.type === "ACTION" || cardState.state.type === "COUNTER") 
+                ? checkIfActionNeedsSelection(cardState.state.id).error 
+                : false);
 
-            if(hasPlayed || !isTurn) {
-                return [hasPlayed, isTurn];
+            if(hasPlayed || !isTurn || actionHasError) {
+                return [hasPlayed, isTurn, actionHasError];
             }
         } else {
             if(!temporary) return false;
             const hasPlayed = temporary?.play < 1;
+            const actionHasError = ((cardState.state.type === "ACTION" || cardState.state.type === "COUNTER") 
+                ? checkIfActionNeedsSelection(cardState.state.id).error 
+                : false);
 
-            if(hasPlayed) {
-                return [hasPlayed];
+            if(hasPlayed || actionHasError) {
+                return [hasPlayed, true, actionHasError];
             }
         } 
 
@@ -66,6 +81,24 @@ export default function PlayCard({
         return false;
     }
 
+    const checkIfActionNeedsSelection = (cardId: string) => {
+        if(cardId === "A04" && !selectedPlayerGroup.length) return {error: false, warning: true};
+        if(cardId === "A04" && selectedPlayerGroup[0].user.uid === user?.uid) return {error: true, warning: false};
+        if(cardId === "A05" && !selectedRuleGroup.length) return {error: false, warning: true};
+        // if(cardId === "A05" && table.rules[`${selectedRuleGroup[0]}`] === getInitRule(selectedRuleGroup[0])) return {warning: true, error: false};
+        if(cardId === "A06" && !selectedRuleGroup.length) return {error: false, warning: true};
+        if(cardId === "A11" && !selectedKeeperGroup.length) return {error: false, warning: true};
+        if(cardId === "A11" && table.players[selectedKeeperGroup[0].playerIndex].user.uid === user?.uid) return {error: true, warning: false};
+        if(cardId === "A12" && selectedKeeperGroup.length < 2) return {warning: true, error: false};
+        if(cardId === "C04" && !selectedKeeperGroup.length) return {warning: true, error: false};
+        if(cardId === "C04" && table.players[selectedKeeperGroup[0].playerIndex].user.uid === user?.uid) return {error: true, warning: false};
+        if(cardId === "C05" && !selectedRuleGroup.length) return {warning: true, error: false};
+        if(cardId === "C06" && !selectedKeeperGroup.length) return {warning: true, error: false};
+        if(cardId === "C06" && table.players[selectedKeeperGroup[0].playerIndex].user.uid === user?.uid) return {error: true, warning: false};
+        
+        return { warning: false, error: false };
+    }
+
     const displayPlayErrors = (errors: boolean[]) => {
         const errorMessages: string[] = [];
         if(errors[0]) {
@@ -78,6 +111,9 @@ export default function PlayCard({
             cardState.state.type === "COUNTER"
                 ? errorMessages.push("Doesn't counter that type of card.")
                 : errorMessages.push("Please wait for your turn.");
+        }
+        if(errors[2] === true) {
+            errorMessages.push("Cannot select groups pertaining to yourself.");
         }
         setPlayErrors(() => [...errorMessages]);
     }
@@ -141,7 +177,7 @@ export default function PlayCard({
                     }
                 </div>
                 <button 
-                    className={`play_btn__card ${(table.pending && cardState.state.type !== "COUNTER") || checkIfPlayDisabled() ? "disabled" : ""}`}
+                    className={`play_btn__card ${(table.pending && cardState.state.type !== "COUNTER") || checkIfPlayDisabled() ? "disabled" : ""} ${checkIfActionNeedsSelection(cardState.state.id).warning ? "warning" : ""}`}
                     onClick={() => {
                         if(table.pending && cardState.state.type !== "COUNTER") return;
                         const isError = checkIfPlayDisabled();

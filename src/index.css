@@ -652,6 +652,10 @@ a:hover,
   text-align: center;
 }
 
+.play_btn__card.warning {
+  background-color: var(--crimson);
+}
+
 .play_btn__card.flipped {
   border-radius: 0 32px 32px 0;
 }

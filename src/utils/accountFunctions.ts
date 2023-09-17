@@ -158,7 +158,7 @@ export default (() => {
             if(user.name.toLowerCase() === username
             && user.pass.toLowerCase() === pass) isUser = true;
         }
-        if(isUser) setter((prev) => ({...prev, username, uid: username, isReady: false }));
+        if(isUser) setter((prev) => ({...prev, username, uid: username, isReady: false, cardCatalog: {} }));
         return isUser;
     }
     

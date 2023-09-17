@@ -1584,28 +1584,30 @@ export default function Game({setWinGameStats}: Props) {
                         type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
                         payload: {
                             playerId: user?.uid ?? '',
-                            cards: [         {
-                                "id": "KR02",
-                                "type": "KEEPER",
-                                "subtype": "RUNE",
-                                "name": "Chaos Rune",
-                                "effects": ["WORMHOLE"],
-                                "text": "Once per turn, choose to draw 1 and play it."
-                            },{
-                                "id": "RL02",
-                                "type": "RULE",
-                                "subtype": "LOCATION",
-                                "name": "Abyss",
-                                "effects": ["LOCATION", "ABYSS"],
-                                text: "",
-                        },        {
-                            "id": "G31",
-                            "type": "GOAL",
-                            "subtype": "",
-                            "name": "Chaos",
-                            "effects": [],
-                            "text": "Collection Type: |Abyss|, |Chaos Rune|"
-                        },],
+                            cards: [        {
+                                "id": "A04",
+                                "type": "ACTION",
+                                "subtype": "",
+                                "name": "Trade Hands",
+                                "effects": ["TRADE_HANDS"],
+                                "text": "When played, choose a player to trade hands with."
+                            },
+                            {
+                                "id": "A05",
+                                "type": "ACTION",
+                                "subtype": "",
+                                "name": "Reset One Rule",
+                                "effects": ["RULE_RESET_CHOOSE"],
+                                "text": "When played, choose 1 rule to reset."
+                            },
+                            {
+                                "id": "A06",
+                                "type": "ACTION",
+                                "subtype": "",
+                                "name": "Reset half of rules(upto)",
+                                "effects": ["RULE_RESET_CHOOSE", "HALF", "OPTIONAL"],
+                                "text": "When played, choose up to half the rules to reset."
+                            },],
                             upload: uploadProps
                         }
                     });
@@ -1701,6 +1703,9 @@ export default function Game({setWinGameStats}: Props) {
                 playCard={turn.temporary.hand.length ? playTemporaryCard : playCard }
                 discardCard={turn.temporary.hand.length ? discardTemporaryCard : discardCardFromHand}
                 fromWormhole={turn.temporary.hand.length ? true : false}
+                selectedKeeperGroup={selectedKeeperGroup}
+                selectedPlayerGroup={selectedPlayerGroup}
+                selectedRuleGroup={selectedRuleGroup}
             />
             }
             {

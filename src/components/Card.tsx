@@ -44,6 +44,7 @@ export default function Card({
     }
 
     const getStyle = () => {
+        if(!user?.cardCatalog) return;
         if(position === "HAND" || position === "SELECT" || position === "CATALOG") {
             const playedAmount = user?.cardCatalog[`${cardState.state.id}`];
             if(!playedAmount) return "";
