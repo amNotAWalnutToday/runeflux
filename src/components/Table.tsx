@@ -1,7 +1,9 @@
+import { useContext } from 'react';
 import CardSchema from "../schemas/cardSchema";
 import GameSchema from "../schemas/gameSchema";
 import Card from "./Card";
 import MiniCard from "./MiniCard";
+import UserContext from '../data/Context';
 
 type Props = {
     table: GameSchema,
@@ -21,6 +23,14 @@ export default function Table({
     selectedGoalGroup,
 }: Props) {
     const { players, goal } = table;
+    const { user } = useContext(UserContext);
+
+    const getRotation = () => {
+        if(players[0].user.uid === user?.uid) return "180deg";
+        if(players[1].user.uid === user?.uid) return "0deg";
+        if(players[2].user.uid === user?.uid) return "270deg";
+        if(players[3].user.uid === user?.uid) return "90deg";
+    }
 
     const mapKeepers = (keepers: CardSchema[], horizontal: boolean, playerNum: number) => {
         return keepers.map((keeper, index) => {
@@ -53,7 +63,10 @@ export default function Table({
     }
     
     return ( 
-        <div className="table_container">
+        <div 
+            className="table_container"
+            style={{transform: `rotateZ(${getRotation()})`}}
+        >
             <div className={`player_1_keepers keeper_container ${players[0].keepers.length > 1 ? "length_2plus" : "length_1"}`}>
                 {
                     players[0].keepers.length
@@ -85,7 +98,7 @@ export default function Table({
             &&
             <div className={`player_3_keepers keeper_container ${players[2].keepers.length > 1 ? "length_2plus" : "length_1"}`}>
                 {
-                    players[1].keepers.length
+                    players[2].keepers.length
                         ? mapKeepers(players[2].keepers, false, 3)
                         : (
                             <div className="mini_card_outline" >

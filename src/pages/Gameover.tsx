@@ -48,7 +48,7 @@ export default function Gameover({winGameStats}: Props) {
         if(user?.uid === joinedGameID) {
             await destroyRoom(db, joinedGameID, setJoinedGameID);
         } else {
-            await leaveRoom(db, joinedGameID, user, setJoinedGameID);
+            leaveRoom(db, joinedGameID, user, setJoinedGameID);
         }
         setHasUpdated(() => true);
     }
