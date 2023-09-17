@@ -25,7 +25,7 @@ export default function CardCatalog() {
     }
     
     const getCompletionPercentage = () => {
-        if(!user) return;
+        if(!user) return 0;
         let cardsPlayed = 0;
         for(const card in user?.cardCatalog) {
             if(user?.cardCatalog[card] > 0) cardsPlayed++;
