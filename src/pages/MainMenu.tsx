@@ -37,7 +37,7 @@ export default function MainMenu() {
                 :
                 <button
                     className='menu_link'
-                    onClick={() => navigate('/lobby')}
+                    onClick={() => navigate('/account')}
                 >
                     Continue to Game
                 </button>

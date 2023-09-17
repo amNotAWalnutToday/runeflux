@@ -1,0 +1,52 @@
+{
+    "abyss_deck": [
+        {
+            "id": "KLA01",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Abyssal Demon",
+            "effects": ["WARP"],
+            "text": "At the end of a players turn, teleport to a random player."
+        },
+        {
+            "id": "KLA02",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Abyssal Sire",
+            "effects": ["WARP_ALL"],
+            "text": "At the end of a players turn, teleport all keepers to random players."
+        },
+        {
+            "id": "KEA01",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Abyssal Whip",
+            "effects": [],
+            "text": ""
+        },
+        {
+            "id": "GA01",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Abyssal Denizens",
+            "effects": [],
+            "text": "Collection type: |Abyssal Demon| and |Abyssal Sire|"
+        },
+        {
+            "id": "GA02",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Whip Drop",
+            "effects": [],
+            "text": "The iconic |Abyssal whip| drop must be obtained from the denizens of the abyss, the |Abyssal sire| or |Abyssal demon|"
+        },
+        {
+            "id": "AA01",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Warp",
+            "effects": [],
+            "text": "Keepers in play will randomize who owns them."
+        }
+    ]
+}

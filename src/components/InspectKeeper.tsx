@@ -45,15 +45,18 @@ export default function InspectKeeper({
         if(cardState.state.id === "KE04") {
             if(!selectedKeeperGroup.length) return false;
             if(selectedKeeperGroup[0].state.subtype !== "LIVING"
-            || selectedKeeperGroup[0].playerIndex === player.index) return false;
+            || selectedKeeperGroup[0].playerIndex === player.index
+            && !selectedKeeperGroup[0].state.attachment) return false;
         } else if(cardState.state.id === "KR07") {
             if(!selectedKeeperGroup.length) return false;
             if(selectedKeeperGroup[0].state.subtype !== "EQUIPMENT"
-            || selectedKeeperGroup[0].playerIndex === player.index) return false;
+            || selectedKeeperGroup[0].playerIndex === player.index
+            && !selectedKeeperGroup[0].state.attachment) return false;
         } else if(cardState.state.id === "KL07") {
             if(!selectedKeeperGroup.length) return false;
             if(selectedKeeperGroup[0].state.subtype !== "RUNE"
-            || selectedKeeperGroup[0].playerIndex === player.index) return false;
+            || selectedKeeperGroup[0].playerIndex === player.index
+            && !selectedKeeperGroup[0].state.attachment) return false;
         } else if(cardState.state.id === "KE05") {
             if(!selectedPlayerGroup.length) return false;
             if(selectedPlayerGroup[0].user.uid === player.state.user.uid) return false;

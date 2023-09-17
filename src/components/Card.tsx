@@ -100,7 +100,10 @@ export default function Card({
                 </div>
             </div>
             <div className='card_container__inner_right'>
-                <h2>{cardState.state.type}</h2>
+                <h2>
+                    {cardState.state.type}
+                    <span className={`${cardState.state.subtype.toLowerCase()}_subtype icon card_subtype`} ></span>
+                </h2>
                 <h3>{cardState.state.name}</h3>
                 <hr className='card_hr__thick' />
                 <p>{cardState.state.type === "GOAL" ? mapGoalText() : cardState.state.text }</p>

@@ -889,6 +889,11 @@ a:hover,
   margin: 0 1rem;
 }
 
+.card_subtype {
+  transform: translate(15px);
+  margin: 0;
+}
+
 .icon_picker {
   display: flex;
   gap: 1rem;

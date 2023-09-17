@@ -30,7 +30,7 @@ export default function CardCatalog() {
         for(const card in user?.cardCatalog) {
             if(user?.cardCatalog[card] > 0) cardsPlayed++;
         }
-        return cardsPlayed ? Math.round(start_deck.length / cardsPlayed) : 0;
+        return cardsPlayed ? Math.round((cardsPlayed / start_deck.length) * 100) : 0;
     }
 
     const mapCards = () => {
@@ -38,12 +38,14 @@ export default function CardCatalog() {
         return start_deck.map((card, ind) => {
             if(filter && (card.type !== filter) && (card.subtype !== filter)) return;
             return user.cardCatalog[`${card.id}`] > 0 ? (
-                <Card 
+                <Card
+                    key={`catalog_card__${ind}`} 
                     position='CATALOG'
                     cardState={{state: card, index: ind}}
                 />
             ) : (
                 <CardBack 
+                    key={`catalog_card__locked_${ind}`}
                     isLocked={true}
                 />
             );

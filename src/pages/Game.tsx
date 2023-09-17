@@ -1568,7 +1568,7 @@ export default function Game({setWinGameStats}: Props) {
 
     return (
         <div className='game_container' >
-            <button
+            {/* <button
                 className='menu_link'
                 onClick={() => {
                     // playActionCards({effects: ["RULE_RESET_CHOOSE"]} as CardSchema);
@@ -1647,7 +1647,7 @@ export default function Game({setWinGameStats}: Props) {
                 }}
             >
                 action card function test
-            </button>
+            </button> */}
             {   
                 // !loading
                 // &&

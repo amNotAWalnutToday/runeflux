@@ -460,6 +460,7 @@ export default (() => {
         hasWon: boolean,
         bypassCreeper: boolean,
     } => {
+        if(!goal) return { hasWon: false, bypassCreeper: false };
         switch(goal.id) {
             case "G01":
                 return checkG01(keepers);

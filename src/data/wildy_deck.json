@@ -1,0 +1,20 @@
+{
+    "wildy_deck": [
+        {
+            "id": "KLW01",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "King Black Dragon",
+            "effects": ["DESTROY_1"],
+            "text": "Once per turn, destroy any keeper of any time in play."
+        },
+        {
+            "id": "KLW01",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Lava Dragon",
+            "effects": [],
+            "text": ""
+        }
+    ]
+}
