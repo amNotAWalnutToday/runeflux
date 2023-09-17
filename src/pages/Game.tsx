@@ -1580,59 +1580,59 @@ export default function Game({setWinGameStats}: Props) {
                     // playActionCards({effects: ["DRAW_3_PLAY_2"]} as CardSchema);
                     // playActionCards({effects: ["DISCARD_1"]} as CardSchema);
                     // playActionCards({effects: ["DRAW_1"]} as CardSchema);
-                    // dispatchPlayers({
-                    //     type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
-                    //     payload: {
-                    //         playerId: user?.uid ?? '',
-                    //         cards: [         {
-                    //             "id": "KR02",
-                    //             "type": "KEEPER",
-                    //             "subtype": "RUNE",
-                    //             "name": "Chaos Rune",
-                    //             "effects": ["WORMHOLE"],
-                    //             "text": "Once per turn, choose to draw 1 and play it."
-                    //         },{
-                    //             "id": "RL02",
-                    //             "type": "RULE",
-                    //             "subtype": "LOCATION",
-                    //             "name": "Abyss",
-                    //             "effects": ["LOCATION", "ABYSS"],
-                    //             text: "",
-                    //     },        {
-                    //         "id": "G31",
-                    //         "type": "GOAL",
-                    //         "subtype": "",
-                    //         "name": "Chaos",
-                    //         "effects": [],
-                    //         "text": "Collection Type: |Abyss|, |Chaos Rune|"
-                    //     },],
-                    //         upload: uploadProps
-                    //     }
-                    // });
-                    upload("DECK_PURE", db, {deckState: [        {
-                        "id": "CR01",
-                        "type": "CREEPER",
-                        "subtype": "EQUIPMENT_CREEPER",
-                        "name": "Elvarg",
-                        "effects": ["LOCATION_CRANDOR"],
-                        "text": "A creeper that attaches to equipment disabling any use effects and preventing that player from winning."
-                    },
-                    {
-                        "id": "CR02",
-                        "type": "CREEPER",
-                        "subtype": "LIVING_CREEPER",
-                        "name": "Poison",
-                        "effects": [],
-                        "text": "A creeper that attaches to a living keeper disabling any use effects and preventing that player from winning."
-                    },
-                    {
-                        "id": "CR03",
-                        "type": "CREEPER",
-                        "subtype": "LIVING_CREEPER",
-                        "name": "Wizard Mind Bomb",
-                        "effects": [],
-                        "text": "A creeper that attaches to a living keeper disabling any use effects and preventing that player from winning."
-                    },]}, joinedGameID);
+                    dispatchPlayers({
+                        type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
+                        payload: {
+                            playerId: user?.uid ?? '',
+                            cards: [         {
+                                "id": "KR02",
+                                "type": "KEEPER",
+                                "subtype": "RUNE",
+                                "name": "Chaos Rune",
+                                "effects": ["WORMHOLE"],
+                                "text": "Once per turn, choose to draw 1 and play it."
+                            },{
+                                "id": "RL02",
+                                "type": "RULE",
+                                "subtype": "LOCATION",
+                                "name": "Abyss",
+                                "effects": ["LOCATION", "ABYSS"],
+                                text: "",
+                        },        {
+                            "id": "G31",
+                            "type": "GOAL",
+                            "subtype": "",
+                            "name": "Chaos",
+                            "effects": [],
+                            "text": "Collection Type: |Abyss|, |Chaos Rune|"
+                        },],
+                            upload: uploadProps
+                        }
+                    });
+                    // upload("DECK_PURE", db, {deckState: [        {
+                    //     "id": "CR01",
+                    //     "type": "CREEPER",
+                    //     "subtype": "EQUIPMENT_CREEPER",
+                    //     "name": "Elvarg",
+                    //     "effects": ["LOCATION_CRANDOR"],
+                    //     "text": "A creeper that attaches to equipment disabling any use effects and preventing that player from winning."
+                    // },
+                    // {
+                    //     "id": "CR02",
+                    //     "type": "CREEPER",
+                    //     "subtype": "LIVING_CREEPER",
+                    //     "name": "Poison",
+                    //     "effects": [],
+                    //     "text": "A creeper that attaches to a living keeper disabling any use effects and preventing that player from winning."
+                    // },
+                    // {
+                    //     "id": "CR03",
+                    //     "type": "CREEPER",
+                    //     "subtype": "LIVING_CREEPER",
+                    //     "name": "Wizard Mind Bomb",
+                    //     "effects": [],
+                    //     "text": "A creeper that attaches to a living keeper disabling any use effects and preventing that player from winning."
+                    // },]}, joinedGameID);
                     // playCard(        {
                     //     "id": "RL02",
                     //     "type": "RULE",

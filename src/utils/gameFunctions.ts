@@ -334,7 +334,13 @@ export default (() => {
             }
         });
 
-        return winner.playerId !== "" ? winner.playerId : false;
+        return (
+            (winner.playerId !== "")
+            && (!winner.hasCreeper)
+            || (winner.hasCreeper && winner.bypassCreeper) 
+                ? winner.playerId 
+                : false
+        );
     }
 
     const drawPhase = (
