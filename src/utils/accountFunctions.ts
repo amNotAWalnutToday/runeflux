@@ -5,9 +5,14 @@ import UserSchema from '../schemas/userSchema';
 import { startDeck as start_deck } from '../data/start_deck.json';
 
 export default (() => {
-    const createAccountAnon = async (user) => {
+    const createAccountAnon = async (
+        user: {
+            auth: Auth,
+            setUser: React.Dispatch<React.SetStateAction<UserSchema | undefined>>,
+            db: Database
+        }
+    ) => {
         const { auth, setUser, db } = user;
-        const localUser = user.user;
         await signInAnonymously(auth)
             .then((a) => {
                 console.log(a);
@@ -35,9 +40,9 @@ export default (() => {
                         newUser.cardCatalog[`${card.id}`] = 0;
                     }
                     await set(reference, newUser);
-                    setUser((prev: UserSchema | null) => Object.assign({}, prev, newUser));                   
+                    setUser((prev: UserSchema | undefined) => Object.assign({}, prev, newUser));                   
                 } else {
-                    setUser((prev: UserSchema | null) => Object.assign({}, prev, hasAccount ? {...hasAccount} : {}));
+                    setUser((prev: UserSchema | undefined) => Object.assign({}, prev, hasAccount ? {...hasAccount} : {}));
                 }
             } else {
                 signOut(auth);
@@ -86,7 +91,7 @@ export default (() => {
             const userRef = ref(db, `/users/${uid}/cardCatalog/${cardKey}`);
             await set(userRef, cardNum);
         } catch(e) {
-            return console.log(e);
+            return console.error(e);
         }
     }
 
@@ -95,7 +100,7 @@ export default (() => {
             const winRef = ref(db, `/users/${uid}/stats/wins`);
             await set(winRef, amount);
         } catch(e) {
-            return console.log(e);
+            return console.error(e);
         }
     }
 
@@ -104,7 +109,7 @@ export default (() => {
             const roundRef = ref(db, `/users/${uid}/stats/totalRounds`);
             await set(roundRef, amount);
         } catch(e) {
-            return console.log(e);
+            return console.error(e);
         }
     }
 
@@ -113,7 +118,7 @@ export default (() => {
             const playedRef = ref(db, `/users/${uid}/stats/played`);
             await set(playedRef, amount);
         } catch(e) {
-            return console.log(e);
+            return console.error(e);
         }
     }
 
@@ -122,7 +127,7 @@ export default (() => {
             const goalRef = ref(db, `/users/${uid}/goalWins/${cardKey}`);
             await set(goalRef, cardNum);
         } catch(e) {
-            return console.log(e);
+            return console.error(e);
         }
     }
 
@@ -131,7 +136,7 @@ export default (() => {
             const usernameRef = ref(db, `users/${uid}/username`);
             await set(usernameRef, name);
         } catch(e) {
-            return console.log(e);
+            return console.error(e);
         }
     }
 
@@ -140,7 +145,7 @@ export default (() => {
             const iconRef = ref(db, `/users/${uid}/icon`);
             await set(iconRef, icon);
         } catch(e) {
-            return console.log(e);
+            return console.error(e);
         }
     }
 
@@ -152,13 +157,32 @@ export default (() => {
         }
     }
 
-    const testUserSignIn = (username: string, pass: string, setter) => {
+    const testUserSignIn = (
+        username: string, 
+        pass: string, 
+        setter: React.Dispatch<React.SetStateAction<UserSchema | undefined>>,
+    ) => {
         let isUser = false;
         for(const user of testsettings.users) {
             if(user.name.toLowerCase() === username
             && user.pass.toLowerCase() === pass) isUser = true;
         }
-        if(isUser) setter((prev) => ({...prev, username, uid: username, isReady: false, cardCatalog: {} }));
+        if(isUser) setter((prev) => {
+            return {
+                ...prev, 
+                username, 
+                uid: username, 
+                isReady: false, 
+                cardCatalog: {}, 
+                goalWins: {},
+                icon: '',
+                stats: {
+                    wins: 0,
+                    played: 0,
+                    totalRounds: 0,
+                }
+            }
+        });
         return isUser;
     }
     

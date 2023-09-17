@@ -6,7 +6,7 @@ type Props = {
     cardState: { state: CardSchema, index: number },
     position: "HAND" | "SELECT" | "PENDING" | "TABLE" | "CREEPER" | "CATALOG",
     numberInLine?: number,
-    inspectKeeper?: (card: { state: CardSchema, index: number } | null) => void,
+    inspectKeeper?: (card: { state: CardSchema, index: number, playerIndex: number } | null) => void,
     selectCard?: (card: { state: CardSchema, index: number } | null) => void,
     selectGoalGroup?: (goal: { state: CardSchema, index: number }) => void,
     selectedGoalGroup?: { state: CardSchema, index: number}[],
@@ -86,7 +86,7 @@ export default function Card({
             onClick={
                 (!inspectKeeper 
                     ? () => selectCard && selectCard(cardState)
-                    : () => inspectKeeper(cardState))
+                    : () => inspectKeeper({...cardState, playerIndex: 0}))
             }
             onContextMenu={(e) => {
                 e.preventDefault();

@@ -5,9 +5,9 @@ import GameSchema from "../schemas/gameSchema"
 import Card from "./Card"
 import ErrorMessage from './ErrorMessage';
 import PlayerSchema from '../schemas/playerSchema';
-import gameFunctions from '../utils/gameFunctions';
+// import gameFunctions from '../utils/gameFunctions';
 
-const { getInitRule } = gameFunctions;
+// const { getInitRule } = gameFunctions;
 
 type Props = {
     cardState: { state: CardSchema, index: number },
@@ -65,7 +65,7 @@ export default function PlayCard({
     }
 
     const checkIfCounterPlayDisabled = () => {
-        const { type, subtype } = table.pending && table.pending !== true ? table.pending : {type: "", subtype: "", effects: []};
+        const { type, subtype } = table.pending && table.pending !== true ? table.pending : {type: "", subtype: ""};
         const isCardNotInPlay = table.pending ? false : true;
         const canCounter = [];
         if(cardState.state.id === "CO01" && subtype === "LOCATION") canCounter.push(false);

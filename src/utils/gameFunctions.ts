@@ -10,11 +10,78 @@ import RuleSchema from '../schemas/ruleSchema';
 import DeckSchema from '../schemas/deckSchema';
 import roomFunctions from './roomFunctions';
 import goalFunctions from './goalFunctions';
+import TURN_REDUCER_ACTION from '../schemas/reducers/TURN_REDUCER_ACTIONS';
 
 const { compareKeepersToGoal } = goalFunctions;
 const { convertGameToRoomGame, convertToRoomPlayer } = roomFunctions;
 
 export default (() => {
+    type TURN_ACTIONS = {
+        type: TURN_REDUCER_ACTION,
+        payload: {
+            init?: TurnSchema,
+            player?: string,
+            victim?: string,
+            amount?: number,
+            duelCard?: { state: CardSchema, index: number, playerIndex: number },
+            cards?: CardSchema[],
+            upload: {
+                db: Database,
+                gameId: string,
+            }
+        }
+    }
+    
+    const turnReducer = (state: TurnSchema, action: TURN_ACTIONS) => {
+        const { player, victim, amount, duelCard, cards, init } = action.payload;
+        const { db, gameId } = action.payload.upload; 
+        const { temporary } = state;
+        const rollNum = Math.ceil(Math.random() * 100);
+    
+        switch(action.type) {
+            case TURN_REDUCER_ACTION.INIT:
+                return Object.assign({}, state, {...init});
+            case TURN_REDUCER_ACTION.CHANGE_TURN:
+                upload("TURN", db, {turnState: Object.assign({}, state, {player, drawn: 0, played: 0})}, gameId);
+                return Object.assign({}, state, {player, drawn: 0, played: 0});
+            case TURN_REDUCER_ACTION.DRAWN_ADD:
+                upload("TURN", db, {turnState: Object.assign({}, state, {player, drawn: amount})}, gameId);
+                return Object.assign({}, state, {player, drawn: amount});
+            case TURN_REDUCER_ACTION.PLAYED_ADD:
+                upload("TURN", db, {turnState: Object.assign({}, state, {played: amount})}, gameId);
+                return Object.assign({}, state, {played: amount});
+            case TURN_REDUCER_ACTION.TEMPORARY_HAND__BEGIN:
+                upload("TURN", db, {turnState: Object.assign({}, state, {temporary: { ...temporary, hand: cards ? [...cards] : [], play: amount ?? 0 }})}, gameId);
+                return Object.assign({}, state, {temporary: { ...temporary, hand: cards ? [...cards] : [] }, play: amount ?? 0});
+            case TURN_REDUCER_ACTION.TEMPORARY_HAND_CARD__REMOVE:
+                upload("TURN", db, {turnState: Object.assign({}, state, {temporary: { ...temporary, hand: cards ? [...cards] : [] }})}, gameId);
+                return Object.assign({}, state, {temporary: { ...temporary, hand: cards ? [...cards] : [] }});
+            case TURN_REDUCER_ACTION.TEMPORARY_HAND_CARD__ADD:
+                upload("TURN", db, {turnState: Object.assign({}, state, {temporary: {...temporary, hand: temporary && cards ? [...temporary.hand, ...cards] : []}})}, gameId);
+                return Object.assign({}, state, {temporary: { ...temporary, hand: temporary && cards ? [...temporary.hand, ...cards] : [] }});
+            case TURN_REDUCER_ACTION.TEMPORARY_PLAY_CHANGE:
+                upload("TURN", db, {turnState: Object.assign({}, state, {temporary: {...temporary, play: amount}})}, gameId);
+                return Object.assign({}, state, {temporary: { ...temporary, play: amount }});
+            case TURN_REDUCER_ACTION.DUEL_BEGIN: 
+                upload("TURN", db, {turnState: Object.assign({}, state, {duel: {cooldown: true, card: duelCard, player1: {id: player, num: 0}, player2: { id: victim, num: 0 }}})}, gameId);
+                return Object.assign({}, state, {duel: {cooldown: true, card: duelCard, player1: { id: player, num: 0 }, player2: { id: victim, num: 0 }}});
+            case TURN_REDUCER_ACTION.DUEL_ROLL__PLAYER_1:
+                upload("TURN", db, {turnState: Object.assign({}, state, {duel: {...state.duel, player1: {...state.duel.player1, num: rollNum}}})}, gameId);
+                return Object.assign({}, state, {duel: {...state.duel, player1: {...state.duel.player1, num: rollNum}}});
+            case TURN_REDUCER_ACTION.DUEL_ROLL__PLAYER_2:
+                upload("TURN", db, {turnState: Object.assign({}, state, {duel: {...state.duel, player2: {...state.duel.player2, num: rollNum}}})}, gameId);
+                return Object.assign({}, state, {duel: {...state.duel, player2: {...state.duel.player2, num: rollNum}}});
+            case TURN_REDUCER_ACTION.DUEL_END:
+                upload("TURN", db, {turnState: Object.assign({}, state, {duel: {...state.duel, player1: {id: '', num: 0}, player2: {id: '', num: 0}}})}, gameId);
+                return Object.assign({}, state, {duel: {...state.duel, player1: {id: '', num: 0}, player2: {id: '', num: 0}}});
+            case TURN_REDUCER_ACTION.DUEL_COOLDOWN:
+                upload("TURN", db, {turnState: Object.assign({}, state, {duel: {...state.duel, cooldown: false}})}, gameId);
+                return Object.assign({}, state, {duel: {...state.duel, cooldown: false}});
+            default:
+                return state;
+        }
+    }
+
     const loadGame = (
         user: UserSchema | undefined, 
     ) => {
@@ -376,7 +443,7 @@ export default (() => {
         db: Database, 
         players: PlayerSchema[], 
         turn: TurnSchema, 
-        turnDispatch, 
+        turnDispatch: React.Dispatch<TURN_ACTIONS>, 
         gameId: string
     ) => {
         const currentPlayer = getPlayer(players, turn.player.toString());
@@ -415,5 +482,6 @@ export default (() => {
         removeCard,
         shuffleDeck,
         endTurn,
+        turnReducer,
     }
 })();

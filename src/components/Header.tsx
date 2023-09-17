@@ -1,9 +1,9 @@
 import { useContext } from 'react';
 import { useNavigate } from "react-router-dom"
 import UserContext from '../data/Context';
-import accountFunctions from '../utils/accountFunctions';
+// import accountFunctions from '../utils/accountFunctions';
 
-const { signout } = accountFunctions;
+// const { signout } = accountFunctions;
 
 
 type Props = {
@@ -11,7 +11,7 @@ type Props = {
 }
 
 export default function Header({pageType}: Props) {
-    const { auth, setUser } = useContext(UserContext);
+    const { setUser } = useContext(UserContext);
     const navigate = useNavigate();
 
     return (

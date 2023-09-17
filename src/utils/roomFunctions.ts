@@ -42,8 +42,28 @@ export default (() => {
         return { user, hand, keepers }
     }
 
-    const createUser = (uid: string, username: string, isReady: boolean) => {
-        return { uid, username, isReady };
+    const createUser = (
+        uid: string, 
+        username: string, 
+        isReady: boolean
+    ) => {
+        const cardCatalog = {};
+        const goalWins = {}
+        const stats = {
+            wins: 0,
+            played: 0,
+            totalRounds: 0
+        }
+        const icon = ''
+        return { 
+            uid, 
+            username, 
+            isReady,
+            cardCatalog,
+            goalWins,
+            stats,
+            icon
+        };
     }
 
     const getPlayer = (players: RoomPlayer[], uid: string) => {
