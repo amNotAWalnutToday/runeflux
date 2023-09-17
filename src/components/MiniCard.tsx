@@ -68,7 +68,19 @@ export default function MiniCard({
         </div>
     ) : (
         <div  
-            className="side_card__mini card__mini"
+            className={`side_card__mini card__mini  ${cardState.state.type.toLowerCase()} ${checkSelected() ? "selected" : ""}`}
+            style={(cardState.state.effects && !cardState.state.cooldown) ? {background: "var(--black-shine)"} : {} }
+            onClick={!cardState.state.attachment ? () => { 
+                if(!playerNum) return;
+                inspectKeeper({...cardState, playerIndex: playerNum - 1})
+            }
+                : (e) => e.preventDefault()
+            }
+            onContextMenu={(e) => {
+                e.preventDefault();
+                if(!selectKeeperGroup) return;
+                selectKeeperGroup({state: cardState.state, index: cardState.index, playerIndex: playerNum ? playerNum - 1 : 0});
+            }}
         >
             <div className='side_card_container__inner_left'>
                 <div className='side_card_header__background' >
@@ -78,6 +90,15 @@ export default function MiniCard({
             <div className="side_card_container__inner_right" >
 
             </div>
+            {
+            cardState.state.attachment
+            &&
+            <Card
+                position="CREEPER"
+                cardState={{state: cardState.state.attachment ?? {} as CardSchema, index: 0}}
+                inspectKeeper={inspectKeeper}
+            />
+            }
         </div>
     )
 }

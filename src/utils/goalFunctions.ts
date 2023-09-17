@@ -123,7 +123,7 @@ export default (() => {
             if(keeper.id === "CR03") requirements.wizardBeer = true
         });
 
-        if(requirements.drunkenDwarf && requirements.wizardBeer) return { hasWon: true, bypassCreeper: false };
+        if(requirements.drunkenDwarf && requirements.wizardBeer) return { hasWon: true, bypassCreeper: true };
         else return { hasWon: false, bypassCreeper: false };
     }
 
