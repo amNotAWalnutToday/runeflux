@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { useNavigate, useBeforeUnload } from 'react-router-dom';
 import CardSchema from "../schemas/cardSchema";
 import PlayerSchema from "../schemas/playerSchema"
@@ -25,6 +25,16 @@ export default function Gameover({winGameStats}: Props) {
     const { joinedGameID, setJoinedGameID, db, user, setUser } = useContext(UserContext);
     const navigate = useNavigate();
 
+    const [hasUpdated, setHasUpdated] = useState(false);
+
+    useEffect(() => {
+        if(!user || !winner || !round || !goal) { 
+            return navigate('/account');
+        }
+        continueHandler();
+        /*eslint-disable-next-line*/
+    }, []);
+
     useBeforeUnload(() => {
         updateUser();
         if(user?.uid === joinedGameID) {
@@ -32,23 +42,15 @@ export default function Gameover({winGameStats}: Props) {
         }
     });
 
-    useEffect(() => {
-        if(!user || !winner || !round || !goal) { 
-            continueHandler();
-            return navigate('/lobby');
-        }
-        /*eslint-disable-next-line*/
-    }, []);
-
-    const continueHandler = () => {
+    const continueHandler = async () => {
         if(!user) return;
         updateUser();
         if(user?.uid === joinedGameID) {
-            destroyRoom(db, joinedGameID, setJoinedGameID);
+            await destroyRoom(db, joinedGameID, setJoinedGameID);
         } else {
-            leaveRoom(db, joinedGameID, user, setJoinedGameID);
+            await leaveRoom(db, joinedGameID, user, setJoinedGameID);
         }
-        navigate('/lobby');    
+        setHasUpdated(() => true);
     }
 
     const updateUser = () => {
@@ -95,8 +97,11 @@ export default function Gameover({winGameStats}: Props) {
                             <h2>in {round} rounds</h2>
                         </div>
                         <button 
-                            className="play_btn__card flipped" 
-                            onClick={continueHandler}
+                            className={`play_btn__card flipped ${hasUpdated ? "" : "disabled"}`} 
+                            onClick={() => {
+                                if(!hasUpdated) return;
+                                navigate('/account');
+                            }}
                         >
                             Continue
                         </button>

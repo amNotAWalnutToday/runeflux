@@ -208,14 +208,14 @@ export default (() => {
         return firstHalf.concat(lastHalf);
     }
 
-    const leaveRoom = (
+    const leaveRoom = async (
         db: Database,
         roomId: string,
         user: UserSchema,
         setJoinedGameID: React.Dispatch<React.SetStateAction<string>>,
     ) => {
         const roomsRef = ref(db);
-        get(child(roomsRef, `/games/${roomId}/`)).then( async (snapshot) => {
+        await get(child(roomsRef, `/games/${roomId}/`)).then( async (snapshot) => {
             const data = await snapshot.val();
             const players = [...data.game.players];
             const playerIndex = players.findIndex((e) => e.user.uid === user.uid);
