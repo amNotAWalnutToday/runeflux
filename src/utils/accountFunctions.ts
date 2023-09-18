@@ -193,6 +193,19 @@ export default (() => {
         });
         return isUser;
     }
+
+    const combineUsers = async (db: Database, main: string, old: string) => {
+        try {
+            const mainUserRef = ref(db, `/users/${main}`);
+            const oldUserRef = ref(db, `/users/`);
+            await get(child(oldUserRef, `${old}`)).then(async (snapshot) => {
+                const data = await snapshot.val();
+                await set(mainUserRef, data);
+            });
+        } catch(e) {
+            console.error(e);
+        }
+    }
     
     return {
         createAccountAnon,
@@ -201,5 +214,6 @@ export default (() => {
         changeIcon,
         signout,
         testUserSignIn,
+        combineUsers,
     }
 })();

@@ -42,6 +42,13 @@ export default function MainMenu() {
                     Continue to Game
                 </button>
                 }
+                {/* <button
+                    onClick={() => {
+                        accountFunctions.combineUsers(user.db, '7DbnEa9huRV21XYiBY5IShBWJ8H2', 'ksWk814FooMEHIuHoGCMamV3qyQ2');
+                    }}
+                >
+                    click me
+                </button> */}
             </div>
         </div>
     )
