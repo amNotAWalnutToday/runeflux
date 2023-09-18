@@ -3,7 +3,7 @@ import CardSchema from '../schemas/cardSchema';
 import PlayerSchema from '../schemas/playerSchema';
 import TurnSchema from '../schemas/turnSchema';
 import startDeckData from '../data/start_deck.json';
-import startRuleData from '../data/start_rules.json';
+import start_rules from '../data/start_rules.json';
 import GameSchema from '../schemas/gameSchema';
 import UserSchema from '../schemas/userSchema';
 import RuleSchema from '../schemas/ruleSchema';
@@ -11,6 +11,10 @@ import DeckSchema from '../schemas/deckSchema';
 import roomFunctions from './roomFunctions';
 import goalFunctions from './goalFunctions';
 import TURN_REDUCER_ACTION from '../schemas/reducers/TURN_REDUCER_ACTIONS';
+import DECK_REDUCER_ACTIONS from '../schemas/reducers/DECK_REDUCER_ACTIONS';
+import RULE_REDUCER_ACTIONS from '../schemas/reducers/RULE_REDUCER_ACTIONS';
+import PLAYER_REDUCER_ACTIONS from '../schemas/reducers/PLAYER_REDUCER_ACTIONS';
+import GOAL_REDUCER_ACTIONS from '../schemas/reducers/GOAL_REDUCER_ACTIONS';
 
 const { compareKeepersToGoal } = goalFunctions;
 const { convertGameToRoomGame, convertToRoomPlayer } = roomFunctions;
@@ -82,6 +86,204 @@ export default (() => {
         }
     }
 
+    type RULE_ACTIONS = {
+        type: RULE_REDUCER_ACTIONS
+        payload: {
+            init? : RuleSchema,
+            ruleKey? : string,
+            amount?: number,
+            location?: string,
+            teleblock?: boolean,
+            upload: {
+                db: Database,
+                gameId: string,
+            }
+        },
+    }
+    
+    const rulesReducer = (state: RuleSchema, action: RULE_ACTIONS) => {
+        const { init, ruleKey, amount, location, teleblock } = action.payload;
+        const { db, gameId } = action.payload.upload;
+        const locations = ["MISTHALIN", "ASGARNIA", "MORYTANIA", "ABYSS", "ENTRANA", "CRANDOR"];
+        const ran = Math.floor(Math.random() * locations.length);
+    
+        switch(action.type) {
+            case RULE_REDUCER_ACTIONS.INIT:
+                return Object.assign({}, state, {...init});
+            case RULE_REDUCER_ACTIONS.RULE_CHANGE__DRAW:
+                upload("RULES", db, {ruleState: {...state, drawAmount: amount ?? 1}}, gameId);
+                return Object.assign({}, state, {drawAmount: amount ?? 1});
+            case RULE_REDUCER_ACTIONS.RULE_CHANGE__PLAY:
+                upload("RULES", db, {ruleState: {...state, playAmount: amount ?? 1}}, gameId);
+                return Object.assign({}, state, {playAmount: amount ?? 1});
+            case RULE_REDUCER_ACTIONS.RULE_CHANGE__HAND_LIMIT:
+                upload("RULES", db, {ruleState: {...state, handLimit: amount ?? 1}}, gameId);
+                return Object.assign({}, state, {handLimit: amount ?? 1});
+            case RULE_REDUCER_ACTIONS.RULE_CHANGE__KEEPER_LIMIT:
+                upload("RULES", db, {ruleState: {...state, keeperLimit: amount ?? 1}}, gameId);
+                return Object.assign({}, state, {keeperLimit: amount ?? 1});
+            case RULE_REDUCER_ACTIONS.RULE_CHANGE__LOCATION:
+                upload("RULES", db, {ruleState: {...state, location: location ?? "MISTHALIN"}}, gameId);
+                return Object.assign({}, state, {location: location ?? "MISTHALIN"});
+            case RULE_REDUCER_ACTIONS.RULE_CHANGE__LOCATION_RANDOM: 
+                upload("RULES", db, {ruleState: {...state, location: locations[ran]}}, gameId);
+                return Object.assign({}, state, {location: locations[ran]});
+            case RULE_REDUCER_ACTIONS.RULE_CHANGE__TELEBLOCK:
+                upload("RULES", db, {ruleState: {...state, teleblock: teleblock ?? false}}, gameId);
+                return Object.assign({}, state, {teleblock: teleblock ?? false});
+            case RULE_REDUCER_ACTIONS.RULE_RESET__CHOICE: 
+                upload("RULES", db, {ruleState: {...state, [`${ruleKey}`]: getInitRule(ruleKey ?? "")}}, gameId);
+                return Object.assign({}, state, {[`${ruleKey}`]: getInitRule(ruleKey ?? "")});
+            case RULE_REDUCER_ACTIONS.RULE_RESET__ALL:
+                upload("RULES", db, { ruleState: {...start_rules} }, gameId);
+                return Object.assign({}, state, { ...start_rules });
+            default: 
+                return state;
+        }
+    }
+
+    type DECK_ACTIONS = {
+        type: DECK_REDUCER_ACTIONS,
+        payload: {
+            init?: DeckSchema,
+            pile: CardSchema[],
+            amount?: number
+            upload: {
+                db: Database,
+                gameId: string,
+            }
+        }
+    }
+    
+    const deckReducer = (state: DeckSchema, action: DECK_ACTIONS) => {
+        const { pile, amount, init } = action.payload;
+        const { db, gameId } = action.payload.upload;
+        switch(action.type) {
+            case DECK_REDUCER_ACTIONS.INIT:
+                return Object.assign({}, state, {...init});
+            case DECK_REDUCER_ACTIONS.DECK_REPLACE__PURE:
+                upload("DECK_PURE", db, {deckState: pile}, gameId);
+                return Object.assign({}, state, {pure: [...pile]});
+            case DECK_REDUCER_ACTIONS.DECK_REPLACE__DISCARD_TO_PURE:
+                upload("DECK_PURE", db, {deckState: [...pile]}, gameId);
+                upload("DECK_DISCARD", db, {deckState: []}, gameId);
+                return Object.assign({}, state, {pure: [...pile], discard: []});
+            case DECK_REDUCER_ACTIONS.DECK_REMOVE__PURE_TOP:
+                upload("DECK_PURE", db, {deckState: [...state.pure.slice(0, state.pure.length - (amount ?? 0))]}, gameId);
+                return Object.assign({}, state, {pure: [...state.pure.slice(0, state.pure.length - (amount ?? 0))]})
+           case DECK_REDUCER_ACTIONS.DECK_ADD__DISCARD_BOT:
+                upload("DECK_DISCARD", db, {deckState: pile ? [...pile].concat([...state.discard]) : []}, gameId);
+                return Object.assign({}, state, {discard: pile ? [...pile].concat([...state.discard]) :[]});
+           default: 
+                return state;
+        }
+    }
+
+    type PLAYER_ACTIONS = {
+        type: PLAYER_REDUCER_ACTIONS,
+        payload: {
+            playerId: string,
+            targetPlayerId?: string,
+            init?: PlayerSchema[],
+            cards?: CardSchema[],
+            keepersToExchange?: {state: CardSchema, index: number, playerIndex: number}[], 
+            cardIndex?: number,
+            cooldown?: boolean,
+            upload: {
+                db: Database,
+                gameId: string,
+            }
+        }
+    }
+    
+    const playerReducer = (state: PlayerSchema[], action: PLAYER_ACTIONS) => {
+        const { 
+            playerId, init, cards, 
+            targetPlayerId, keepersToExchange, cardIndex, 
+            cooldown,
+        } = action.payload;
+        const { db, gameId } = action.payload.upload;
+        const players = [...state];
+        const player = getPlayer(state, playerId);
+        const targetPlayer = targetPlayerId ? getPlayer(state, targetPlayerId) : { state: {} as PlayerSchema, index: 0};
+        switch(action.type) {
+            case PLAYER_REDUCER_ACTIONS.INIT:
+                return init ? [...init] : [];
+            case PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD:
+                players[player.index] = Object.assign({}, player.state, {hand: [...player.state.hand, ...cards ?? []]});
+                upload("PLAYER", db, {playersState: players, playerId}, gameId);
+                return [...players]; 
+            case PLAYER_REDUCER_ACTIONS.HAND_CARDS__REMOVE:
+                players[player.index].hand = cards ? [...cards] : [];
+                upload("PLAYER", db, {playersState: players, playerId}, gameId);
+                return [...players];
+            case PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__ADD:
+                players[player.index] = Object.assign({}, player.state, {keepers: [...player.state.keepers, ...cards ?? []]});
+                upload("PLAYER", db, {playersState: players, playerId}, gameId);
+                return [...players];
+            case PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__REMOVE:
+                players[player.index].keepers = cards ? [...cards] : [];
+                upload("PLAYER", db, {playersState: players, playerId}, gameId);
+                return [...players];
+            case PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__EXCHANGE:
+                if(!keepersToExchange) return [...players];
+                console.log(keepersToExchange);
+                players[keepersToExchange[0].playerIndex] = Object.assign({}, players[keepersToExchange[0].playerIndex], {keepers: [...removeCard([...players[keepersToExchange[0].playerIndex].keepers], keepersToExchange[0].index), cards ? cards[1] : {}]});
+                players[keepersToExchange[1].playerIndex] = Object.assign({}, players[keepersToExchange[1].playerIndex], {keepers: [...removeCard([...players[keepersToExchange[1].playerIndex].keepers], keepersToExchange[1].index), cards ? cards[0] : {}]});
+                upload("PLAYER", db, {playersState: players, playerId: players[keepersToExchange[0].playerIndex].user.uid}, gameId);
+                upload("PLAYER", db, {playersState: players, playerId: players[keepersToExchange[1].playerIndex].user.uid}, gameId);
+                return [...players];
+            case PLAYER_REDUCER_ACTIONS.KEEPER_COOLDOWN__SET:
+                players[player.index].keepers[cardIndex ?? 0].cooldown = cooldown;
+                upload("PLAYER", db, {playersState: players, playerId}, gameId);
+                return [...players];
+            case PLAYER_REDUCER_ACTIONS.TRADE_HANDS:
+                players[player.index]             = Object.assign({}, player.state, {hand: [...targetPlayer.state.hand]});
+                players[targetPlayer?.index ?? 0] = Object.assign({}, targetPlayer?.state, {hand: [...player.state.hand]});
+                upload("PLAYER", db, {playersState: players, playerId}, gameId);
+                upload("PLAYER", db, {playersState: players, playerId: targetPlayerId}, gameId);
+                return [...players];
+            default:
+                return state;
+        }
+    }
+
+    type GOAL_ACTIONS = {
+        type: GOAL_REDUCER_ACTIONS,
+        payload: {
+            goals: CardSchema[],
+            replaceIndex?: number,
+            upload: {
+                db: Database,
+                gameId: string,
+            }
+        }
+    }
+
+    const goalReducer = (state: CardSchema[], action: GOAL_ACTIONS) => {
+        const { goals, replaceIndex } = action.payload;
+        const { db, gameId } = action.payload.upload;
+
+        switch(action.type) {
+            case GOAL_REDUCER_ACTIONS.INIT:
+                return goals ? [...goals] : [];
+            case GOAL_REDUCER_ACTIONS.GOAL_REPLACE__SINGLE:
+                upload("GOAL", db, {goalState: goals?.length ? [...goals] : []}, gameId);
+                return [...goals]; 
+            case GOAL_REDUCER_ACTIONS.GOAL_ADD__MULTI:
+                upload("GOAL",  db, {goalState: goals?.length ? [...state, ...goals] : []}, gameId);
+                return [...state, ...goals];
+            case GOAL_REDUCER_ACTIONS.GOAL_REPLACE__MULTI:
+                upload("GOAL", db, {goalState: replaceIndex === 0 ? [...goals, state[1]] : [state[0], ...goals]}, gameId);
+                return replaceIndex === 0 ? [...goals, state[1]] : [state[0], ...goals];
+            case GOAL_REDUCER_ACTIONS.GOAL_RESET:
+                upload("GOAL", db, {goalState: []}, gameId);
+                return [];
+            default:
+                return state;
+        }
+    }
+
     const loadGame = (
         user: UserSchema | undefined, 
     ) => {
@@ -121,7 +323,7 @@ export default (() => {
                 }
             }
         }
-        return Object.assign({}, game, {rules: startRuleData, turn});
+        return Object.assign({}, game, {rules: start_rules, turn});
     }
 
     const connectGame = async (
@@ -331,7 +533,7 @@ export default (() => {
     }
 
     const getInitRule = (key: string): number | string | boolean => {
-        const startingRules: {[key: string]: number | string | boolean} = startRuleData
+        const startingRules: {[key: string]: number | string | boolean} = start_rules
         for(const rule in startingRules) {
             if(key === rule) return (startingRules[rule]);
         }
@@ -482,5 +684,9 @@ export default (() => {
         shuffleDeck,
         endTurn,
         turnReducer,
+        goalReducer,
+        rulesReducer,
+        playerReducer,
+        deckReducer,
     }
 })();
