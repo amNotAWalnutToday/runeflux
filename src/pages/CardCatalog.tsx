@@ -44,7 +44,7 @@ export default function CardCatalog() {
     const checkCardLogCon = (card: CardSchema) => {
         if(!user) return 0;
         if(playOrWon === "PLAY") return user?.cardCatalog[`${card.id}`] > 0;
-        else return user?.goalWins[`${card.id}`] > 0;
+        else return user.goalWins[`${card.id}`] ? user?.goalWins[`${card.id}`] > 0 : false;
     }
 
     const mapCards = () => {

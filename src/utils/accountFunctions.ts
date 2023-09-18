@@ -42,6 +42,14 @@ export default (() => {
                     await set(reference, newUser);
                     setUser((prev: UserSchema | undefined) => Object.assign({}, prev, newUser));                   
                 } else {
+                    for(const card of start_deck) {
+                        let hasCard = false;
+                        for(const userCard in hasAccount.cardCatalog) {
+                            if(userCard === card.id) hasCard = true;
+                        }
+                        if(!hasCard) hasAccount.cardCatalog[`${card.id}`] = 0;
+                    }
+                    await set(reference, hasAccount);
                     setUser((prev: UserSchema | undefined) => Object.assign({}, prev, hasAccount ? {...hasAccount} : {}));
                 }
             } else {
