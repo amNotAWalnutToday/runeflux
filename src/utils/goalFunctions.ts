@@ -366,12 +366,12 @@ export default (() => {
         const requirements = { morytania: false, ghost: false, vampyreJuvinate: false };
 
         keepers.forEach((keeper) => {
-            if(keeper.id === "KL11") requirements.ghost = true
-            if(keeper.id === "KL01") requirements.vampyreJuvinate = true
+            if(keeper.id === "KL02") requirements.ghost = true
+            if(keeper.id === "KL10") requirements.vampyreJuvinate = true
         });
 
         if(location === "MORYTANIA") requirements.morytania = true;
-
+        console.log(requirements);
         if(requirements.ghost && requirements.morytania && requirements.vampyreJuvinate) return { hasWon: true, bypassCreeper: false };
         else return { hasWon: false, bypassCreeper: false };
     }

@@ -602,6 +602,9 @@ export default (() => {
                 winner.playerId = player.user.uid;
             }
         });
+
+        console.log(winner);
+
         return (
             (winner.playerId !== "")
             && (!winner.hasCreeper)
