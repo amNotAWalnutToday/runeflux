@@ -653,7 +653,7 @@
             "type": "RULE",
             "subtype": "BASIC",
             "name": "Play All",
-            "effects": ["RULE_PLAY", "5"],
+            "effects": ["RULE_PLAY", "99"],
             "text": "When this card is in play, each player will play all cards per turn."
         },
         {

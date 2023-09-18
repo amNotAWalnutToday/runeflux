@@ -1503,13 +1503,13 @@ export default function Game({setWinGameStats}: Props) {
                         type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
                         payload: {
                             playerId: user?.uid ?? '',
-                            cards: [          {
-                                "id": "CO05",
-                                "type": "COUNTER",
-                                "subtype": "",
-                                "name": "Veto!",
-                                "effects": ["RULESTOP_OR_RULE_RESET_3"],
-                                "text": "Out of turn - stop another player while they are playing a rule card| during turn - reset up to 3 rules."
+                            cards: [        {
+                                "id": "RB08",
+                                "type": "RULE",
+                                "subtype": "BASIC",
+                                "name": "Play All",
+                                "effects": ["RULE_PLAY", "99"],
+                                "text": "When this card is in play, each player will play all cards per turn."
                             },],
                             upload: uploadProps
                         }
