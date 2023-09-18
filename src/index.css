@@ -855,6 +855,17 @@ a:hover,
   border: 2px dashed var(--golden_highlight);
 }
 
+.mini_hand_card {
+  position: absolute;
+  display: inline-block;
+  width: 25px;
+  height: 40px;
+  background-color: var(--black);
+  border: 1px solid white;
+  border-radius: 3px;
+  box-shadow: 0px 0px 4px black;
+}
+
 .ready_mark {
   background-size: contain;
   display: inline-block;

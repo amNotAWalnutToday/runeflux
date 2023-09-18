@@ -27,6 +27,21 @@ export default function UserAccountBox({
         return false;
     }
 
+    const mapMiniHand = () => {
+        if(!player?.hand) return;
+        return player?.hand.map((any, ind) => {
+            return (
+                <div 
+                    key={`${any.id}_small_hand`}
+                    className="mini_hand_card"
+                    style={{transform: `translate(calc(-50% * ${ind}), 50px)`}}
+                >
+
+                </div>
+            )
+        })
+    }
+
     return isSideBox ? (
         <div 
             className={`user_bar ${isTurn ? "highlight" : "" } ${checkSelected() ? "selected" : ""}`}
@@ -39,6 +54,7 @@ export default function UserAccountBox({
             <p>
                 {player?.user.username ?? "Not Signed In!"}
                 <span className={`${player?.user.icon} ready_mark`} ></span>
+                {mapMiniHand()}
             </p>
         </div>
     ) : (
