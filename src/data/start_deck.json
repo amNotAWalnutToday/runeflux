@@ -174,7 +174,7 @@
             "subtype": "EQUIPMENT",
             "name": "Ghostspeak Amulet",
             "effects": ["SUMMON_GHOST"],
-            "text": ""
+            "text": "Once per turn, choose to summon a ghost."
         },
         {
             "id": "KE02",
@@ -524,7 +524,7 @@
             "id": "G34",
             "type": "GOAL",
             "subtype": "",
-            "name": "Meele Setup",
+            "name": "Melee Setup",
             "effects": [],
             "text": "Collection Type: |Rune Scimitar|, |Antidragon-fire shield|, |Cake|"
         },
@@ -550,7 +550,7 @@
             "subtype": "LOCATION",
             "name": "Abyss",
             "effects": ["LOCATION", "ABYSS"],
-            "text": "When this card is in play, each player has to discard down to 1 card to end their turn."
+            "text": "Once per turn, choose whether to draw 1 and play it."
         },
         {
             "id": "RL03",
@@ -566,7 +566,7 @@
             "subtype": "LOCATION",
             "name": "Morytania",
             "effects": ["LOCATION", "MORYTANIA"],
-            "text": "When this card is in play, Ghosts have a 20% chance to spawn at the end of turns."
+            "text": "When this card is in play, Ghosts have a 10% chance to spawn at the end of turns."
         },
         {
             "id": "RL05",
@@ -814,7 +814,7 @@
             "subtype": "",
             "name": "Everyone Discard 1",
             "effects": ["DISCARD_1", "ALL_PLAYERS"],
-            "text": "Draw 2 cards and immediately use them."
+            "text": "Each player will immediately discard one card."
         },
         {
             "id": "A14",
@@ -828,9 +828,9 @@
             "id": "CO01",
             "type": "COUNTER",
             "subtype": "",
-            "name": "telestop",
+            "name": "Telestop",
             "effects": ["TELESTOP_OR_LOCATION_MISTHALIN"],
-            "text": "Out of turn stop an opposing players teleport, during your turn teleport to misthalin."
+            "text": "Out of turn - stop an opposing players teleport| During your turn teleport to misthalin."
         },
         {
             "id": "CO02",
@@ -838,7 +838,7 @@
             "subtype": "",
             "name": "Canceled Plans",
             "effects": ["GOALSTOP_OR_GOALS_NONE"],
-            "text": "Out of turn, stop another player while they are playing a goal card, during your turn discard all goals in play."
+            "text": "Out of turn - stop another player while they are playing a goal card| During turn discard all goals in play."
         },
         {
             "id": "CO03",
@@ -846,7 +846,7 @@
             "subtype": "",
             "name": "Belay That!",
             "effects": ["ACTIONSTOP_OR_DISCARD_1_ALL"],
-            "text": "Out of turn, stop another player while they are playing an action card, during your turn every discards one."
+            "text": "Out of turn - stop another player while they are playing an action card| During turn every discards one."
         },
         {
             "id": "CO04",
@@ -854,7 +854,7 @@
             "subtype": "",
             "name": "That's Mine!",
             "effects": ["KEEPER_STEALSTOP_OR_KEEPER_STEAL"],
-            "text": "Out of turn, when another player trys to steal a keeper you steal it instead, during your turn choose a keeper to steal."
+            "text": "Out of turn - when another player trys to steal a keeper you steal it instead| During turn - choose a keeper to steal."
         },
         {
             "id": "CO05",
@@ -862,7 +862,7 @@
             "subtype": "",
             "name": "Veto!",
             "effects": ["RULESTOP_OR_RULE_RESET_3"],
-            "text": "Out of turn, stop another player while they are playing a rule card, during your turn reset up to 3 rules."
+            "text": "Out of turn - stop another player while they are playing a rule card| During turn - reset up to 3 rules."
         },
         {
             "id": "CO06",
@@ -870,7 +870,7 @@
             "subtype": "",
             "name": "It's a Trap!",
             "effects": ["KEEPER_DISCARD_REFLECT_OR_KEEPER_DISCARD"],
-            "text": "Out of turn, when another player trys to destroy one of your keepers destroy a random one of theirs instead, during your turn, choose a keeper to discard."
+            "text": "Out of turn - when another player trys to destroy one of your keepers destroy a random one of theirs instead| During turn, choose a keeper to discard."
         }
     ]
 }

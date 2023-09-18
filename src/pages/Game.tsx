@@ -981,10 +981,9 @@ export default function Game({setWinGameStats}: Props) {
                     }
                 });
             }
-        } else if(card.effects.includes("RULESTOP_OR_RULE_RESET_2")) {
+        } else if(card.effects.includes("RULESTOP_OR_RULE_RESET_3")) {
             if(isYourTurn) {
-                const selectedAmount = selectedRuleGroup.length > 2 ? 2 : 1;
-                for(let i = 0; i <= selectedAmount; i++) {
+                for(let i = 0; i <= 3; i++) {
                     dispatchRules({
                         type: RULE_REDUCER_ACTIONS.RULE_RESET__CHOICE,
                         payload: {
@@ -1324,6 +1323,7 @@ export default function Game({setWinGameStats}: Props) {
             wormhole(1, 0);
         } else if(keeperId === "KE05") {
             const ran = Math.floor(Math.random() * selectedPlayerGroup[0].hand.length);
+            if(!selectedPlayerGroup[0].hand) return;
             const card = selectedPlayerGroup[0].hand[ran];
             dispatchPlayers({
                 type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
@@ -1487,7 +1487,7 @@ export default function Game({setWinGameStats}: Props) {
 
     return (
         <div className='game_container' >
-            {/* <button
+            <button
                 className='menu_link'
                 onClick={() => {
                     // playActionCards({effects: ["RULE_RESET_CHOOSE"]} as CardSchema);
@@ -1503,27 +1503,13 @@ export default function Game({setWinGameStats}: Props) {
                         type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
                         payload: {
                             playerId: user?.uid ?? '',
-                            cards: [         {
-                                "id": "KL03",
-                                "type": "KEEPER",
-                                "subtype": "LIVING",
-                                "name": "Duke Horacio",
-                                "effects": [],
-                                "text": ""
-                            },        {
-                                "id": "KL08",
-                                "type": "KEEPER",
-                                "subtype": "LIVING",
-                                "name": "King Roald",
-                                "effects": [],
-                                "text": ""
-                            },        {
-                                "id": "G21",
-                                "type": "GOAL",
+                            cards: [          {
+                                "id": "CO05",
+                                "type": "COUNTER",
                                 "subtype": "",
-                                "name": "Misthalins Nobility",
-                                "effects": [],
-                                "text": "Collection Type: |King Roald|, |Duke Horacio|"
+                                "name": "Veto!",
+                                "effects": ["RULESTOP_OR_RULE_RESET_3"],
+                                "text": "Out of turn - stop another player while they are playing a rule card| during turn - reset up to 3 rules."
                             },],
                             upload: uploadProps
                         }
@@ -1586,7 +1572,7 @@ export default function Game({setWinGameStats}: Props) {
                 }}
             >
                 seocnd coming
-            </button> */}
+            </button>
             {   
                 // !loading
                 // &&

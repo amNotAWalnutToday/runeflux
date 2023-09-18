@@ -837,6 +837,11 @@ a:hover,
   }
 }
 
+.counter_p {
+  display: block;
+  margin-top: 1rem;
+}
+
 .hand_card {
   transition: transform ease-out 0.2s;
 }

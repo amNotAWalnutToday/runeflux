@@ -68,6 +68,19 @@ export default function Card({
         });
     }
 
+    const mapCounterText = () => {
+        return cardState.state.text.split("|").map((paragraph, ind) => {
+            return (
+                <span
+                    key={`counter_text__${ind}`}
+                    className="counter_p"
+                >
+                    {paragraph}
+                </span>
+            )
+        });
+    }
+
     return cardState.state ? (
         <div 
             className={`card ${getStyle()} ${cardState.state.type.toLowerCase()} ${position === "PENDING" ? "pending" : ""} ${position === "HAND" ? "hand_card": ""} ${checkGoalIsSelected() ? "goal_selected" : ""}`} 
@@ -106,7 +119,13 @@ export default function Card({
                 </h2>
                 <h3>{cardState.state.name}</h3>
                 <hr className='card_hr__thick' />
-                <p>{cardState.state.type === "GOAL" ? mapGoalText() : cardState.state.text }</p>
+                <p>{cardState.state.type === "GOAL" 
+                        ? mapGoalText() 
+                        : cardState.state.type === "COUNTER" 
+                            ? mapCounterText() 
+                            : cardState.state.text
+                            }
+                </p>
             </div>
         </div>
     ) : null
