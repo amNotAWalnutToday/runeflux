@@ -17,7 +17,8 @@ export default function EndTurn({table, localPlayer, endTurn}: Props) {
         const hasPlayed       = table.turn.played          >= table.rules.playAmount
                              || !localPlayer.hand.length;
         const isHandFull      = localPlayer.hand.length    >  table.rules.handLimit;
-        const isKeepersFull   = localPlayer.keepers.length > table.rules.keeperLimit;
+        const isKeepersFull   = localPlayer.keepers.length > table.rules.keeperLimit
+                             && !checkIfKeepersAllCreepers();
         const isTurn          = table.turn.player === localPlayer.user.uid; 
         const isUsingWormhole = table.turn.temporary.hand.length > 0;
 
@@ -25,6 +26,15 @@ export default function EndTurn({table, localPlayer, endTurn}: Props) {
             return [hasDrawn, hasPlayed, isHandFull, isKeepersFull, isTurn, isUsingWormhole];
         }
         else return false;
+    }
+
+    const checkIfKeepersAllCreepers = () => {
+        if(!localPlayer.keepers) return;
+        let creepers = 0;
+        for(const keeper of localPlayer.keepers) {
+            if(keeper.type === "CREEPER") creepers++;
+        }
+        return creepers === localPlayer.keepers.length;
     }
 
     const displayErrors = (errors: boolean[]) => {
