@@ -4,7 +4,7 @@ import UserContext from "../data/Context";
 
 type Props = {
     cardState: { state: CardSchema, index: number },
-    position: "HAND" | "SELECT" | "PENDING" | "TABLE" | "CREEPER" | "CATALOG",
+    position: "HAND" | "SELECT" | "PENDING" | "TABLE" | "CREEPER" | "CATALOG" | "PREVIOUS_PENDING",
     numberInLine?: number,
     inspectKeeper?: (card: { state: CardSchema, index: number, playerIndex: number } | null) => void,
     selectCard?: (card: { state: CardSchema, index: number } | null) => void,
@@ -83,7 +83,7 @@ export default function Card({
 
     return cardState.state ? (
         <div 
-            className={`card ${getStyle()} ${cardState.state.type.toLowerCase()} ${position === "PENDING" ? "pending" : ""} ${position === "HAND" ? "hand_card": ""} ${checkGoalIsSelected() ? "goal_selected" : ""}`} 
+            className={`card ${getStyle()} ${cardState.state.type.toLowerCase()} ${position === "PREVIOUS_PENDING" ? "previous_pending" : ""} ${position === "PENDING" ? "pending" : ""} ${position === "HAND" ? "hand_card": ""} ${checkGoalIsSelected() ? "goal_selected" : ""}`} 
             style={ position === "HAND" ? {transform: animation ?  origin : handPosition} 
                 : position === "CREEPER" ? {transform: "scale(0.3) translate(-300px, -100px)"} : {} 
             } 

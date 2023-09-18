@@ -311,6 +311,7 @@ export default function Game({setWinGameStats}: Props) {
     /*LOCAL STATE*/
     const [loading, setLoading] = useState(true);
     const [locationCooldown, setLocationCooldown] = useState(false);
+    const [previousPending, setPreviousPending] = useState<CardSchema>();
     const [selectedCard, setSelectedCard] = useState<{state: CardSchema, index: number} | null>(null);
     const [inspectedKeeper, setInspectedKeeper] = useState<{state: CardSchema, index: number, playerIndex: number} | null>(null);
     const [selectedRuleGroup, setSelectedRuleGroup] = useState<string[]>([]);
@@ -882,6 +883,8 @@ export default function Game({setWinGameStats}: Props) {
     const resolvePlayCard = (card: CardSchema, prevPending: typeof table.pending | null) => {
         setTimeout(() => {
             resetPending();
+            setPreviousPending((prev) => ({...prev, ...card}));
+            console.log(previousPending);
             switch(card.type) {
                 case "KEEPER":
                     return playKeeperCard(card);
@@ -1709,6 +1712,14 @@ export default function Game({setWinGameStats}: Props) {
                 <Card
                     position={"PENDING"}
                     cardState={{state: table.counter, index: 0}}
+                />
+            }
+            {
+                previousPending
+                &&
+                <Card
+                    position='PREVIOUS_PENDING'
+                    cardState={{state: previousPending, index: 0}}
                 />
             }
         </div>

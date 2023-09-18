@@ -774,7 +774,7 @@ a:hover,
 
 .errors_container {
   opacity: 0%;
-  animation: rise 2s linear 1;
+  animation: rise 3s linear 1;
   background-color: #fafcfeb0;
   padding: 0.25rem;
   box-shadow: 0px 3px 12px black;
@@ -840,6 +840,20 @@ a:hover,
 .counter_p {
   display: block;
   margin-top: 0.5rem;
+}
+
+.card.previous_pending::before {
+  position: absolute;
+  content: "Last Played";
+  top: -65px;
+  font-size: 32px;
+}
+
+.card.previous_pending {
+  position: absolute;
+  left: 130px;
+  bottom: 200px;
+  transform: scale(0.5);
 }
 
 .hand_card {
