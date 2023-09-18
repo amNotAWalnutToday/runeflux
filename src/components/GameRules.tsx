@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import RuleSchema from "../schemas/ruleSchema";
+import TurnSchema from '../schemas/turnSchema';
 
 type Props = {
     rules: RuleSchema,
+    turn: TurnSchema,
     selectedRuleGroup: string[],
     selectRuleGroup: (rule: string) => void,
     isTurn: boolean,
@@ -13,6 +15,7 @@ type Props = {
 
 export default function GameRules({
     rules, 
+    turn,
     selectedRuleGroup, 
     selectRuleGroup,
     isTurn,
@@ -81,7 +84,7 @@ export default function GameRules({
                         selectRuleGroup("drawAmount");
                     }}
                 >
-                    Draw: {rules.drawAmount}
+                    Draw: {turn.drawn} / {rules.drawAmount}
                 </li>
                 <li
                     className={`rule ${selectedRuleGroup.includes("playAmount") ? "highlight" : ""}`}
@@ -90,7 +93,7 @@ export default function GameRules({
                         selectRuleGroup("playAmount");
                     }}
                 >
-                    Play: {rules.playAmount}
+                    Play: {turn.played} / {rules.playAmount}
                 </li>
                 <li
                     className={`rule ${selectedRuleGroup.includes("handLimit") ? "highlight" : ""}`}

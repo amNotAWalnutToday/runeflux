@@ -1591,6 +1591,7 @@ export default function Game({setWinGameStats}: Props) {
             </div>
             <GameRules 
                 rules={table.rules}
+                turn={turn}
                 selectRuleGroup={selectRuleGroup}
                 selectedRuleGroup={selectedRuleGroup}
                 wormhole={wormhole}
