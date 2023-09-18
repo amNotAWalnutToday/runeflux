@@ -15,6 +15,7 @@ import Account from './pages/Account';
 import CardCatalog from './pages/CardCatalog';
 import PlayerSchema from './schemas/playerSchema';
 import CardSchema from './schemas/cardSchema';
+import PageNotFound from './pages/PageNotFound';
 
 const app = initializeApp(firebaseConfig);
 
@@ -79,6 +80,12 @@ export default function RouteSwitch() {
                         path='/catalog'
                         element={
                             <CardCatalog />
+                        }
+                    />
+                    <Route
+                        path={'*'}
+                        element={
+                            <PageNotFound />
                         }
                     />
                 </Routes>
