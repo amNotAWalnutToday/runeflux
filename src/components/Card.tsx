@@ -55,6 +55,10 @@ export default function Card({
         }
     }
 
+    const convertNameToImage = (name: string) => {
+        return name.split(" ").join("_").toLowerCase();
+    }
+
     const mapGoalText = () => {
         return cardState.state.text.split("|").map((segment, ind) => {
             return (
@@ -126,6 +130,9 @@ export default function Card({
                             : cardState.state.text
                             }
                 </p>
+                <div
+                    className={`${convertNameToImage(cardState.state.name)} card_image`}
+                />
             </div>
         </div>
     ) : null

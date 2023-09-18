@@ -54,7 +54,7 @@ export default function MiniCard({
                 </div>
             </div>
             <div className="card_container__inner_right" >
-
+                <div className={`${cardState.state.name.split(" ").join("_").toLowerCase()} mini_card_image`} />
             </div>
             {
             cardState.state.attachment
@@ -88,7 +88,7 @@ export default function MiniCard({
                 </div>
             </div>
             <div className="side_card_container__inner_right" >
-
+                <div className={`${cardState.state.name.split(" ").join("_").toLowerCase()} card_image`} />
             </div>
             {
             cardState.state.attachment

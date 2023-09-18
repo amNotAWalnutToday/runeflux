@@ -935,3 +935,71 @@ a:hover,
   border: 1px solid white;
   background-color: #111;
 }
+
+.card_image {
+  z-index: 0;
+  margin-top: 2rem;
+  transform: translate(50px, 0px);
+  width: 50px;
+  height: 50px;
+}
+
+.mini_card_image {
+  margin-top: 2rem;
+  width: 25px;
+  height: 25px;
+}
+
+.mind_rune {
+  background: url("./assets/mind_rune.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.chaos_rune {
+  background: url("./assets/chaos_rune.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.air_rune {
+  background: url("./assets/air_rune.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.water_rune {
+  background: url("./assets/water_rune.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.earth_rune {
+  background: url("./assets/earth_rune.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.fire_rune {
+  background: url("./assets/fire_rune.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.law_rune {
+  background: url("./assets/law_rune.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.nature_rune {
+  background: url("./assets/nature_rune.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.cosmic_rune {
+  background: url("./assets/cosmic_rune.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}

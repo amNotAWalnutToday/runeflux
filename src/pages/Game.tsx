@@ -1523,11 +1523,11 @@ export default function Game({setWinGameStats}: Props) {
                         type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
                         payload: {
                             playerId: user?.uid ?? '',
-                            cards: [        {
-                                "id": "KL04",
+                            cards: [         {
+                                "id": "KR01",
                                 "type": "KEEPER",
-                                "subtype": "LIVING",
-                                "name": "Father Aereck",
+                                "subtype": "RUNE",
+                                "name": "Mind Rune",
                                 "effects": [],
                                 "text": ""
                             },],

@@ -56,7 +56,11 @@ export default function Gameover({winGameStats}: Props) {
     const updateUser = () => {
         if(!user || !goal) return;
         if(winner?.user.uid === user.uid) {
-            const playedAmount = user?.cardCatalog[`${goal?.id}`] + 1;
+            const playedAmount = (
+                !user?.goalWins[`${goal.id}`] 
+                    ? 1
+                    : user?.goalWins[`${goal?.id}`] + 1
+            );
             const winAmount = user.stats.wins + 1;
             uploadStats("GOALWON", db, {cardKey: goal?.id, cardNum: playedAmount}, user.uid);
             uploadStats("WINS", db, {amount: winAmount}, user.uid);
@@ -65,6 +69,7 @@ export default function Gameover({winGameStats}: Props) {
                 return { 
                     ...prev, 
                     cardCatalog: Object.assign({}, prev.cardCatalog, {[`${goal.id}`]: playedAmount}), 
+                    goalWins: Object.assign({}, prev.goalWins, {[`${goal.id}`]: playedAmount}),
                     stats: Object.assign({}, prev.stats, {wins: winAmount}),
                 };
             }); 
