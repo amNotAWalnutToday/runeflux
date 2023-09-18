@@ -802,7 +802,6 @@ export default function Game({setWinGameStats}: Props) {
 
     const playCard = (card: CardSchema | false, indexInHand: number) => {
         if(!card) return;
-        if(card.subtype === "LOCATION" && rules.teleblock) return;
         const prevPending = table.pending ?? null;
         if(user) {
             const playedAmount = user.cardCatalog[`${card.id}`] + 1;
@@ -835,7 +834,7 @@ export default function Game({setWinGameStats}: Props) {
 
     const playTemporaryCard = (card: CardSchema | false, indexInHand: number) => {
         if(!card || !table.turn.temporary) return;
-        if(card.subtype === "LOCATION" && rules.teleblock) return;
+        if(user?.uid !== turn.player) return;
         const prevPending = table.pending ?? null;
         upload('PENDING', db, {cardState: card}, joinedGameID);
         discardTemporaryCard(indexInHand, checkShouldDiscard(card.type));
@@ -1111,6 +1110,7 @@ export default function Game({setWinGameStats}: Props) {
                 }
             });
         } else if(card.effects.includes("LOCATION")) {
+            if(rules.teleblock) return;
             const location = card.effects[1];
             dispatchRules({
                 type: RULE_REDUCER_ACTIONS.RULE_CHANGE__LOCATION,
@@ -1159,9 +1159,8 @@ export default function Game({setWinGameStats}: Props) {
                     upload: uploadProps,
                 }
             });
-        } else if(card.effects.includes("LOCATION_RANDOM")) {
-            teleport();
-        } else if(card.effects.includes("RULE_RESET_CHOOSE")) {
+        } else if(card.effects.includes("TELEPORT")) teleport();
+        else if(card.effects.includes("RULE_RESET_CHOOSE")) {
             for(let i = 0; i <= (card.effects.length > 1 ? 2 : 0); i++) {
                 dispatchRules({
                     type: RULE_REDUCER_ACTIONS.RULE_RESET__CHOICE,
@@ -1286,6 +1285,7 @@ export default function Game({setWinGameStats}: Props) {
     }
 
     const teleport = () => {
+        if(rules.teleblock) return;
         dispatchRules({
             type: RULE_REDUCER_ACTIONS.RULE_CHANGE__LOCATION_RANDOM,
             payload: {
@@ -1318,7 +1318,7 @@ export default function Game({setWinGameStats}: Props) {
                 }
             });
         } else if(keeperId === "KR08") {
-            teleport();
+            playCard(getCardById("A01"), -1);
         } else if(keeperId === "KR02") {
             wormhole(1, 0);
         } else if(keeperId === "KE05") {
