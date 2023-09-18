@@ -122,7 +122,10 @@ export default function Table({
                         )
                 }
             </div>}
-            <div className="table_goals" >
+            <div 
+                className={`table_goals`} 
+                style={{transform: `rotateZ(${getRotation()})`}}
+            >
                 {
                     goal.length
                         ? mapGoals()

@@ -31,13 +31,13 @@ export default function UserAccountBox({
         if(!player?.hand) return;
         return player?.hand.map((any, ind) => {
             return (
-                <div 
-                    key={`${any.id}_small_hand`}
+                <span
+                    key={`${any.id}_small_hand__${ind}`}
                     className="mini_hand_card"
                     style={{transform: `translate(calc(-50% * ${ind}), 50px)`}}
                 >
 
-                </div>
+                </span>
             )
         })
     }

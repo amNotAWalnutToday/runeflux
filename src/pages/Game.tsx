@@ -428,6 +428,7 @@ export default function Game({setWinGameStats}: Props) {
         setLocalPlayer((prev) => {
             return { ...prev, ...getPlayer(players, user?.uid ?? '').state }
         });
+        if(user?.uid !== turn.player) return;
         const player = getPlayer(players, user?.uid ?? '');
         if(player.state.hand.length) {
             player.state.hand.forEach((card, ind) => {
@@ -796,6 +797,29 @@ export default function Game({setWinGameStats}: Props) {
         setInspectedKeeper(() => null);
     }
 
+    const discardKeeperFromPlayer = (cardIndex: number, playerId: string, addToDiscard = true) => {
+        const player = getPlayer(players, playerId);
+        const updatedKeepers = removeCard(player.state.keepers, cardIndex);
+        if(addToDiscard) {
+            dispatchDeck({
+                type: DECK_REDUCER_ACTIONS.DECK_ADD__DISCARD_BOT,
+                payload: {
+                    pile: [players[player.index].keepers[cardIndex]],
+                    upload: uploadProps
+                }
+            });
+        }
+
+        dispatchPlayers({
+            type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__REMOVE,
+            payload: {
+                playerId: playerId,
+                cards: [...updatedKeepers],
+                upload: uploadProps
+            }
+        });
+    }
+
     const resetPending = () => {
         upload('PENDING', db, {cardState: false}, joinedGameID);
     }
@@ -1134,18 +1158,9 @@ export default function Game({setWinGameStats}: Props) {
 
     const entranaHandler = () => {
         players.forEach((player) => {
-            let keepers = [...player.keepers];
             player.keepers.forEach((keeper, index) => {
                 if(keeper.subtype === "RUNE" || keeper.subtype === "EQUIPMENT") {
-                    keepers = removeCard(keepers, index);    
-                }
-            });
-            dispatchPlayers({
-                type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__REMOVE,
-                payload: {
-                    playerId: player.user.uid,
-                    cards: [...keepers],
-                    upload: uploadProps
+                    discardKeeperFromPlayer(index, player.user.uid);
                 }
             });
         });
@@ -1556,7 +1571,7 @@ export default function Game({setWinGameStats}: Props) {
                     dispatchPlayers({
                         type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
                         payload: {
-                            playerId: "tqVobwETqdQmDbugQ8NIoGZA1ko2" ?? '',
+                            playerId: user?.uid ?? '',
                             cards: [        {
                                 "id": "CR03",
                                 "type": "CREEPER",
