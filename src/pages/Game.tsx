@@ -828,7 +828,12 @@ export default function Game({setWinGameStats}: Props) {
         if(!card) return;
         const prevPending = table.pending ?? null;
         if(user) {
-            const playedAmount = user.cardCatalog[`${card.id}`] + 1;
+            const playedAmount = (
+                user.cardCatalog[`${card.id}`] 
+                    ? user.cardCatalog[`${card.id}`] + 1
+                    : 1 
+            );
+            
             setUser((prev) => {
                 if(!prev) return;
                 return {...prev, cardCatalog: Object.assign({}, prev?.cardCatalog, {[`${card.id}`]: playedAmount})}
@@ -1357,15 +1362,12 @@ export default function Game({setWinGameStats}: Props) {
                     upload: uploadProps
                 }
             });
-        } else if(keeperId === "KL07" || keeperId === "KR07" || keeperId === "KE04") {
-            playCard({
-                "id": "AF01",
-                "type": "ACTION",
-                "subtype": "",
-                "name": "DESTROY",
-                "effects": ["DESTROY_1"],
-                "text": "DESTROY!"
-            }, -1);
+        } else if(
+            keeperId === "KL07" || keeperId === "KR07" || keeperId === "KE04"
+            || keeperId === "K02" || keeperId === "KE02"
+        ) {
+            // destroy cards //
+            playCard(getCardById("A15"), -1);
         } else if(keeperId === "KL10") {
             playCard({
                 "id": "AF02",
@@ -1519,12 +1521,12 @@ export default function Game({setWinGameStats}: Props) {
                         payload: {
                             playerId: user?.uid ?? '',
                             cards: [        {
-                                "id": "RB08",
-                                "type": "RULE",
-                                "subtype": "BASIC",
-                                "name": "Play All",
-                                "effects": ["RULE_PLAY", "99"],
-                                "text": "When this card is in play, each player will play all cards per turn."
+                                "id": "KL04",
+                                "type": "KEEPER",
+                                "subtype": "LIVING",
+                                "name": "Father Aereck",
+                                "effects": [],
+                                "text": ""
                             },],
                             upload: uploadProps
                         }
@@ -1572,11 +1574,11 @@ export default function Game({setWinGameStats}: Props) {
                         type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
                         payload: {
                             playerId: user?.uid ?? '',
-                            cards: [        {
-                                "id": "CR03",
+                            cards: [          {
+                                "id": "CR02",
                                 "type": "CREEPER",
                                 "subtype": "LIVING_CREEPER",
-                                "name": "Wizard Mind Bomb",
+                                "name": "Poison",
                                 "effects": [],
                                 "text": "A creeper that attaches to a living keeper disabling any use effects and preventing that player from winning."
                             },

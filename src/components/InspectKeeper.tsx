@@ -41,7 +41,6 @@ export default function InspectKeeper({
 
     const checkUseIfNeedSelect = () => {
         const player = getPlayer(table.players, user?.uid ?? '');
-
         if(cardState.state.id === "KE04") {
             if(!selectedKeeperGroup.length) return false;
             if(selectedKeeperGroup[0].state.subtype !== "LIVING"
@@ -60,6 +59,14 @@ export default function InspectKeeper({
         } else if(cardState.state.id === "KE05") {
             if(!selectedPlayerGroup.length) return false;
             if(selectedPlayerGroup[0].user.uid === player.state.user.uid) return false;
+        } else if(cardState.state.id === "K02") {
+            if(!selectedKeeperGroup.length) return false;
+            if(selectedKeeperGroup[0].state.id !== "CR02"
+            && selectedKeeperGroup[0].state.attachment?.id !== "CR02") return false;
+        } else if(cardState.state.id === "KE02") {
+            if(!selectedKeeperGroup.length) return false;
+            if(selectedKeeperGroup[0].state.id !== "CR01"
+            && selectedKeeperGroup[0].state.attachment?.id !== "CR01") return false;
         }
 
         return true;

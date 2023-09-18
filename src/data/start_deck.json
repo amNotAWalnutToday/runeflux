@@ -180,9 +180,9 @@
             "id": "KE02",
             "type": "KEEPER",
             "subtype": "EQUIPMENT",
-            "name": "Anti-Dragonfire Shield",
-            "effects": [],
-            "text": ""
+            "name": "Anti Dragonfire Shield",
+            "effects": ["DESTROY_1"],
+            "text": "Once per turn, can destroy elvarg creeper."
         },
         {
             "id": "KE03",
@@ -231,6 +231,14 @@
             "name": "Cake",
             "effects": ["DRAW_1"],
             "text": ""
+        },
+        {
+            "id": "K02",
+            "type": "KEEPER",
+            "subtype": "",
+            "name": "Anti Poison",
+            "effects": ["DESTROY_1"],
+            "text": "Once per turn, can destroy the poison creeper."
         },
         {
             "id": "CR01",
@@ -537,6 +545,22 @@
             "text": "Collection Type: |Chaos Rune|, |Drunken Dwarf|"
         },
         {
+            "id": "G36",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Poison Removal",
+            "effects": [],
+            "text": "just gotta drink |Anti-Poison| to cure |Poison|."
+        },
+        {
+            "id": "G37",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Prevent Toxicity?",
+            "effects": [],
+            "text": "Does a |Anti Poison| protect from being told to sit in the |Wilderness|."
+        },
+        {
             "id": "RL01",
             "type": "RULE",
             "subtype": "LOCATION",
@@ -823,6 +847,14 @@
             "name": "Summon Ghost",
             "effects": ["SUMMON_GHOST"],
             "text": "Summon a ghost to add to your keepers."
+        },
+        {
+            "id": "A15",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Destroy Keeper",
+            "effects": ["DESTROY_1"],
+            "text": "Choose a keeper/creeper to destroy."
         },
         {
             "id": "CO01",
