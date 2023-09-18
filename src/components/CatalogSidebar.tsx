@@ -1,10 +1,18 @@
 type Props = {
     filterByType: (type: string) => void;
+    filterByWin: (byWin: boolean) => void;
     filter: string,
+    playOrWon: string,
     completionPercentage: number,
 }
 
-export default function CatalogSidebar({filterByType, filter, completionPercentage}: Props) {
+export default function CatalogSidebar({
+    filterByType,
+    filterByWin,
+    filter,
+    playOrWon,
+    completionPercentage
+}: Props) {
     return (
         <div className="sidebar_container" >
             <ul>
@@ -46,6 +54,18 @@ export default function CatalogSidebar({filterByType, filter, completionPercenta
                         onClick={() => filterByType("GOAL")}
                     >
                         Goals
+                    </li>
+                    <li 
+                        className={`subtype_li ${filter === "GOAL" && playOrWon === "PLAY" ? "selected" : ""}`}
+                        onClick={() => filterByWin(false)}
+                    >
+                        - Played
+                    </li>
+                    <li 
+                        className={`subtype_li ${filter === "GOAL" && playOrWon === "WON" ? "selected" : ""}`}
+                        onClick={() => filterByWin(true)}
+                    >
+                        - Won
                     </li>
                 </section>
                 <section className="rule_section" >

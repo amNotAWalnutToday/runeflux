@@ -7,11 +7,13 @@ import { startDeck as start_deck } from '../data/start_deck.json';
 import Card from '../components/Card';
 import CardBack from '../components/CardBack';
 import UserContext from '../data/Context';
+import CardSchema from '../schemas/cardSchema';
 
 export default function CardCatalog() {
     const { user } = useContext(UserContext);
     const navigate = useNavigate();
     const [filter, setFilter] = useState("");
+    const [playOrWon, setPlayOrWon] = useState<"PLAY" | "WON">("PLAY");
 
     useEffect(() => {
         if(!user) return navigate('/');
@@ -19,9 +21,15 @@ export default function CardCatalog() {
     }, []);
 
     const filterByType = (type: string) => {
+        setPlayOrWon(() => "PLAY");
         setFilter(() => {
             return type;
         });
+    }
+
+    const filterByWin = (byWin = false) => {
+        if(byWin) setFilter(() => "GOAL");
+        setPlayOrWon(() => byWin ? "WON" : "PLAY");
     }
     
     const getCompletionPercentage = () => {
@@ -33,11 +41,17 @@ export default function CardCatalog() {
         return cardsPlayed ? Math.round((cardsPlayed / start_deck.length) * 100) : 0;
     }
 
+    const checkCardLogCon = (card: CardSchema) => {
+        if(!user) return 0;
+        if(playOrWon === "PLAY") return user?.cardCatalog[`${card.id}`] > 0;
+        else return user?.goalWins[`${card.id}`] > 0;
+    }
+
     const mapCards = () => {
         if(!user) return;
         return start_deck.map((card, ind) => {
             if(filter && (card.type !== filter) && (card.subtype !== filter)) return;
-            return user.cardCatalog[`${card.id}`] > 0 ? (
+            return checkCardLogCon(card) ? (
                 <Card
                     key={`catalog_card__${ind}`} 
                     position='CATALOG'
@@ -60,7 +74,9 @@ export default function CardCatalog() {
             />
             <CatalogSidebar 
                 filter={filter}
+                playOrWon={playOrWon}
                 filterByType={filterByType}
+                filterByWin={filterByWin}
                 completionPercentage={getCompletionPercentage()}
             />
             <div className='catalog'>
