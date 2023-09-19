@@ -460,7 +460,7 @@ export default function Game({setWinGameStats}: Props) {
             type: DECK_REDUCER_ACTIONS.DECK_REMOVE__PURE_TOP,
             payload: {
                 pile: [],
-                amount: playAmount,
+                amount: playAmount + discardAmount,
                 upload: uploadProps,
             }
         })
