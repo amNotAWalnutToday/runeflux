@@ -32,7 +32,7 @@ const {
     getPlayer,
     getPlayerKeeper,
     getCardById,
-    getDeckCardById,
+    // getDeckCardById,
     connectGame, 
     chooseWhoGoesFirst,
     checkShouldDiscard,
@@ -769,6 +769,7 @@ export default function Game({setWinGameStats}: Props) {
         const isYourTurn = user?.uid === turn.player;
         if(card.effects.includes("TELESTOP_OR_LOCATION_MISTHALIN")) {
             if(isYourTurn) {
+                if(rules.teleblock) return;
                 dispatchRules({
                     type: RULE_REDUCER_ACTIONS.RULE_CHANGE__LOCATION,
                     payload: {
@@ -845,29 +846,13 @@ export default function Game({setWinGameStats}: Props) {
             }
         } else if(card.effects.includes("KEEPER_DISCARD_REFLECT_OR_KEEPER_DISCARD")) {
             if(isYourTurn) {
-                const updatedKeepers = removeCard(players[selectedKeeperGroup[0].playerIndex].keepers, selectedKeeperGroup[0].index);
-                dispatchPlayers({
-                    type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__REMOVE,
-                    payload: {
-                        playerId: players[selectedKeeperGroup[0].playerIndex].user.uid,
-                        cards: [...updatedKeepers],
-                        upload: uploadProps
-                    }
-                });
+                discardKeeperFromPlayer(selectedKeeperGroup[0].index, players[selectedKeeperGroup[0].playerIndex].user.uid);
             } else {
                 uploadTable(db, table, joinedGameID);
                 upload("PENDING", db, {cardState: false}, joinedGameID);
                 const playerWhoGotCountered = getPlayer(players, turn.player !== true && turn.player ? turn.player : '');
                 const randomCardIndex = Math.floor(Math.random() * playerWhoGotCountered.state.keepers.length);
-                const updatedKeepers = removeCard(playerWhoGotCountered.state.keepers, randomCardIndex);
-                dispatchPlayers({
-                    type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__REMOVE,
-                    payload: {
-                        playerId: playerWhoGotCountered.state.user.uid,
-                        cards: [...updatedKeepers],
-                        upload: uploadProps,
-                    }
-                });
+                discardKeeperFromPlayer(randomCardIndex, playerWhoGotCountered.state.user.uid);
             }
         }
         upload("COUNTER", db, {cardState: false}, joinedGameID);
@@ -1082,15 +1067,10 @@ export default function Game({setWinGameStats}: Props) {
                 drawCardsForPlayer(player.user.uid, 1, index);
             });
         } else if(card.effects.includes("DESTROY_1")) {
-            const keepers = removeCard(players[selectedKeeperGroup[0].playerIndex].keepers, selectedKeeperGroup[0].index);
-            dispatchPlayers({
-                type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__REMOVE,
-                payload: {
-                    playerId: players[selectedKeeperGroup[0].playerIndex].user.uid,
-                    cards: [...keepers], 
-                    upload: uploadProps
-                }
-            });
+            discardKeeperFromPlayer(
+                selectedKeeperGroup[0].index, 
+                players[selectedKeeperGroup[0].playerIndex].user.uid
+            );
         } else if(card.effects.includes("STEAL_RUNE_CROSSBOW")) {
             const keeper = checkPlayersForKeeper(players, "KE04");
             if(!keeper.keeper) return;

@@ -596,6 +596,7 @@ export default (() => {
     const checkPlayersForKeeper = (players: PlayerSchema[], keeperId: string) => {
         const match = { keeper: <CardSchema | null> null, index: 0, playerIndex: 0 }; 
         players.forEach((player, playerIndex) => {
+            if(!player.keepers) return;
             player.keepers.forEach((keeper, cardIndex) => {
                 if(keeper.id === keeperId) {
                     match.keeper = keeper;
@@ -616,6 +617,7 @@ export default (() => {
         }
 
         players.forEach((player) => {
+            if(!player.keepers) return;
             const { hasWon, bypassCreeper } = compareKeepersToGoal(player.keepers, goal, location);
             
             if(hasWon) {

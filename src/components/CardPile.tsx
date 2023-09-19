@@ -15,9 +15,11 @@ export default function CardPile({type, pile, drawSpecificCard}: Props) {
     
     const mapPile = () => {
         return pile.map((card, ind) => {
-            if(type === "DISCARD" && !ind) return;
+            if((type === "DISCARD" && card.id === "A17")
+            || (type === "PURE" && card.id === "A16")) return;
             return (
                 <MiniCard
+                    key={`card_pile__${card.id}_${ind}`}
                     isSideWays={false}
                     cardState={{state: card, index: ind}}
                     drawSpecificCard={drawSpecificFunc}
