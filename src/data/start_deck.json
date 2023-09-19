@@ -230,7 +230,7 @@
             "subtype": "",
             "name": "Cake",
             "effects": ["DRAW_1"],
-            "text": ""
+            "text": "Once per turn, choose to draw 1 card."
         },
         {
             "id": "K02",

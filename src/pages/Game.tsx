@@ -1273,7 +1273,7 @@ export default function Game({setWinGameStats}: Props) {
 
     return (
         <div className='game_container' >
-            {/* <button
+            <button
                 className='menu_link'
                 onClick={() => {
                     dispatchPlayers({
@@ -1287,6 +1287,20 @@ export default function Game({setWinGameStats}: Props) {
                                 "name": "Mind Rune",
                                 "effects": [],
                                 "text": ""
+                            },        {
+                                "id": "KE03",
+                                "type": "KEEPER",
+                                "subtype":"EQUIPMENT",
+                                "name": "Air Staff",
+                                "effects": [],
+                                "text": ""
+                            },        {
+                                "id": "G01",
+                                "type": "GOAL",
+                                "subtype": "",
+                                "name": "Your First Spell",
+                                "effects": [],
+                                "text": "To cast your first spell you must acquire the following reagents: |air rune| or |air staff|, |mind rune|."
                             },],
                             upload: uploadProps
                         }
@@ -1316,7 +1330,7 @@ export default function Game({setWinGameStats}: Props) {
                 }}
             >
                 seocnd coming
-            </button> */}
+            </button>
             {   
                 <Table 
                     table={table}

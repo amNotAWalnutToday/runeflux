@@ -27,6 +27,13 @@ export default function Gameover({winGameStats}: Props) {
 
     const [hasUpdated, setHasUpdated] = useState(false);
 
+    useBeforeUnload(() => {
+        updateUser();
+        if(user?.uid === joinedGameID) {
+            destroyRoom(db, joinedGameID, setJoinedGameID);
+        }
+    });
+
     useEffect(() => {
         if(!user || !winner || !round || !goal) { 
             return navigate('/account');
@@ -34,13 +41,6 @@ export default function Gameover({winGameStats}: Props) {
         continueHandler();
         /*eslint-disable-next-line*/
     }, []);
-
-    useBeforeUnload(() => {
-        updateUser();
-        if(user?.uid === joinedGameID) {
-            destroyRoom(db, joinedGameID, setJoinedGameID);
-        }
-    });
 
     const continueHandler = async () => {
         if(!user) return;
