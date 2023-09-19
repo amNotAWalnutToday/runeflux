@@ -30,7 +30,9 @@ import GOAL_REDUCER_ACTIONS from '../schemas/reducers/GOAL_REDUCER_ACTIONS';
 const { 
     loadGame, 
     getPlayer,
+    getPlayerKeeper,
     getCardById,
+    getDeckCardById,
     connectGame, 
     chooseWhoGoesFirst,
     checkShouldDiscard,
@@ -304,11 +306,10 @@ export default function Game({setWinGameStats}: Props) {
         if(user.uid === joinedGameID) {
             if(await checkGameInProgress(db, joinedGameID)) return;
             const firstTurn = chooseWhoGoesFirst(players);
-            const updatedDeck = shuffleDeck(table.deck.pure);
             dispatchDeck({
-                type: DECK_REDUCER_ACTIONS.DECK_REPLACE__PURE, 
+                type: DECK_REDUCER_ACTIONS.DECK_SHUFFLE__PURE, 
                 payload: {
-                    pile: updatedDeck,
+                    pile: [],
                     upload: {...uploadProps}
                 }
             });
@@ -493,6 +494,15 @@ export default function Game({setWinGameStats}: Props) {
                 upload: uploadProps
             }
         });
+        if(!fromDiscard) {
+            dispatchDeck({
+                type: DECK_REDUCER_ACTIONS.DECK_SHUFFLE__PURE,
+                payload: {
+                    pile: [],
+                    upload: uploadProps,
+                }       
+            });
+        }
         setShowCardPiles((prev) => ({...prev, pure: false, discard: false}));
     }
     
@@ -617,6 +627,18 @@ export default function Game({setWinGameStats}: Props) {
         upload('PENDING', db, {cardState: false}, joinedGameID);
     }
 
+    const checkKeepScry = (cardId: string) => {
+        if(getPlayerKeeper(getPlayer(players, user?.uid ?? '').state, "KL13")
+        && cardId === "A16") return true;
+        return false;
+    }
+
+    const checkKeeperHistory = (cardId: string) => {
+        if(getPlayerKeeper(getPlayer(players, user?.uid ?? '').state, "KL14")
+        && cardId === "A17") return true;
+        return false;
+    }
+
     const playCard = (card: CardSchema | false, indexInHand: number) => {
         if(!card) return;
         const prevPending = table.pending ?? null;
@@ -639,7 +661,11 @@ export default function Game({setWinGameStats}: Props) {
             return resolvePlayCard(card, prevPending);
         }
         upload('PENDING', db, {cardState: card}, joinedGameID);
-        if(indexInHand > -1) discardCardFromHand(indexInHand, checkShouldDiscard(card.type));
+        if(indexInHand > -1
+        && !checkKeepScry(card.id)
+        && !checkKeeperHistory(card.id)) { 
+            discardCardFromHand(indexInHand, checkShouldDiscard(card.type));
+        }
         if(turn.player === user?.uid
         && card.type !== "CREEPER"
         && indexInHand > -1) {
@@ -651,6 +677,7 @@ export default function Game({setWinGameStats}: Props) {
                 }
             });
         }
+        selectCard(null);
         resolvePlayCard(card, prevPending);
     }
 
@@ -690,7 +717,6 @@ export default function Game({setWinGameStats}: Props) {
                 case "CREEPER":
                     return playCreeperCard(card);
             }
-            resetGroups();
         }, 3000);
     }
 
@@ -1324,7 +1350,15 @@ export default function Game({setWinGameStats}: Props) {
                                 "name": "Historical Research",
                                 "effects": ["DRAW_SPECIFIC_DISCARD"],
                                 "text": "Look through past records and find the location of a card to acquire."
-                            },],
+                            },         {
+                                "id": "KL14",
+                                "type": "KEEPER",
+                                "subtype": "LIVING",
+                                "name": "Reldo",
+                                "effects": [],
+                                "text": "When using the Historical Records card, don't discard it."
+                            },
+                    ],
                             upload: uploadProps
                         }
                     });     

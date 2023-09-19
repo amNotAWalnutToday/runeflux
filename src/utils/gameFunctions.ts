@@ -181,6 +181,9 @@ export default (() => {
             case DECK_REDUCER_ACTIONS.DECK_ADD__DISCARD_BOT:
                 upload("DECK_DISCARD", db, {deckState: pile ? [...pile].concat([...state.discard]) : []}, gameId);
                 return Object.assign({}, state, {discard: pile ? [...pile].concat([...state.discard]) :[]});
+            case DECK_REDUCER_ACTIONS.DECK_SHUFFLE__PURE:
+                upload("DECK_PURE", db, {deckState: [...shuffleDeck(state.pure)]}, gameId);
+                return Object.assign({}, state, {pure: [...shuffleDeck(state.pure)]});
             default: 
                 return state;
         }
@@ -530,6 +533,14 @@ export default (() => {
         return {state: players[0], index: 0};
     }
 
+    const getPlayerKeeper = (player: PlayerSchema, kid: string) => {
+        if(!player.keepers) return false;
+        for(const keeper of player.keepers) {
+            if(keeper.id === kid) return keeper;
+        }
+        return false;
+    }
+
     const getCardById = (cardId: string) => {
         for(const card of startDeckData.startDeck) {
             if(cardId === card.id) {
@@ -537,6 +548,13 @@ export default (() => {
             }
         }
         return startDeckData.startDeck[0];
+    }
+
+    const getDeckCardById = (cardId: string, deck: CardSchema[]) => {
+        for(let i = 0; i < deck.length; i++) {
+            if(cardId === deck[i].id) return { state: deck[i], index: i };
+        }
+        return { state: deck[0], index: 0 };
     }
 
     const getInitRule = (key: string): number | string | boolean => {
@@ -681,7 +699,9 @@ export default (() => {
         upload,
         uploadTable,
         getPlayer,
+        getPlayerKeeper,
         getCardById,
+        getDeckCardById,
         getInitRule,
         chooseWhoGoesFirst,
         checkShouldDiscard,
