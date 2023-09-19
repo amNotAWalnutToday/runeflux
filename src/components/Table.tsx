@@ -32,6 +32,13 @@ export default function Table({
         if(players[3].user.uid === user?.uid) return "90deg";
     }
 
+    const getGoalRotation = () => {
+        if(players[0].user.uid === user?.uid) return "180deg";
+        if(players[1].user.uid === user?.uid) return "0deg";
+        if(players[2].user.uid === user?.uid) return "90deg";
+        if(players[3].user.uid === user?.uid) return "270deg";
+    }
+
     const mapKeepers = (keepers: CardSchema[], horizontal: boolean, playerNum: number) => {
         return keepers.map((keeper, index) => {
             return (
@@ -124,7 +131,7 @@ export default function Table({
             </div>}
             <div 
                 className={`table_goals`} 
-                style={{transform: `rotateZ(${getRotation()})`}}
+                style={{transform: `rotateZ(${getGoalRotation()})`}}
             >
                 {
                     goal.length
