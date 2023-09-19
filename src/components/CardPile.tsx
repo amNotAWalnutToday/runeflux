@@ -9,7 +9,6 @@ type Props = {
 
 export default function CardPile({type, pile, drawSpecificCard}: Props) {
     const drawSpecificFunc = (cardIndex: number) => {
-        if(type === "DISCARD" && !cardIndex) return;
         drawSpecificCard(cardIndex, type === "DISCARD");
     }
     
