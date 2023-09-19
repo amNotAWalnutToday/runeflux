@@ -1033,3 +1033,75 @@ a:hover,
   background-size: contain;
   background-repeat: no-repeat;
 }
+
+.ghostspeak_amulet {
+  background: url("./assets/ghostspeak.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.anti_dragonfire_shield {
+  background: url("./assets/antifire_shield.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.air_staff {
+  background: url("./assets/air_staff.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.rune_crossbow {
+  background: url("./assets/rune_crossbow.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.avas_attractor {
+  background: url("./assets/avas_acc.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.draman_staff {
+  background: url("./assets/draman_staff.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.rune_scimitar {
+  background: url("./assets/rune_scimitar.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.cake {
+  background: url("./assets/cake.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.anti_poison {
+  background: url("./assets/anti_poison.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.elvarg {
+  background: url("./assets/elvarg.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.poison {
+  background: url("./assets/poisoned.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.wizard_mind_bomb {
+  background: url("./assets/wizard_bomb.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}

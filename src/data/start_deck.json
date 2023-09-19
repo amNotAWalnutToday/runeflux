@@ -220,7 +220,7 @@
             "id": "KE05",
             "type": "KEEPER",
             "subtype":"EQUIPMENT",
-            "name": "Ava's Attractor",
+            "name": "Avas Attractor",
             "effects": ["STEAL_1_FROM_HAND"],
             "text": "Once per turn, attract a card to your hand from an opposing player of your choice."
         },
@@ -278,7 +278,7 @@
             "subtype": "LIVING_CREEPER",
             "name": "Wizard Mind Bomb",
             "effects": [],
-            "text": "A creeper that attaches to a living keeper disabling any use effects and preventing that player from winning."
+            "text": "Attaches to living keepers disabling, effects and prevents winning."
         },
         {
             "id": "G01",
