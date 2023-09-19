@@ -97,6 +97,22 @@
             "text": "At the end of a players turn or when discarded teleport to another player."
         },
         {
+            "id": "KL13",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Aris Maye",
+            "effects": [],
+            "text": "When using the Scry and Acquire card, don't discard it."
+        },
+        {
+            "id": "KL14",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Reldo",
+            "effects": [],
+            "text": "When using the Historical Records card, don't discard it."
+        },
+        {
             "id": "KR01",
             "type": "KEEPER",
             "subtype": "RUNE",
@@ -561,6 +577,22 @@
             "text": "Does a |Anti Poison| protect from being told to sit in the |Wilderness|."
         },
         {
+            "id": "G38",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Varrock",
+            "effects": [],
+            "text": "Collection type: |Aris Maye|, |Reldo|, |King Roald|"
+        },
+        {
+            "id": "G39",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Recipe for Disaster",
+            "effects": [],
+            "text": "A long journey begins after speaking to the |Cook|. Freeing the members of the banquet will require help from |Aris Maye|."
+        },
+        {
             "id": "RL01",
             "type": "RULE",
             "subtype": "LOCATION",
@@ -855,6 +887,22 @@
             "name": "Destroy Keeper",
             "effects": ["DESTROY_1"],
             "text": "Choose a keeper/creeper to destroy."
+        },
+        {
+            "id": "A16",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Scry and Acquire",
+            "effects": ["DRAW_SPECIFIC_PURE"],
+            "text": "See into the future and choose a card to acquire."
+        },
+        {
+            "id": "A17",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Historical Research",
+            "effects": ["DRAW_SPECIFIC_DISCARD"],
+            "text": "Look through past records and find the location of a card to acquire."
         },
         {
             "id": "CO01",

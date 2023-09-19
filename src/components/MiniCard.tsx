@@ -4,9 +4,10 @@ import Card from "./Card";
 type Props = {
     isSideWays: boolean,
     cardState: { state: CardSchema, index: number },
-    inspectKeeper: (card: { state: CardSchema, index: number, playerIndex: number } | null) => void,
+    inspectKeeper?: (card: { state: CardSchema, index: number, playerIndex: number } | null) => void,
     selectedKeeperGroup?: { state: CardSchema, index: number, playerIndex: number }[],
     selectKeeperGroup?: (card: { state: CardSchema, index: number, playerIndex: number }) => void,
+    drawSpecificCard?: (cardIndex: number, fromDiscard?: boolean, playerId?: string) => void,
     playerNum?: number,
 }
 
@@ -17,6 +18,7 @@ export default function MiniCard({
     selectKeeperGroup,
     selectedKeeperGroup,
     playerNum,
+    drawSpecificCard,
 }: Props) {
     const checkSelected = () => {
         if(!selectedKeeperGroup || !playerNum) return false;
@@ -33,7 +35,7 @@ export default function MiniCard({
             className={`card__mini ${cardState.state.type.toLowerCase()} ${checkSelected() ? "selected" : ""}`}
             style={(cardState.state.effects && !cardState.state.cooldown) ? {background: "var(--black-shine)"} : {} }
             onClick={!cardState.state.attachment ? () => { 
-                if(!playerNum) return;
+                if(!playerNum || !inspectKeeper) return;
                 inspectKeeper({...cardState, playerIndex: playerNum - 1})
             }
                 : (e) => e.preventDefault()
@@ -71,7 +73,8 @@ export default function MiniCard({
             className={`side_card__mini card__mini  ${cardState.state.type.toLowerCase()} ${checkSelected() ? "selected" : ""}`}
             style={(cardState.state.effects && !cardState.state.cooldown) ? {background: "var(--black-shine)"} : {} }
             onClick={!cardState.state.attachment ? () => { 
-                if(!playerNum) return;
+                if(drawSpecificCard) return drawSpecificCard(cardState.index);
+                if(!playerNum || !inspectKeeper) return;
                 inspectKeeper({...cardState, playerIndex: playerNum - 1})
             }
                 : (e) => e.preventDefault()
@@ -88,7 +91,7 @@ export default function MiniCard({
                 </div>
             </div>
             <div className="side_card_container__inner_right" >
-                <div className={`${cardState.state.name.split(" ").join("_").toLowerCase()} card_image`} />
+                <div className={`${cardState.state.name.split(" ").join("_").toLowerCase()} mini_card_image sideways`} />
             </div>
             {
             cardState.state.attachment

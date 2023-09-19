@@ -477,6 +477,31 @@ export default (() => {
         else return { hasWon: false, bypassCreeper: false };
     }
 
+    const checkG38 = (keepers: CardSchema[]) => {
+        const requirements = { arisMaye: false, reldo: false, kingRoald: false };
+        
+        keepers.forEach((keeper) => {
+            if(keeper.id === "KL14") requirements.reldo = true;
+            if(keeper.id === "KL13") requirements.arisMaye = true;
+            if(keeper.id === "KL08") requirements.kingRoald = true;
+        });
+
+        if(requirements.kingRoald && requirements.arisMaye && requirements.reldo) return { hasWon: true, bypassCreeper: false };
+        else return { hasWon: false, bypassCreeper: false };
+    }
+
+    const checkG39 = (keepers: CardSchema[]) => {
+        const requirements = { arisMaye: false, cook: false };
+        
+        keepers.forEach((keeper) => {
+            if(keeper.id === "KL05") requirements.cook = true;
+            if(keeper.id === "KL13") requirements.arisMaye = true;
+        });
+
+        if(requirements.cook && requirements.arisMaye) return { hasWon: true, bypassCreeper: false };
+        else return { hasWon: false, bypassCreeper: false };
+    }
+
     const compareKeepersToGoal = (
         keepers: CardSchema[], 
         goal: CardSchema,
@@ -561,6 +586,10 @@ export default (() => {
                 return checkG36(keepers);
             case "G37":
                 return checkG37(keepers, location);
+            case "G38":
+                return checkG38(keepers);
+            case "G39":
+                return checkG39(keepers);
         }
 
         return { hasWon: false, bypassCreeper: false };

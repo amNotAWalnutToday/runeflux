@@ -147,7 +147,8 @@ export default (() => {
         payload: {
             init?: DeckSchema,
             pile: CardSchema[],
-            amount?: number
+            amount?: number,
+            cardIndex?: number,
             upload: {
                 db: Database,
                 gameId: string,
@@ -156,7 +157,7 @@ export default (() => {
     }
     
     const deckReducer = (state: DeckSchema, action: DECK_ACTIONS) => {
-        const { pile, amount, init } = action.payload;
+        const { pile, amount, cardIndex, init } = action.payload;
         const { db, gameId } = action.payload.upload;
         switch(action.type) {
             case DECK_REDUCER_ACTIONS.INIT:
@@ -171,10 +172,16 @@ export default (() => {
             case DECK_REDUCER_ACTIONS.DECK_REMOVE__PURE_TOP:
                 upload("DECK_PURE", db, {deckState: [...state.pure.slice(0, state.pure.length - (amount ?? 0))]}, gameId);
                 return Object.assign({}, state, {pure: [...state.pure.slice(0, state.pure.length - (amount ?? 0))]})
-           case DECK_REDUCER_ACTIONS.DECK_ADD__DISCARD_BOT:
+            case DECK_REDUCER_ACTIONS.DECK_REMOVE__PURE_SPECIFIC: 
+                upload("DECK_PURE", db, {deckState: [...removeCard(state.pure, cardIndex ?? 0)]}, gameId);
+                return Object.assign({}, state, {pure: [...removeCard(state.pure, cardIndex ?? 0)]});
+            case DECK_REDUCER_ACTIONS.DECK_REMOVE__DISCARD_SPECIFIC:
+                upload("DECK_DISCARD", db, {deckState: [...removeCard(state.discard, cardIndex ?? 0)]}, gameId);
+                return Object.assign({}, state, {discard: [...removeCard(state.discard, cardIndex ?? 0)]});
+            case DECK_REDUCER_ACTIONS.DECK_ADD__DISCARD_BOT:
                 upload("DECK_DISCARD", db, {deckState: pile ? [...pile].concat([...state.discard]) : []}, gameId);
                 return Object.assign({}, state, {discard: pile ? [...pile].concat([...state.discard]) :[]});
-           default: 
+            default: 
                 return state;
         }
     }
@@ -218,7 +225,7 @@ export default (() => {
                 upload("PLAYER", db, {playersState: players, playerId}, gameId);
                 return [...players];
             case PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__ADD:
-                players[player.index] = Object.assign({}, player.state, {keepers: [...player.state.keepers, ...cards ?? []]});
+                players[player.index] = Object.assign({}, player.state, {keepers: player.state.keepers ? [...player.state.keepers, ...cards ?? []] : [...cards ?? []]});
                 upload("PLAYER", db, {playersState: players, playerId}, gameId);
                 return [...players];
             case PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__REMOVE:
@@ -627,7 +634,6 @@ export default (() => {
     const removeCard = (cards: CardSchema[], cardIndex: number) => {
         const firstHalf = cards.slice(0, cardIndex);
         const lastHalf = cards.slice(cardIndex + 1);
-        console.log(firstHalf, lastHalf);
         return firstHalf.concat(lastHalf);
     }
 

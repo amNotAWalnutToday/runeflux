@@ -20,6 +20,7 @@ import Table from '../components/Table';
 import Card from '../components/Card';
 import InspectKeeper from '../components/InspectKeeper';
 import Duel from '../components/Duel';
+import CardPile from '../components/CardPile';
 import TURN_REDUCER_ACTION from '../schemas/reducers/TURN_REDUCER_ACTIONS';
 import DECK_REDUCER_ACTIONS from '../schemas/reducers/DECK_REDUCER_ACTIONS';
 import RULE_REDUCER_ACTIONS from '../schemas/reducers/RULE_REDUCER_ACTIONS';
@@ -78,6 +79,7 @@ export default function Game({setWinGameStats}: Props) {
     /*LOCAL STATE*/
     const [loading, setLoading] = useState(true);
     const [locationCooldown, setLocationCooldown] = useState(false);
+    const [showCardPiles, setShowCardPiles] = useState({discard: false, pure: false});
     const [previousPending, setPreviousPending] = useState<CardSchema>();
     const [selectedCard, setSelectedCard] = useState<{state: CardSchema, index: number} | null>(null);
     const [inspectedKeeper, setInspectedKeeper] = useState<{state: CardSchema, index: number, playerIndex: number} | null>(null);
@@ -85,7 +87,7 @@ export default function Game({setWinGameStats}: Props) {
     const [selectedPlayerGroup, setSelectedPlayerGroup] = useState<PlayerSchema[]>([]);
     const [selectedKeeperGroup, setSelectedKeeperGroup] = useState<{ state: CardSchema, index: number, playerIndex: number }[]>([]);
     const [selectedGoalGroup, setSelectedGoalGroup] = useState<{ state: CardSchema, index: number }[]>([]);
-    const [localPlayer, setLocalPlayer] = useState(getPlayer(table.players, user?.uid ?? '').state)
+    const [localPlayer, setLocalPlayer] = useState(getPlayer(table.players, user?.uid ?? '').state);
 
     const selectCard = (card: { state: CardSchema, index: number } | null) => {
         setSelectedCard((prev) => {
@@ -469,6 +471,29 @@ export default function Game({setWinGameStats}: Props) {
                 upload: uploadProps
             }
         });
+    }
+
+    const drawSpecificCard = (cardIndex: number, fromDiscard = false, playerId = user?.uid ?? '') => {
+        const cardToDraw = fromDiscard ? deck.discard[cardIndex] : deck.pure[cardIndex];
+        dispatchDeck({
+            type: (!fromDiscard 
+                    ? DECK_REDUCER_ACTIONS.DECK_REMOVE__PURE_SPECIFIC
+                    : DECK_REDUCER_ACTIONS.DECK_REMOVE__DISCARD_SPECIFIC),
+            payload: {
+                pile: [],
+                cardIndex,
+                upload: uploadProps
+            }
+        });
+        dispatchPlayers({
+            type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
+            payload: {
+                playerId,
+                cards: [cardToDraw],
+                upload: uploadProps
+            }
+        });
+        setShowCardPiles((prev) => ({...prev, pure: false, discard: false}));
     }
     
     const discardCardFromHand = (cardIndex: number, addToDiscard = true) => {
@@ -1069,7 +1094,11 @@ export default function Game({setWinGameStats}: Props) {
                     upload: uploadProps
                 }
             });
-        } 
+        } else if(card.effects.includes("DRAW_SPECIFIC_PURE")) {
+            setShowCardPiles((prev) => ({...prev, pure: true}));
+        } else if(card.effects.includes("DRAW_SPECIFIC_DISCARD")) {
+            setShowCardPiles((prev) => ({...prev, discard: true}));
+        }
         resetGroups();
     }
 
@@ -1280,27 +1309,21 @@ export default function Game({setWinGameStats}: Props) {
                         type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
                         payload: {
                             playerId: user?.uid ?? '',
-                            cards: [         {
-                                "id": "KR01",
-                                "type": "KEEPER",
-                                "subtype": "RUNE",
-                                "name": "Mind Rune",
-                                "effects": [],
-                                "text": ""
-                            },        {
-                                "id": "KE03",
-                                "type": "KEEPER",
-                                "subtype":"EQUIPMENT",
-                                "name": "Air Staff",
-                                "effects": [],
-                                "text": ""
-                            },        {
-                                "id": "G01",
-                                "type": "GOAL",
+                            cards: [        {
+                                "id": "A16",
+                                "type": "ACTION",
                                 "subtype": "",
-                                "name": "Your First Spell",
-                                "effects": [],
-                                "text": "To cast your first spell you must acquire the following reagents: |air rune| or |air staff|, |mind rune|."
+                                "name": "Scry and Acquire",
+                                "effects": ["DRAW_SPECIFIC_PURE"],
+                                "text": "See into the future and choose a card to acquire."
+                            },
+                            {
+                                "id": "A17",
+                                "type": "ACTION",
+                                "subtype": "",
+                                "name": "Historical Research",
+                                "effects": ["DRAW_SPECIFIC_DISCARD"],
+                                "text": "Look through past records and find the location of a card to acquire."
                             },],
                             upload: uploadProps
                         }
@@ -1456,6 +1479,24 @@ export default function Game({setWinGameStats}: Props) {
                 <Card
                     position='PREVIOUS_PENDING'
                     cardState={{state: previousPending, index: 0}}
+                />
+            }
+            {
+                showCardPiles.pure
+                &&
+                <CardPile 
+                    type={"PURE"}
+                    pile={deck.pure}
+                    drawSpecificCard={drawSpecificCard}
+                />
+            }
+            {
+                showCardPiles.discard
+                &&
+                <CardPile
+                    type={"DISCARD"}
+                    pile={deck.discard}
+                    drawSpecificCard={drawSpecificCard}
                 />
             }
         </div>
