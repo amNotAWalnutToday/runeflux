@@ -886,7 +886,7 @@ a:hover,
   transition: transform ease-out 0.2s;
 }
 
-.rule {
+.rules_container .rule {
   border: 2px dashed #0000;
   padding: 0.1rem 1rem;
 }
@@ -1102,6 +1102,90 @@ a:hover,
 
 .wizard_mind_bomb {
   background: url("./assets/wizard_bomb.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.ernest {
+  background: url("./assets/ernest.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.ghost {
+  background: url("./assets/ghost.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.duke_horacio {
+  background: url("./assets/duke_h.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+} 
+
+.father_aereck {
+  background: url("./assets/father_aereck.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.cook {
+  background: url("./assets/cook.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.drunken_dwarf {
+  background: url("./assets/drunk_dwarf.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.archmage_sedridor {
+  background: url("./assets/archmage_sedridor.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.king_roald {
+  background: url("./assets/king_roald.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.ava {
+  background: url("./assets/ava.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.vampyre_juvinate {
+  background: url("./assets/feral_vampyre.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.goblin {
+  background: url("./assets/goblin.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.imp {
+  background: url("./assets/imp.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.aris_maye {
+  background: url("./assets/aris_maye.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.reldo {
+  background: url("./assets/reldo.png");
   background-size: contain;
   background-repeat: no-repeat;
 }
