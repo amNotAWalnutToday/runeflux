@@ -115,6 +115,11 @@ export default (() => {
                     }
                 }
             },
+            phases: {
+                morytania: 0,
+                abyss: 0,
+                wilderness: 0,
+            },
             pending: false,
             isWon: false,
             round: 0,

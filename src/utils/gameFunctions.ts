@@ -309,6 +309,11 @@ export default (() => {
             pending: false,
             counter: false,
             isWon: false,
+            phases: {
+                morytania: 0,
+                abyss: 0,
+                wilderness: 0,
+            }
         }
         for(const card of startDeckData.startDeck) {
             game.deck.pure.push(card);
@@ -350,6 +355,7 @@ export default (() => {
             pendingData: CardSchema | false,
             counterData: CardSchema | false,
             winData: boolean,
+            phaseData: { morytania: 0, abyss: 0, wilderness: 0 }, 
         ) => void,
     ) => {
         try {
@@ -364,7 +370,8 @@ export default (() => {
                     data.round,
                     data.pending,
                     data.counter,
-                    data.isWon
+                    data.isWon,
+                    data.phases
                 );
             });
             await onValue(gameRef, async (snapshot) => {
@@ -378,6 +385,7 @@ export default (() => {
                     data.pending,
                     data.counter,
                     data.isWon,
+                    data.phases
                 );
             });
         } catch(e) {
@@ -397,6 +405,7 @@ export default (() => {
             roundState?: number,
             cardState?: CardSchema | false,
             goalState?: CardSchema[],
+            phaseState?: {location: string, amount: number},
             playerId?: string,
         },
         gameId: string
@@ -404,7 +413,8 @@ export default (() => {
         const { 
             gameState, deckState, turnState, 
             playersState, playerId, roundState,
-            ruleState, cardState, goalState
+            ruleState, cardState, goalState,
+            phaseState,
         } = payload;
 
         switch(type) {
@@ -428,6 +438,8 @@ export default (() => {
                 return uploadGoal(db, goalState ?? [], gameId);
             case "WIN":
                 return uploadWin(db, gameId);
+            case "PHASE":
+                return uploadPhase(db, phaseState?.location ?? '', phaseState?.amount ?? 0, gameId);
             default:
                 return uploadTable(db, gameState ?? {} as GameSchema, gameId);
         }
@@ -522,6 +534,15 @@ export default (() => {
         try {
             const winRef = ref(db, `/games/${gameId}/game/isWon`);
             await set(winRef, true);
+        } catch(e) {
+            return console.error(e);
+        }
+    }
+
+    const uploadPhase = async (db: Database, location: string, amount: number, gameId: string) => {
+        try {
+            const phaseRef = ref(db, `/games/${gameId}/game/phases/${location}`);
+            await set(phaseRef, amount ?? 0);
         } catch(e) {
             return console.error(e);
         }

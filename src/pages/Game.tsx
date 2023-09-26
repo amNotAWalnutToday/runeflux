@@ -246,6 +246,7 @@ export default function Game({setWinGameStats}: Props) {
         pendingData: CardSchema | false,
         counterData: CardSchema | false,
         winData: boolean,
+        phaseData: {morytania: 0, abyss: 0, wilderness: 0},
     ) => {
         if(!deckData.discard) deckData.discard = [];
         if(!deckData.pure) deckData.pure = [];
@@ -294,7 +295,14 @@ export default function Game({setWinGameStats}: Props) {
                 upload: uploadProps
             }
         });
-        setTable((prev) => ({...prev, round: roundData, pending: pendingData, counter: counterData, isWon: winData}));
+        setTable((prev) => ({
+            ...prev, 
+            round: roundData, 
+            pending: pendingData, 
+            counter: counterData, 
+            isWon: winData,
+            phases: phaseData,
+        }));
         setLocalPlayer((prev) => {
             return { ...prev, ...getPlayer(playerData, user?.uid ?? '').state }
         });
@@ -1247,7 +1255,7 @@ export default function Game({setWinGameStats}: Props) {
             player.keepers.forEach((keeper, keeperIndex) => {
                 if(keeper.id !== "KL02") return;
                 const chance = Math.floor(Math.random() * 101);
-                if(chance <= 11) {
+                if(chance <= 110) {
                     const choice = Math.ceil(Math.random() * 6);
                     discardKeeperFromPlayer(keeperIndex, player.user.uid, false);
                     dispatchPlayers({
@@ -1266,9 +1274,8 @@ export default function Game({setWinGameStats}: Props) {
                             : 1 
                     );
                     uploadStats("CARD", db, {cardKey: `KLM0${choice}`, cardNum: playedAmount}, player.user?.uid);
-
-                    ////////////////////
-                    // experimental
+                    upload("PHASE", db, {phaseState: {location: "morytania", amount: table.phases.morytania + 1}}, joinedGameID);
+                    if(table.phases.morytania > 0) return;
                     dispatchDeck({
                         type: DECK_REDUCER_ACTIONS.DECK_ADD__DISCARD_BOT,
                         payload: {

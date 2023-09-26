@@ -12,6 +12,11 @@ interface GameSchema {
     turn: TurnSchema,
     pending: CardSchema | boolean,
     counter: CardSchema | boolean,
+    phases: {
+        morytania: number,
+        abyss: number,
+        wilderness: number,
+    },
     round: number,
     isWon: boolean,
 }
