@@ -68,7 +68,7 @@ export default function PlayCard({
         const { type, subtype } = table.pending && table.pending !== true ? table.pending : {type: "", subtype: ""};
         const isCardNotInPlay = table.pending ? false : true;
         const canCounter = [];
-        if(cardState.state.id === "CO01" && subtype === "LOCATION" && checkCounterEffects()) canCounter.push(false);
+        if(cardState.state.id === "CO01" && (subtype === "LOCATION" || checkCounterEffects())) canCounter.push(false);
         if(cardState.state.id === "CO02" && type === "GOAL") canCounter.push(false);
         if(cardState.state.id === "CO03" && type === "ACTION") canCounter.push(false);
         if(cardState.state.id === "CO04" && checkCounterEffects()) canCounter.push(false);
@@ -82,19 +82,23 @@ export default function PlayCard({
     }
 
     const checkCounterEffects = () => {
-        if(!cardState.state.effects) return;
-        if(!cardState.state.effects.length) return;
+        if(!table.pending) return;
+        if(table.pending === true) return;
+        if(!table.pending.effects) return;
+        if(!table.pending.effects.length) return;
+
         if(cardState.state.id === "CO01") {
-            if(cardState.state.effects.includes("TELEPORT")) return true;
+            if(table.pending.effects.includes("TELEPORT")) return true;
         }
 
         if(cardState.state.id === "CO04") {
-            if(cardState.state.effects.includes("STEAL_RUNE_CROSSBOW")
-            || cardState.state.effects.includes("KEEPER_STEAL_CHOOSE")) return true;
+            if(table.pending.effects.includes("STEAL_RUNE_CROSSBOW")
+            || table.pending.effects.includes("KEEPER_STEAL_CHOOSE")
+            || table.pending.effects.includes("STEAL_KEEPER")) return true;
         }
 
         if(cardState.state.id === "CO06") {
-            if(cardState.state.effects.includes("DESTROY_1")) return true;
+            if(table.pending.effects.includes("DESTROY_1")) return true;
         }
 
         return false;

@@ -709,6 +709,7 @@ export default function Game({setWinGameStats}: Props) {
 
     const resolvePlayCard = (card: CardSchema, prevPending: typeof table.pending | null) => {
         setTimeout(() => {
+            if(table.counter) return;
             resetPending();
             setPreviousPending((prev) => ({...prev, ...card}));
             switch(card.type) {
@@ -786,7 +787,7 @@ export default function Game({setWinGameStats}: Props) {
                     }
                 });
             } else {
-                upload("RULE", db, {ruleState: rules}, joinedGameID);
+                upload("RULES", db, {ruleState: {...rules, location: rules.location}}, joinedGameID);
             }
         } else if(card.effects.includes("GOALSTOP_OR_GOALS_NONE")) {
             if(isYourTurn) {
@@ -806,6 +807,13 @@ export default function Game({setWinGameStats}: Props) {
             } else {
                 uploadTable(db, table, joinedGameID);
                 upload("PENDING", db, {cardState: false}, joinedGameID);
+                dispatchDeck({
+                    type: DECK_REDUCER_ACTIONS.DECK_ADD__DISCARD_BOT,
+                    payload: {
+                        pile: [card],
+                        upload: uploadProps
+                    }
+                });
             }
         } else if(card.effects.includes("KEEPER_STEALSTOP_OR_KEEPER_STEAL")) {
             if(isYourTurn) {
@@ -837,6 +845,13 @@ export default function Game({setWinGameStats}: Props) {
                         upload: uploadProps
                     }
                 });
+                dispatchDeck({
+                    type: DECK_REDUCER_ACTIONS.DECK_ADD__DISCARD_BOT,
+                    payload: {
+                        pile: [card],
+                        upload: uploadProps
+                    }
+                });
             }
         } else if(card.effects.includes("RULESTOP_OR_RULE_RESET_3")) {
             if(isYourTurn) {
@@ -850,7 +865,7 @@ export default function Game({setWinGameStats}: Props) {
                     });
                 }
             } else {
-                upload("RULE", db, {ruleState: rules}, joinedGameID);
+                upload("RULES", db, {ruleState: rules}, joinedGameID);
             }
         } else if(card.effects.includes("KEEPER_DISCARD_REFLECT_OR_KEEPER_DISCARD")) {
             if(isYourTurn) {
@@ -861,6 +876,13 @@ export default function Game({setWinGameStats}: Props) {
                 const playerWhoGotCountered = getPlayer(players, turn.player !== true && turn.player ? turn.player : '');
                 const randomCardIndex = Math.floor(Math.random() * playerWhoGotCountered.state.keepers.length);
                 discardKeeperFromPlayer(randomCardIndex, playerWhoGotCountered.state.user.uid);
+                dispatchDeck({
+                    type: DECK_REDUCER_ACTIONS.DECK_ADD__DISCARD_BOT,
+                    payload: {
+                        pile: [card],
+                        upload: uploadProps
+                    }
+                });
             }
         }
         upload("COUNTER", db, {cardState: false}, joinedGameID);
@@ -1401,13 +1423,13 @@ export default function Game({setWinGameStats}: Props) {
                         type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
                         payload: {
                             playerId: user?.uid ?? '',
-                            cards: [          {
-                                "id": "CR02",
-                                "type": "CREEPER",
-                                "subtype": "LIVING_CREEPER",
-                                "name": "Poison",
-                                "effects": [],
-                                "text": "A creeper that attaches to a living keeper disabling any use effects and preventing that player from winning."
+                            cards: [         {
+                                "id": "CO03",
+                                "type": "COUNTER",
+                                "subtype": "",
+                                "name": "Belay That!",
+                                "effects": ["ACTIONSTOP_OR_DISCARD_1_ALL"],
+                                "text": "Out of turn - stop another player while they are playing an action card| During turn every discards one."
                             },
                     ],
                             upload: uploadProps
