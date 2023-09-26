@@ -1,0 +1,1028 @@
+{
+    "allCards": [
+        {
+            "id": "KL01",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Ernest",
+            "effects": [],
+            "text": ""
+        },
+        {
+            "id": "KL02",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Ghost",
+            "effects": ["LOCATION_MORYTANIA__CHANGE_BROTHERS"],
+            "text": "Reveals its origins when in a specific location."
+        },
+        {
+            "id": "KL03",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Duke Horacio",
+            "effects": [],
+            "text": ""
+        },
+        {
+            "id": "KL04",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Father Aereck",
+            "effects": [],
+            "text": ""
+        },
+        {
+            "id": "KL05",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Cook",
+            "effects": [],
+            "text": ""
+        },
+        {
+            "id": "KL06",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Drunken Dwarf",
+            "effects": ["DISCARD_OR_DRAW_RANDOM_1_2"],
+            "text": "Once per turn, randomly draw or discard between 1 - 2 cards"
+        },
+        {
+            "id": "KL07",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Archmage Sedridor",
+            "effects": ["DESTROY_1"],
+            "text": "Once per turn, choose one rune keeper to destroy."
+        },
+        {
+            "id": "KL08",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "King Roald",
+            "effects": [],
+            "text": ""
+        },
+        {
+            "id": "KL09",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Ava",
+            "effects": [],
+            "text": ""
+        },
+        {
+            "id": "KL10",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Vampyre Juvinate",
+            "effects": ["STEAL_RUNE_CROSSBOW"],
+            "text": "Once per turn, steal the rune crossbow from another player."
+        },
+        {
+            "id": "KL11",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Goblin",
+            "effects": [],
+            "text": ""
+        },
+        {
+            "id": "KL12",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Imp",
+            "effects": ["WARP"],
+            "text": "At the end of a players turn or when discarded teleport to another player."
+        },
+        {
+            "id": "KL13",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Aris Maye",
+            "effects": [],
+            "text": "When using the Scry and Acquire card, don't discard it."
+        },
+        {
+            "id": "KL14",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Reldo",
+            "effects": [],
+            "text": "When using the Historical Records card, don't discard it."
+        },
+        {
+            "id": "KLM01",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Torag",
+            "effects": ["STEAL_KEEPER"],
+            "text": "Once per turn, steal Dharok or Karil."
+        },
+        {
+            "id": "KLM02",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Verac",
+            "effects": ["STEAL_KEEPER"],
+            "text": "Once per turn, steal Guthan or Ahrim"
+        },
+        {
+            "id": "KLM03",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Guthan",
+            "effects": ["STEAL_KEEPER"],
+            "text": "Once per turn, steal Torag or Karil"
+        },
+        {
+            "id": "KLM04",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Dharok",
+            "effects": ["STEAL_KEEPER"],
+            "text": "Once per turn, steal Verac or Ahrim"
+        },
+        {
+            "id": "KLM05",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Karil",
+            "effects": ["STEAL_KEEPER"],
+            "text": "Once per turn, steal Verac or Dharok"
+        },
+        {
+            "id": "KLM06",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Ahrim",
+            "effects": ["STEAL_KEEPER"],
+            "text": "Once per turn, steal Torag or Guthan"
+        },
+        {
+            "id": "KR01",
+            "type": "KEEPER",
+            "subtype": "RUNE",
+            "name": "Mind Rune",
+            "effects": [],
+            "text": ""
+        },
+        {
+            "id": "KR02",
+            "type": "KEEPER",
+            "subtype": "RUNE",
+            "name": "Chaos Rune",
+            "effects": ["WORMHOLE"],
+            "text": "Once per turn, choose to draw 1 and play it."
+        },
+        {
+            "id": "KR03",
+            "type": "KEEPER",
+            "subtype": "RUNE",
+            "name": "Air Rune",
+            "effects": [],
+            "text": ""
+        },
+        {
+            "id": "KR04",
+            "type": "KEEPER",
+            "subtype": "RUNE",
+            "name": "Water Rune",
+            "effects": [],
+            "text": ""
+        },
+        {
+            "id": "KR05",
+            "type": "KEEPER",
+            "subtype": "RUNE",
+            "name": "Earth Rune",
+            "effects": [],
+            "text": ""
+        },
+        {
+            "id": "KR06",
+            "type": "KEEPER",
+            "subtype": "RUNE",
+            "name": "Fire Rune",
+            "effects": [],
+            "text": ""
+        },
+        {
+            "id": "KR07",
+            "type": "KEEPER",
+            "subtype": "RUNE",
+            "name": "Nature Rune",
+            "effects": ["DESTROY_1"],
+            "text": "Once per turn, choose one equipment keeper to destroy"
+        },
+        {
+            "id": "KR08",
+            "type": "KEEPER",
+            "subtype": "RUNE",
+            "name": "Law Rune",
+            "effects": ["TELEPORT"],
+            "text": "Once per turn, teleport to a random location."
+        },
+        {
+            "id": "KR09",
+            "type": "KEEPER",
+            "subtype": "RUNE",
+            "name": "Cosmic Rune",
+            "effects": [],
+            "text": ""
+        },
+        {
+            "id": "KE01",
+            "type": "KEEPER",
+            "subtype": "EQUIPMENT",
+            "name": "Ghostspeak Amulet",
+            "effects": ["SUMMON_GHOST"],
+            "text": "Once per turn, choose to summon a ghost."
+        },
+        {
+            "id": "KE02",
+            "type": "KEEPER",
+            "subtype": "EQUIPMENT",
+            "name": "Anti Dragonfire Shield",
+            "effects": ["DESTROY_1"],
+            "text": "Once per turn, can destroy elvarg creeper."
+        },
+        {
+            "id": "KE03",
+            "type": "KEEPER",
+            "subtype":"EQUIPMENT",
+            "name": "Air Staff",
+            "effects": [],
+            "text": ""
+        },
+        {
+            "id": "KE04",
+            "type": "KEEPER",
+            "subtype":"EQUIPMENT",
+            "name": "Rune Crossbow",
+            "effects": ["DESTROY_1"],
+            "text": "Once per turn, choose one living keeper to destroy"
+        },
+        {
+            "id": "KE05",
+            "type": "KEEPER",
+            "subtype":"EQUIPMENT",
+            "name": "Avas Attractor",
+            "effects": ["STEAL_1_FROM_HAND"],
+            "text": "Once per turn, attract a card to your hand from an opposing player of your choice."
+        },
+        {
+            "id": "KE06",
+            "type": "KEEPER",
+            "subtype":"EQUIPMENT",
+            "name": "Draman Staff",
+            "effects": [],
+            "text": ""
+        },
+        {
+            "id": "KE07",
+            "type": "KEEPER",
+            "subtype":"EQUIPMENT",
+            "name": "Rune Scimitar",
+            "effects": [],
+            "text": ""
+        },
+        {
+            "id": "K01",
+            "type": "KEEPER",
+            "subtype": "",
+            "name": "Cake",
+            "effects": ["DRAW_1"],
+            "text": "Once per turn, choose to draw 1 card."
+        },
+        {
+            "id": "K02",
+            "type": "KEEPER",
+            "subtype": "",
+            "name": "Anti Poison",
+            "effects": ["DESTROY_1"],
+            "text": "Once per turn, can destroy the poison creeper."
+        },
+        {
+            "id": "CR01",
+            "type": "CREEPER",
+            "subtype": "EQUIPMENT_CREEPER",
+            "name": "Elvarg",
+            "effects": ["LOCATION_CRANDOR"],
+            "text": "A creeper that attaches to equipment disabling any use effects and preventing that player from winning."
+        },
+        {
+            "id": "CR02",
+            "type": "CREEPER",
+            "subtype": "LIVING_CREEPER",
+            "name": "Poison",
+            "effects": [],
+            "text": "A creeper that attaches to a living keeper disabling any use effects and preventing that player from winning."
+        },
+        {
+            "id": "CR03",
+            "type": "CREEPER",
+            "subtype": "LIVING_CREEPER",
+            "name": "Wizard Mind Bomb",
+            "effects": [],
+            "text": "Attaches to living keepers disabling, effects and prevents winning."
+        },
+        {
+            "id": "G01",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Your First Spell",
+            "effects": [],
+            "text": "To cast your first spell you must acquire the following reagents: |air rune| or |air staff|, |mind rune|."
+        },
+        {
+            "id": "G02",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Restless Ghost",
+            "effects": [],
+            "text": "In the cemetary of lumbridge you must put the |ghost| to rest. QUEST REQUIREMENTS: |ghost|, |ghostspeak amulet|, |father aereck|"
+        },
+        {
+            "id": "G03",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Ready To Slay A Dragon",
+            "effects": [],
+            "text": "Speak to |Duke Horacio| to get your |antifire shield|, then you can believe you can fight a dragon."
+        },
+        {
+            "id": "G04",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Dragon Slayer",
+            "effects": [],
+            "text": "Find your way to |crandor|, off the coast of misthalin and fight the dragon known as |Elvarg|. |antifire shield| is required."
+        },
+        {
+            "id": "G05",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Cook's Assistant",
+            "effects": [],
+            "text": "For most new adventurers, they end up helping |Cook| get ingredients for his |Cake| for the eternal duke's birthday."
+        },
+        {
+            "id": "G06",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Lumbridge Citizens",
+            "effects": [],
+            "text": "Collection type: lumbridge residents including the likes of |Duke Horacio|, |Cook| and |Father Aereck|"
+        },
+        {
+            "id": "G07",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Elemental Runes",
+            "effects": [],
+            "text": "Collection type: any 3 elemental |runes| from |Air|, |Water|, |Earth| or |Fire|"
+        },
+        {
+            "id": "G08",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Rune Mysteries",
+            "effects": [],
+            "text": "The path to unlocking runecraft requires the power of |Air|, QUEST REQUIREMENTS: |Air Rune|, |Archmage Sedridor|, |Duke Horacio|"
+        },
+        {
+            "id": "G09",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "How to become a Chaos Dwarf",
+            "effects": [],
+            "text": "Under the curse of zamorak dwarves that use magic end up becoming corrupt and turning into chaos dwarves, requirements: |Drunken Dwarf|, |Wizard Mind Bomb|"
+        },
+        {
+            "id": "G10",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Drunken Wizard",
+            "effects": [],
+            "text": "A wizards favourite drinks got to be a |wizard mind bomb| right, so bring one to |Archmage Sedridor| for reasons."
+        },
+        {
+            "id": "G11",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Rock Cake",
+            "effects": [],
+            "text": "A secret cake baked only by dwarfs, requirements: |Drunken Dwarf|, |Cake|"
+        },
+        {
+            "id": "G12",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Alchemy",
+            "effects": [],
+            "text": "To cast alchemy spell you must have a |Nature rune| and |Fire Runes|"
+        },
+        {
+            "id": "G13",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Cursed",
+            "effects": [],
+            "text": "Not the spell, but someone who gains all 3 creepers must have bad luck right well now they can win, |Any 3 creepers|"
+        },
+        {
+            "id": "G14",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Regicide",
+            "effects": [],
+            "text": "Requirements: |King Roald|, |Poison|. Wait this isn't how regicide goes."
+        },
+        {
+            "id": "G15",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Animal Magnetism",
+            "effects": [],
+            "text": "The quest all aspiring newbie rangers rush to for some QoL ammo reservation, Requirements: |Ava|, |Ghostspeak Amulet|, |Ava's Attractor|"
+        },
+        {
+            "id": "G16",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Ranged Setup",
+            "effects": [],
+            "text": "The power houses of early game range. Requirements: |Rune Crossbow|, |Ava's Attractor|"
+        },
+        {
+            "id": "G17",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Draynor Manor",
+            "effects": [],
+            "text": "Collection type: residents of draynor manor |Ernest|, |Ava|, |Ghost|"
+        },
+        {
+            "id": "G18",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Swampmans Nightmares",
+            "effects": [],
+            "text": "|Rune Crossbow| and |Vampyre Juvinate|. You get the rest."
+        },
+        {
+            "id": "G19",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Entrana",
+            "effects": [],
+            "text": "Collection Type: |Law Rune|, |Draman Staff|"
+        },
+        {
+            "id": "G20",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Smuggler",
+            "effects": [],
+            "text": "Since equipment and runes aren't allowed on entrana, find a way to get them there. Requirements: |Entrana|, |Any 4 equipment or rune type keepers|."
+        },
+        {
+            "id": "G21",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Misthalins Nobility",
+            "effects": [],
+            "text": "Collection Type: |King Roald|, |Duke Horacio|"
+        },
+        {
+            "id": "G22",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Mind Goblin",
+            "effects": [],
+            "text": "They exist. |Mind Rune|, |Goblin|"
+        },
+        {
+            "id": "G23",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Zanaris",
+            "effects": [],
+            "text": "Collection Type: |Cosmic Rune|, |Dramen Staff|"
+        },
+        {
+            "id": "G24",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Catalytic Runes",
+            "effects": [],
+            "text": "Collection Type: |Mind Rune|, |Chaos Rune|"
+        },
+        {
+            "id": "G25",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Utility Runes",
+            "effects": [],
+            "text": "Collection Type: |Law Rune|, |Nature Rune|, |Cosmic Rune|"
+        },
+        {
+            "id": "G26",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Misthalins Altars",
+            "effects": [],
+            "text": "Collection Type: |Water Rune|, |Earth Rune|"
+        },
+        {
+            "id": "G27",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Zamorak",
+            "effects": [],
+            "text": "Collection Type: |Wilderness|, |Imp|, |Chaos Rune|"
+        },
+        {
+            "id": "G28",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Starter Monsters",
+            "effects": [],
+            "text": "Collection Type: |Imp|, |Goblin|, |Ernest(he's a chicken right)|"
+        },
+        {
+            "id": "G29",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Morytanias Low-Tier Undead",
+            "effects": [],
+            "text": "Collection Type: |Morytania|, |Ghost|, |Vampyre Juvinate|"
+        },
+        {
+            "id": "G30",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Port-Phasmatys",
+            "effects": [],
+            "text": "Collection Type: |4 ghosts| and location |Morytania|"
+        },
+        {
+            "id": "G31",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Chaos",
+            "effects": [],
+            "text": "Collection Type: |Abyss|, |Chaos Rune|"
+        },
+        {
+            "id": "G32",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Juvinile 'Rare Drop'",
+            "effects": [],
+            "text": "After defeating a |Vampyre juvinate|, you have been graced with the staff of utmost versatility the |Air Staff|."
+        },
+        {
+            "id": "G33",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Tribrid",
+            "effects": [],
+            "text": "Collection Type: |Rune Scimitar|, |Rune Crossbow|, |Air Staff|"
+        },
+        {
+            "id": "G34",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Melee Setup",
+            "effects": [],
+            "text": "Collection Type: |Rune Scimitar|, |Antidragon-fire shield|, |Cake|"
+        },
+        {
+            "id": "G35",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Chaos Dwarf",
+            "effects": [],
+            "text": "Collection Type: |Chaos Rune|, |Drunken Dwarf|"
+        },
+        {
+            "id": "G36",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Poison Removal",
+            "effects": [],
+            "text": "just gotta drink |Anti-Poison| to cure |Poison|."
+        },
+        {
+            "id": "G37",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Prevent Toxicity?",
+            "effects": [],
+            "text": "Does a |Anti Poison| protect from being told to sit in the |Wilderness|."
+        },
+        {
+            "id": "G38",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Varrock",
+            "effects": [],
+            "text": "Collection type: |Aris Maye|, |Reldo|, |King Roald|"
+        },
+        {
+            "id": "G39",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Recipe for Disaster",
+            "effects": [],
+            "text": "A long journey begins after speaking to the |Cook|. Freeing the members of the banquet will require help from |Aris Maye|."
+        },
+        {
+            "id": "GM01",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Spear and Shield",
+            "effects": [],
+            "text": "A spear that can pierce anything(|Verac|) and an impenetrable shield(|Torag|)."
+        },
+        {
+            "id": "GM02",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Risk and Safety",
+            "effects": [],
+            "text": "Stay close to 0 hitpoints(|Dharok|) and Heal up to full(|Guthan|)."
+        },
+        {
+            "id": "GM03",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Blighted mage and Tainted range",
+            "effects": [],
+            "text": "Collection type: |Ahrim| the blighted and |Karil| the tainted."
+        },
+        {
+            "id": "RL01",
+            "type": "RULE",
+            "subtype": "LOCATION",
+            "name": "Misthalin",
+            "effects": ["LOCATION", "MISTHALIN"],
+            "text": "teleport all players to the location of misthalin, this location has no special effects."
+        },
+        {
+            "id": "RL02",
+            "type": "RULE",
+            "subtype": "LOCATION",
+            "name": "Abyss",
+            "effects": ["LOCATION", "ABYSS"],
+            "text": "Once per turn, choose whether to draw 1 and play it."
+        },
+        {
+            "id": "RL03",
+            "type": "RULE",
+            "subtype": "LOCATION",
+            "name": "Asgarnia",
+            "effects": ["LOCATION", "ASGARNIA"],
+            "text": "When this card is in play, there can be 2 different goals in play. Only 1 is required to win."
+        },
+        {
+            "id": "RL04",
+            "type": "RULE",
+            "subtype": "LOCATION",
+            "name": "Morytania",
+            "effects": ["LOCATION", "MORYTANIA"],
+            "text": "When this card is in play, Ghosts have a 10% chance to spawn at the end of turns."
+        },
+        {
+            "id": "RL05",
+            "type": "RULE",
+            "subtype": "LOCATION",
+            "name": "Wilderness",
+            "effects": ["LOCATION", "WILDERNESS"],
+            "text": "When this card is in play, once per turn, choose a keeper to challenge and steal."
+        },
+        {
+            "id": "RL06",
+            "type": "RULE",
+            "subtype": "LOCATION",
+            "name": "Entrana",
+            "effects": ["LOCATION", "ENTRANA"],
+            "text": "When this card is in play, on arrival everyone must discard all equipment/rune keepers in play."
+        },
+        {
+            "id": "RL07",
+            "type": "RULE",
+            "subtype": "LOCATION",
+            "name": "Crandor",
+            "effects": ["LOCATION", "CRANDOR"],
+            "text": "When this card is in play, at the end of every turn discard one card."
+        },
+        {
+            "id": "RB01",
+            "type": "RULE",
+            "subtype": "BASIC",
+            "name": "Draw 2",
+            "effects": ["RULE_DRAW", "2"],
+            "text": "When this card is in play, each player will draw 2 cards per turn."
+        },
+        {
+            "id": "RB02",
+            "type": "RULE",
+            "subtype": "BASIC",
+            "name": "Draw 3",
+            "effects": ["RULE_DRAW", "3"],
+            "text": "When this card is in play, each player will draw 3 cards per turn."
+        },
+        {
+            "id": "RB03",
+            "type": "RULE",
+            "subtype": "BASIC",
+            "name": "Draw 4",
+            "effects": ["RULE_DRAW", "4"],
+            "text": "When this card is in play, each player will draw 4 cards per turn."
+        },
+        {
+            "id": "RB04",
+            "type": "RULE",
+            "subtype": "BASIC",
+            "name": "Draw 5",
+            "effects": ["RULE_DRAW", "5"],
+            "text": "When this card is in play, each player will draw 5 cards per turn."
+        },
+        {
+            "id": "RB05",
+            "type": "RULE",
+            "subtype": "BASIC",
+            "name": "Play 2",
+            "effects": ["RULE_PLAY", "2"],
+            "text": "When this card is in play, each player will play 2 cards per turn."
+        },
+        {
+            "id": "RB06",
+            "type": "RULE",
+            "subtype": "BASIC",
+            "name": "Play 3",
+            "effects": ["RULE_PLAY", "3"],
+            "text": "When this card is in play, each player will play 3 cards per turn."
+        },
+        {
+            "id": "RB07",
+            "type": "RULE",
+            "subtype": "BASIC",
+            "name": "Play 4",
+            "effects": ["RULE_PLAY", "4"],
+            "text": "When this card is in play, each player will play 4 cards per turn."
+        },
+        {
+            "id": "RB08",
+            "type": "RULE",
+            "subtype": "BASIC",
+            "name": "Play All",
+            "effects": ["RULE_PLAY", "99"],
+            "text": "When this card is in play, each player will play all cards per turn."
+        },
+        {
+            "id": "RB09",
+            "type": "RULE",
+            "subtype": "BASIC",
+            "name": "Hand Limit 1",
+            "effects": ["RULE_HAND_LIMIT", "1"],
+            "text": "When this card is in play, each player has to discard down to 1 card to end their turn."
+        },
+        {
+            "id": "RB10",
+            "type": "RULE",
+            "subtype": "BASIC",
+            "name": "Hand Limit 2",
+            "effects": ["RULE_HAND_LIMIT", "2"],
+            "text": "When this card is in play, each player has to discard down to 2 card to end their turn."
+        },
+        {
+            "id": "RB11",
+            "type": "RULE",
+            "subtype": "BASIC",
+            "name": "Hand Limit 3",
+            "effects": ["RULE_HAND_LIMIT", "3"],
+            "text": "When this card is in play, each player has to discard down to 3 card to end their turn."
+        },
+        {
+            "id": "RB12",
+            "type": "RULE",
+            "subtype": "BASIC",
+            "name": "Keeper Limit 3",
+            "effects": ["RULE_KEEPER_LIMIT", "3"],
+            "text": "When this card is in play, each player can have 3 keepers in play."
+        },
+        {
+            "id": "RB13",
+            "type": "RULE",
+            "subtype": "BASIC",
+            "name": "Keeper Limit 4",
+            "effects": ["RULE_KEEPER_LIMIT", "4"],
+            "text": "When this card is in play, each player can have 4 keepers in play."
+        },
+        {
+            "id": "RB14",
+            "type": "RULE",
+            "subtype": "BASIC",
+            "name": "Keeper Limit 1",
+            "effects": ["RULE_KEEPER_LIMIT", "1"],
+            "text": "When this card is in play, each player can have 1 keepers in play."
+        },
+        {
+            "id": "RB15",
+            "type": "RULE",
+            "subtype": "BASIC",
+            "name": "Teleblock",
+            "effects": ["TELEBLOCK"],
+            "text": "When this card is in play, location can not be changed."
+        },
+        {
+            "id": "A01",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Teleport",
+            "effects": ["TELEPORT"],
+            "text": "teleport to a random location."
+        },
+        {
+            "id": "A02",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Rules Reset",
+            "effects": ["RULES_RESET"],
+            "text": "When played, all rules will be returned to their base values from the start of the game."
+        },
+        {
+            "id": "A03",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Pick up all keepers",
+            "effects": ["KEEPERS_TO_HAND"],
+            "text": "When played, all players must pick up all their keepers in play."
+        },
+        {
+            "id": "A04",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Trade Hands",
+            "effects": ["TRADE_HANDS"],
+            "text": "When played, choose a player to trade hands with."
+        },
+        {
+            "id": "A05",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Reset One Rule",
+            "effects": ["RULE_RESET_CHOOSE"],
+            "text": "When played, choose 1 rule to reset."
+        },
+        {
+            "id": "A06",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Reset half of rules(upto)",
+            "effects": ["RULE_RESET_CHOOSE", "HALF", "OPTIONAL"],
+            "text": "When played, choose up to half the rules to reset."
+        },
+        {
+            "id": "A07",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Draw 3, Play 2",
+            "effects": ["DRAW_3_PLAY_2"],
+            "text": "Draw 3 cards, out of those 3 cards you must choose 2 to play and finally discard the remaining card."
+        },
+        {
+            "id": "A08",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Draw 2, Use'em",
+            "effects": ["DRAW_2_PLAY_2"],
+            "text": "Draw 2 cards and immediately use them."
+        },
+        {
+            "id": "A09",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Draw 5, discard 2",
+            "effects": ["DRAW_5_PLAY_3"],
+            "text": "Draw 5 cards, out of those 5 cards you must choose 3 to play and finally discard the remaining cards."
+        },
+        {
+            "id": "A10",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Everyone draw 1",
+            "effects": ["DRAW_1", "ALL_PLAYERS"],
+            "text": "All players draw 1 card."
+        },
+        {
+            "id": "A11",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Steal A Keeper",
+            "effects": ["KEEPER_STEAL_CHOOSE"],
+            "text": "Choose a keeper on field to take into your possession."
+        },
+        {
+            "id": "A12",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Exchange Keepers",
+            "effects": ["KEEPER_EXCHANGE_CHOOSE"],
+            "text": "Choose 2 keepers on the field and swap their locations."
+        },
+        {
+            "id": "A13",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Everyone Discard 1",
+            "effects": ["DISCARD_1", "ALL_PLAYERS"],
+            "text": "Each player will immediately discard one card."
+        },
+        {
+            "id": "A14",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Summon Ghost",
+            "effects": ["SUMMON_GHOST"],
+            "text": "Summon a ghost to add to your keepers."
+        },
+        {
+            "id": "A15",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Destroy Keeper",
+            "effects": ["DESTROY_1"],
+            "text": "Choose a keeper/creeper to destroy."
+        },
+        {
+            "id": "A16",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Scry and Acquire",
+            "effects": ["DRAW_SPECIFIC_PURE"],
+            "text": "See into the future and choose a card to acquire."
+        },
+        {
+            "id": "A17",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Historical Research",
+            "effects": ["DRAW_SPECIFIC_DISCARD"],
+            "text": "Look through past records and find the location of a card to acquire."
+        },
+        {
+            "id": "CO01",
+            "type": "COUNTER",
+            "subtype": "",
+            "name": "Telestop",
+            "effects": ["TELESTOP_OR_LOCATION_MISTHALIN"],
+            "text": "Out of turn - stop an opposing players teleport| During your turn teleport to misthalin."
+        },
+        {
+            "id": "CO02",
+            "type": "COUNTER",
+            "subtype": "",
+            "name": "Canceled Plans",
+            "effects": ["GOALSTOP_OR_GOALS_NONE"],
+            "text": "Out of turn - stop another player while they are playing a goal card| During turn discard all goals in play."
+        },
+        {
+            "id": "CO03",
+            "type": "COUNTER",
+            "subtype": "",
+            "name": "Belay That!",
+            "effects": ["ACTIONSTOP_OR_DISCARD_1_ALL"],
+            "text": "Out of turn - stop another player while they are playing an action card| During turn every discards one."
+        },
+        {
+            "id": "CO04",
+            "type": "COUNTER",
+            "subtype": "",
+            "name": "That's Mine!",
+            "effects": ["KEEPER_STEALSTOP_OR_KEEPER_STEAL"],
+            "text": "Out of turn - when another player trys to steal a keeper you steal it instead| During turn - choose a keeper to steal."
+        },
+        {
+            "id": "CO05",
+            "type": "COUNTER",
+            "subtype": "",
+            "name": "Veto!",
+            "effects": ["RULESTOP_OR_RULE_RESET_3"],
+            "text": "Out of turn - stop another player while they are playing a rule card| During turn - reset up to 3 rules."
+        },
+        {
+            "id": "CO06",
+            "type": "COUNTER",
+            "subtype": "",
+            "name": "It's a Trap!",
+            "effects": ["KEEPER_DISCARD_REFLECT_OR_KEEPER_DISCARD"],
+            "text": "Out of turn - when another player trys to destroy one of your keepers destroy a random one of theirs instead| During turn, choose a keeper to discard."
+        }
+    ]
+}

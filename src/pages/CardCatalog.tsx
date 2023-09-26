@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from "../components/Header"
 import UserAccountBox from "../components/UserAccountBox"
 import CatalogSidebar from "../components/CatalogSidebar"
-import { startDeck as start_deck } from '../data/start_deck.json';
+import { allCards as all_cards } from '../data/all_cards.json';
 import Card from '../components/Card';
 import CardBack from '../components/CardBack';
 import UserContext from '../data/Context';
@@ -38,7 +38,7 @@ export default function CardCatalog() {
         for(const card in user?.cardCatalog) {
             if(user?.cardCatalog[card] > 0) cardsPlayed++;
         }
-        return cardsPlayed ? Math.round((cardsPlayed / start_deck.length) * 100) : 0;
+        return cardsPlayed ? Math.round((cardsPlayed / all_cards.length) * 100) : 0;
     }
 
     const checkCardLogCon = (card: CardSchema) => {
@@ -49,7 +49,7 @@ export default function CardCatalog() {
 
     const mapCards = () => {
         if(!user) return;
-        return start_deck.map((card, ind) => {
+        return all_cards.map((card, ind) => {
             if(filter && (card.type !== filter) && (card.subtype !== filter)) return;
             return checkCardLogCon(card) ? (
                 <Card
