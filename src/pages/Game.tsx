@@ -1042,6 +1042,7 @@ export default function Game({setWinGameStats}: Props) {
                 }
             });
         } else if(card.effects.includes("KEEPER_STEAL_CHOOSE")) {
+            discardKeeperFromPlayer(selectedKeeperGroup[0].index, players[selectedKeeperGroup[0].playerIndex].user.uid, false);
             dispatchPlayers({
                 type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__ADD,
                 payload: {
@@ -1050,15 +1051,6 @@ export default function Game({setWinGameStats}: Props) {
                     upload: uploadProps
                 }
             });
-            const updatedKeepers = removeCard(players[selectedKeeperGroup[0].playerIndex].keepers, selectedKeeperGroup[0].index);
-            dispatchPlayers({
-                type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__REMOVE,
-                payload: {
-                    playerId: players[selectedKeeperGroup[0].playerIndex].user.uid,
-                    cards: updatedKeepers,
-                    upload: uploadProps
-                }
-            })
         } else if(card.effects.includes("DRAW_2_PLAY_2")) {
             wormhole(2);
         } else if(card.effects.includes("DRAW_5_PLAY_3")) {
@@ -1189,6 +1181,11 @@ export default function Game({setWinGameStats}: Props) {
                 "effects": ["STEAL_RUNE_CROSSBOW"],
                 "text": "STEAL!, STEAL!, STEAL!"
             }, -1);
+        } else if(
+            keeperId === "KLM01" || keeperId === "KLM02" || keeperId === "KLM03"
+            || keeperId === "KLM04" || keeperId === "KLM05" || keeperId === "KLM06" 
+        ) {
+            playCard(getCardById("A11"), -1);
         } else if(keeperId === "KE01") {
             playCard(getCardById("A14"), -1);
         }

@@ -67,6 +67,30 @@ export default function InspectKeeper({
             if(!selectedKeeperGroup.length) return false;
             if(selectedKeeperGroup[0].state.id !== "CR01"
             && selectedKeeperGroup[0].state.attachment?.id !== "CR01") return false;
+        } else if(cardState.state.id === "KLM01") {
+            if(!selectedKeeperGroup.length) return false;
+            if(selectedKeeperGroup[0].state.id !== "KLM04"
+            && selectedKeeperGroup[0].state.id !== "KLM05") return false;
+        } else if(cardState.state.id === "KLM02") {
+            if(!selectedKeeperGroup.length) return false;
+            if(selectedKeeperGroup[0].state.id !== "KLM03"
+            && selectedKeeperGroup[0].state.id !== "KLM06") return false;
+        } else if(cardState.state.id === "KLM03") {
+            if(!selectedKeeperGroup.length) return false;
+            if(selectedKeeperGroup[0].state.id !== "KLM01"
+            && selectedKeeperGroup[0].state.id !== "KLM05") return false;
+        } else if(cardState.state.id === "KLM04") {
+            if(!selectedKeeperGroup.length) return false;
+            if(selectedKeeperGroup[0].state.id !== "KLM02"
+            && selectedKeeperGroup[0].state.id !== "KLM06") return false;
+        } else if(cardState.state.id === "KLM05") {
+            if(!selectedKeeperGroup.length) return false;
+            if(selectedKeeperGroup[0].state.id !== "KLM02"
+            && selectedKeeperGroup[0].state.id !== "KLM04") return false;
+        } else if(cardState.state.id === "KLM06") {
+            if(!selectedKeeperGroup.length) return false;
+            if(selectedKeeperGroup[0].state.id !== "KLM01"
+            && selectedKeeperGroup[0].state.id !== "KLM03") return false;
         }
 
         return true;
