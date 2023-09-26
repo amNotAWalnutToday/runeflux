@@ -131,7 +131,10 @@ export default function Table({
             </div>}
             <div 
                 className={`table_goals`} 
-                style={{transform: `rotateZ(${getGoalRotation()})`}}
+                style={{
+                    transform: `rotateZ(${getGoalRotation()})`,
+                    flexDirection: players.length > 2 && (players[3].user.uid === user?.uid || players[4].user.uid === user?.uid) ? "column" : "row"
+                }}
             >
                 {
                     goal.length

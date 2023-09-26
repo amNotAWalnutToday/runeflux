@@ -315,8 +315,10 @@ export default (() => {
                 wilderness: 0,
             }
         }
-        for(const card of startDeckData.startDeck) {
-            game.deck.pure.push(card);
+        for(const cardRef of startDeckData.startDeck) {
+            for(const card of allDeckData.allCards) {
+                if(cardRef === card.id) game.deck.pure.push(card);
+            }
         }
         const turn: TurnSchema = {
             player: false,

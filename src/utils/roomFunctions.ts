@@ -1,5 +1,6 @@
 import { Database, child, onValue, remove, ref, set, get } from 'firebase/database';
 import startDeckData from '../data/start_deck.json';
+import allDeckData from '../data/all_cards.json';
 import startRuleData from '../data/start_rules.json';
 import UserSchema from '../schemas/userSchema';
 import CardSchema from '../schemas/cardSchema';
@@ -124,8 +125,10 @@ export default (() => {
             isWon: false,
             round: 0,
         }
-        for(const card of startDeckData.startDeck) {
-            game.deck.pure.push(card);
+        for(const cardRef of startDeckData.startDeck) {
+            for(const card of allDeckData.allCards) {
+                if(cardRef === card.id) game.deck.pure.push(card);
+            }
         }
         const room: RoomSchema = {
             game: Object.assign({}, game, {rules: startRuleData}),

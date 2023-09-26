@@ -2,7 +2,6 @@ import { Auth, onAuthStateChanged, signInAnonymously, signOut } from 'firebase/a
 import { ref, set, get, child, Database } from 'firebase/database';
 import testsettings from '../../testsettings.json';
 import UserSchema from '../schemas/userSchema';
-import { startDeck as start_deck } from '../data/start_deck.json';
 import { allCards as all_cards } from '../data/all_cards.json';
 
 export default (() => {
@@ -37,7 +36,7 @@ export default (() => {
                         cardCatalog: {},
                         goalWins: {}
                     }
-                    for(const card of start_deck) {
+                    for(const card of all_cards) {
                         newUser.cardCatalog[`${card.id}`] = 0;
                     }
                     await set(reference, newUser);
