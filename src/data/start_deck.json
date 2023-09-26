@@ -93,7 +93,7 @@
             "type": "KEEPER",
             "subtype": "LIVING",
             "name": "Imp",
-            "effects": ["WARP"],
+            "effects": [],
             "text": "At the end of a players turn or when discarded teleport to another player."
         },
         {

@@ -1208,20 +1208,12 @@ export default function Game({setWinGameStats}: Props) {
         if(!warper.keeper) return;
         const ran = Math.floor(Math.random() * players.length);
         if(ran === warper.playerIndex) return;
+        discardKeeperFromPlayer(warper.index, players[warper.playerIndex].user.uid, false);
         dispatchPlayers({
             type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__ADD,
             payload: {
                 playerId: players[ran].user.uid,
                 cards: [warper.keeper],
-                upload: uploadProps
-            }
-        });
-        const updatedKeepers = removeCard(players[warper.playerIndex].keepers, warper.index);
-        dispatchPlayers({
-            type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__REMOVE,
-            payload: {
-                playerId: players[warper.playerIndex].user.uid,
-                cards: [...updatedKeepers],
                 upload: uploadProps
             }
         });
@@ -1252,7 +1244,7 @@ export default function Game({setWinGameStats}: Props) {
             player.keepers.forEach((keeper, keeperIndex) => {
                 if(keeper.id !== "KL02") return;
                 const chance = Math.floor(Math.random() * 101);
-                if(chance <= 110) {
+                if(chance <= 76) {
                     const choice = Math.ceil(Math.random() * 6);
                     discardKeeperFromPlayer(keeperIndex, player.user.uid, false);
                     dispatchPlayers({

@@ -3,6 +3,7 @@ import { ref, set, get, child, Database } from 'firebase/database';
 import testsettings from '../../testsettings.json';
 import UserSchema from '../schemas/userSchema';
 import { startDeck as start_deck } from '../data/start_deck.json';
+import { allCards as all_cards } from '../data/all_cards.json';
 
 export default (() => {
     const createAccountAnon = async (
@@ -42,7 +43,7 @@ export default (() => {
                     await set(reference, newUser);
                     setUser((prev: UserSchema | undefined) => Object.assign({}, prev, newUser));                   
                 } else {
-                    for(const card of start_deck) {
+                    for(const card of all_cards) {
                         let hasCard = false;
                         for(const userCard in hasAccount.cardCatalog) {
                             if(userCard === card.id) hasCard = true;
