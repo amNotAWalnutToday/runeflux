@@ -229,8 +229,8 @@
             "type": "KEEPER",
             "subtype": "RUNE",
             "name": "Cosmic Rune",
-            "effects": [],
-            "text": ""
+            "effects": ["RULE_RANDOM"],
+            "text": "Once per turn, randomize one non location rule."
         },
         {
             "id": "KE01",

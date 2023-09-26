@@ -32,6 +32,7 @@ const {
     getPlayer,
     getPlayerKeeper,
     getCardById,
+    seperateCreepersAndKeepers,
     // getDeckCardById,
     connectGame, 
     chooseWhoGoesFirst,
@@ -413,11 +414,19 @@ export default function Game({setWinGameStats}: Props) {
             type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
             payload: {
                 playerId: user?.uid ?? '',
-                cards: Array.from(deck.pure.slice(deck.pure.length - drawn)),
+                cards: creepers.length ? [...creepers] : Array.from(deck.pure.slice(deck.pure.length - drawn)),
                 upload: uploadProps
             }
         });
         if(creepers.length) return;
+        const keepers = seperateCreepersAndKeepers(deck.pure.slice(deck.pure.length - drawn)).keepers;
+        dispatchDeck({
+            type: DECK_REDUCER_ACTIONS.DECK_ADD__DISCARD_BOT,
+            payload: {
+                pile: [...keepers],
+                upload: uploadProps
+            }
+        });
         dispatchTurn({
             type: TURN_REDUCER_ACTION.DRAWN_ADD, 
             payload: { 
@@ -464,6 +473,8 @@ export default function Game({setWinGameStats}: Props) {
     }
 
     const wormhole = (playAmount = 1, discardAmount = 0) => {
+        const { creepers, keepers } = seperateCreepersAndKeepers(deck.pure.slice(deck.pure.length - (playAmount + discardAmount)));
+
         dispatchDeck({
             type: DECK_REDUCER_ACTIONS.DECK_REMOVE__PURE_TOP,
             payload: {
@@ -477,6 +488,14 @@ export default function Game({setWinGameStats}: Props) {
             payload: {
                 cards: Array.from(deck.pure.slice(deck.pure.length - (playAmount + discardAmount))),
                 amount: playAmount,
+                upload: uploadProps
+            }
+        });
+        if(!creepers.length) return;
+        dispatchDeck({
+            type: DECK_REDUCER_ACTIONS.DECK_ADD__DISCARD_BOT,
+            payload: {
+                pile: [...keepers],
                 upload: uploadProps
             }
         });
@@ -1152,6 +1171,8 @@ export default function Game({setWinGameStats}: Props) {
             setShowCardPiles((prev) => ({...prev, pure: true}));
         } else if(card.effects.includes("DRAW_SPECIFIC_DISCARD")) {
             setShowCardPiles((prev) => ({...prev, discard: true}));
+        } else if(card.effects.includes("RULE_RANDOM")) {
+            cosmicHandler();
         }
         resetGroups();
     }
@@ -1164,6 +1185,26 @@ export default function Game({setWinGameStats}: Props) {
                 upload: uploadProps
             }
         });  
+    }
+
+    const cosmicHandler = () => {
+        const ruleActions = [
+            RULE_REDUCER_ACTIONS.RULE_CHANGE__DRAW,
+            RULE_REDUCER_ACTIONS.RULE_CHANGE__PLAY,
+            RULE_REDUCER_ACTIONS.RULE_CHANGE__HAND_LIMIT,
+            RULE_REDUCER_ACTIONS.RULE_CHANGE__KEEPER_LIMIT,
+            RULE_REDUCER_ACTIONS.RULE_CHANGE__TELEBLOCK
+        ]
+        const ranAction = Math.floor(Math.random() * ruleActions.length);
+        const amount = Math.ceil(Math.random() * 5);
+        dispatchRules({
+            type: ruleActions[ranAction],
+            payload: {
+                amount,
+                teleblock: amount > 2,
+                upload: uploadProps,
+            }
+        })
     }
 
     const playKeeperEffect = (keeperId: string, keeperIndex: number) => {
@@ -1236,6 +1277,15 @@ export default function Game({setWinGameStats}: Props) {
             playCard(getCardById("A11"), -1);
         } else if(keeperId === "KE01") {
             playCard(getCardById("A14"), -1);
+        } else if(keeperId === "KR09") {
+            playCard({
+                "id": "AF03",
+                "type": "ACTION",
+                "subtype": "",
+                "name": "RULE FLUX",
+                "effects": ["RULE_RANDOM"],
+                "text": "Randomize a rule."
+            }, -1);
         }
 
         dispatchPlayers({

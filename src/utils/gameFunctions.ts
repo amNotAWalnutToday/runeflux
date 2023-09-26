@@ -105,7 +105,7 @@ export default (() => {
     const rulesReducer = (state: RuleSchema, action: RULE_ACTIONS) => {
         const { init, ruleKey, amount, location, teleblock } = action.payload;
         const { db, gameId } = action.payload.upload;
-        const locations = ["MISTHALIN", "ASGARNIA", "MORYTANIA", "ABYSS", "ENTRANA", "CRANDOR"];
+        const locations = ["MISTHALIN", "ASGARNIA", "MORYTANIA", "ABYSS", "WILDERNESS"];
         const ran = Math.floor(Math.random() * locations.length);
     
         switch(action.type) {
@@ -589,6 +589,16 @@ export default (() => {
         return 0;
     }
 
+    const seperateCreepersAndKeepers = (keepers: CardSchema[]) => {
+        const creepers: CardSchema[]    = [];
+        const nonCreepers: CardSchema[] = [];
+        keepers.forEach((keeper) => {
+            if(keeper.type === "CREEPER") creepers.push(keeper);
+            else nonCreepers.push(keeper);
+        });
+        return {keepers: nonCreepers, creepers};
+    }
+
     const chooseWhoGoesFirst = (players: PlayerSchema[]) => {
         const ran = Math.floor(Math.random() * players.length);
         return players[ran].user.uid;
@@ -729,6 +739,7 @@ export default (() => {
         getCardById,
         getDeckCardById,
         getInitRule,
+        seperateCreepersAndKeepers,
         chooseWhoGoesFirst,
         checkShouldDiscard,
         checkForCreepers,
