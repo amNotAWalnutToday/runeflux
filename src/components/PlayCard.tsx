@@ -109,13 +109,19 @@ export default function PlayCard({
         if(cardId === "A11" && !selectedKeeperGroup.length) return {error: false, warning: true};
         if(cardId === "A11" && table.players[selectedKeeperGroup[0].playerIndex].user.uid === user?.uid) return {error: true, warning: false};
         if(cardId === "A12" && selectedKeeperGroup.length < 2) return {warning: true, error: false};
+        if(cardId === "A15" && !selectedKeeperGroup.length) return { warning: true, error: false };
+        if(cardId === "A15" 
+        && (table.players[selectedKeeperGroup[0].playerIndex].user.uid === user?.uid)
+            && (selectedKeeperGroup[0].state.type !== "CREEPER")
+                && !selectedKeeperGroup[0].state.attachment) return { error: true, warning: false };
         if(cardId === "CO04" && !selectedKeeperGroup.length) return {warning: true, error: false};
         if(cardId === "CO04" && table.players[selectedKeeperGroup[0].playerIndex].user.uid === user?.uid) return {error: true, warning: false};
         if(cardId === "CO05" && !selectedRuleGroup.length) return {warning: true, error: false};
         if(cardId === "CO06" && !selectedKeeperGroup.length) return {warning: true, error: false};
         if(cardId === "CO06" 
         && (table.players[selectedKeeperGroup[0].playerIndex].user.uid === user?.uid)
-            && selectedKeeperGroup[0].state.type !== "CREEPER") return {error: true, warning: false};
+            && (selectedKeeperGroup[0].state.type !== "CREEPER"
+                && !selectedKeeperGroup[0].state.attachment)) return {error: true, warning: false};
         if(cardState.state.subtype === "LOCATION" && table.rules.teleblock) return {warning: true, error: false};
 
         return { warning: false, error: false };

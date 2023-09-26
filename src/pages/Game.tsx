@@ -1014,11 +1014,19 @@ export default function Game({setWinGameStats}: Props) {
             });
         } else if(card.effects.includes("KEEPERS_TO_HAND")) {
             players.forEach((player) => {
+                const keepers: CardSchema[]  = [];
+                const creepers: CardSchema[] = [];
+                if(!player.keepers.length) return;
+                player.keepers.forEach((keeper) => {
+                    if(keeper.type === "CREEPER"
+                    || keeper.attachment) creepers.push(keeper);
+                    else keepers.push(keeper); 
+                });
                 dispatchPlayers({
                     type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
                     payload: {
                         playerId: player.user.uid,
-                        cards: [...player.keepers.slice(0)],
+                        cards: [...keepers],
                         upload: uploadProps
                     }
                 });
@@ -1026,7 +1034,7 @@ export default function Game({setWinGameStats}: Props) {
                     type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__REMOVE,
                     payload: {
                         playerId: player.user.uid,
-                        cards: [],
+                        cards: [...creepers],
                         upload: uploadProps
                     }
                 });
@@ -1349,7 +1357,7 @@ export default function Game({setWinGameStats}: Props) {
 
     return (
         <div className='game_container' >
-            {/* <button
+            <button
                 className='menu_link'
                 onClick={() => {
                     dispatchPlayers({
@@ -1408,7 +1416,7 @@ export default function Game({setWinGameStats}: Props) {
                 }}
             >
                 seocnd coming
-            </button> */}
+            </button>
             {   
                 <Table 
                     table={table}
