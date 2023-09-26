@@ -486,7 +486,7 @@
             "subtype": "",
             "name": "Smuggler",
             "effects": [],
-            "text": "Since equipment and runes aren't allowed on entrana, find a way to get them there. Requirements: |Entrana|, |Any 4 equipment or rune type keepers|."
+            "text": "Since equipment isn't allowed on entrana, find a way to get them there. Requirements: |Entrana|, |Any 2 equipment keepers|."
         },
         {
             "id": "G21",
@@ -710,7 +710,7 @@
             "subtype": "LOCATION",
             "name": "Entrana",
             "effects": ["LOCATION", "ENTRANA"],
-            "text": "When this card is in play, on arrival everyone must discard all equipment/rune keepers in play."
+            "text": "When this card is in play, on arrival everyone must discard all equipment keepers in play."
         },
         {
             "id": "RL07",

@@ -998,9 +998,27 @@ export default function Game({setWinGameStats}: Props) {
 
     const entranaHandler = () => {
         players.forEach((player) => {
-            player.keepers.forEach((keeper, index) => {
-                if(keeper.subtype === "RUNE" || keeper.subtype === "EQUIPMENT") {
-                    discardKeeperFromPlayer(index, player.user.uid);
+            const nonEquipmentKeepers: CardSchema[] = [];
+            const equipmentKeepers: CardSchema[] = [];
+            player.keepers.forEach((keeper) => {
+                if(keeper.subtype === "EQUIPMENT") {
+                    equipmentKeepers.push(keeper);
+                } else nonEquipmentKeepers.push(keeper);
+            });
+            
+            dispatchPlayers({
+                type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__REMOVE,
+                payload: {
+                    playerId: player.user.uid,
+                    cards: [...nonEquipmentKeepers],
+                    upload: uploadProps
+                }
+            });
+            dispatchDeck({
+                type: DECK_REDUCER_ACTIONS.DECK_ADD__DISCARD_BOT,
+                payload: {
+                    pile: [...equipmentKeepers],
+                    upload: uploadProps,
                 }
             });
         });

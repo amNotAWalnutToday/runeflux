@@ -249,16 +249,16 @@ export default (() => {
     }
 
     const checkG20 = (keepers: CardSchema[], location: string) => {
-        const requirements = { entrana: false, equipmentOrRune: 0 };
-        /**number type for equipment and runes 4*/
+        const requirements = { entrana: false, equipment: 0 };
+        /**number type for equipment2*/
         keepers.forEach((keeper) => {
-            if(keeper.subtype === "RUNE" || keeper.subtype === "EQUIPMENT") {
-                requirements.equipmentOrRune += 1;
+            if(keeper.subtype === "EQUIPMENT") {
+                requirements.equipment += 1;
             }
         });
         if(location === "ENTRANA") requirements.entrana = true;
 
-        if(requirements.entrana && requirements.equipmentOrRune >= 4) return { hasWon: true, bypassCreeper: false };
+        if(requirements.entrana && requirements.equipment >= 2) return { hasWon: true, bypassCreeper: false };
         else return { hasWon: false, bypassCreeper: false };
     }
 

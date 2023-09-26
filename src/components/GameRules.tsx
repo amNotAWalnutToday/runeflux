@@ -30,7 +30,7 @@ export default function GameRules({
         "Double agenda(two goals) is in play here.",
         "At the end of every turn discard 1 random card",
         "Once per turn, Challenge an other players keeper for the chance to steal them",
-        "Upon arriving here discard all current equipment and rune keepers in play.",
+        "Upon arriving here discard all current equipment keepers in play.",
         "10% chance to summon a ghost at the end of your turn.",
         "Once per turn, You have the option to draw 1 and play it."
     ];
