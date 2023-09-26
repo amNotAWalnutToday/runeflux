@@ -3,6 +3,7 @@ import CardSchema from '../schemas/cardSchema';
 import PlayerSchema from '../schemas/playerSchema';
 import TurnSchema from '../schemas/turnSchema';
 import startDeckData from '../data/start_deck.json';
+import allDeckData from '../data/all_cards.json';
 import start_rules from '../data/start_rules.json';
 import GameSchema from '../schemas/gameSchema';
 import UserSchema from '../schemas/userSchema';
@@ -542,12 +543,12 @@ export default (() => {
     }
 
     const getCardById = (cardId: string) => {
-        for(const card of startDeckData.startDeck) {
+        for(const card of allDeckData.allCards) {
             if(cardId === card.id) {
                 return card;
             }
         }
-        return startDeckData.startDeck[0];
+        return allDeckData.allCards[0];
     }
 
     const getDeckCardById = (cardId: string, deck: CardSchema[]) => {

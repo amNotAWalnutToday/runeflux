@@ -502,6 +502,42 @@ export default (() => {
         else return { hasWon: false, bypassCreeper: false };
     }
 
+    const checkGM01 = (keepers: CardSchema[]) => {
+        const requirements = { verac: false, torag: false };
+        
+        keepers.forEach((keeper) => {
+            if(keeper.id === "KLM02") requirements.verac = true;
+            if(keeper.id === "KLM01") requirements.torag = true;
+        });
+
+        if(requirements.torag && requirements.verac) return { hasWon: true, bypassCreeper: false };
+        else return { hasWon: false, bypassCreeper: false };
+    }
+
+    const checkGM02 = (keepers: CardSchema[]) => {
+        const requirements = { guthan: false, dharok: false };
+        
+        keepers.forEach((keeper) => {
+            if(keeper.id === "KLM03") requirements.guthan = true;
+            if(keeper.id === "KLM04") requirements.dharok = true;
+        });
+
+        if(requirements.guthan && requirements.dharok) return { hasWon: true, bypassCreeper: false };
+        else return { hasWon: false, bypassCreeper: false };
+    }
+
+    const checkGM03 = (keepers: CardSchema[]) => {
+        const requirements = { karil: false, ahrim: false };
+        
+        keepers.forEach((keeper) => {
+            if(keeper.id === "KLM05") requirements.karil = true;
+            if(keeper.id === "KLM06") requirements.ahrim = true;
+        });
+
+        if(requirements.karil && requirements.ahrim) return { hasWon: true, bypassCreeper: false };
+        else return { hasWon: false, bypassCreeper: false };
+    }
+
     const compareKeepersToGoal = (
         keepers: CardSchema[], 
         goal: CardSchema,
@@ -590,6 +626,12 @@ export default (() => {
                 return checkG38(keepers);
             case "G39":
                 return checkG39(keepers);
+            case "GM01":
+                return checkGM01(keepers);
+            case "GM02":
+                return checkGM02(keepers);
+            case "GM03":
+                return checkGM03(keepers);
         }
 
         return { hasWon: false, bypassCreeper: false };

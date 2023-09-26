@@ -1227,6 +1227,60 @@ export default function Game({setWinGameStats}: Props) {
         return false;
     }
 
+    const ghostHandler = () => {
+        const chance = Math.floor(Math.random() * 101);
+        if(chance <= 20) {
+            dispatchPlayers({
+                type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__ADD,
+                payload: {
+                    playerId: user?.uid ?? '',
+                    cards: [getCardById("KL02")],
+                    upload: uploadProps,
+                }
+            });
+        }
+    }
+
+    const ghostEffectHandler = () => {
+        players.forEach((player) => {
+            if(!player.keepers) return;
+            player.keepers.forEach((keeper, keeperIndex) => {
+                if(keeper.id !== "KL02") return;
+                const chance = Math.floor(Math.random() * 101);
+                if(chance <= 11) {
+                    const choice = Math.ceil(Math.random() * 6);
+                    discardKeeperFromPlayer(keeperIndex, player.user.uid, false);
+                    dispatchPlayers({
+                        type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__ADD,
+                        payload: {
+                            playerId: player.user.uid,
+                            cards: [getCardById(`KLM0${choice}`)],
+                            upload: uploadProps
+                        }
+                    });
+
+                    // add card to catalog(exception) //
+                    const playedAmount = (
+                        player.user.cardCatalog[`KLM0${choice}`] 
+                            ? player.user.cardCatalog[`KLM0${choice}`] + 1
+                            : 1 
+                    );
+                    uploadStats("CARD", db, {cardKey: `KLM0${choice}`, cardNum: playedAmount}, player.user?.uid);
+
+                    ////////////////////
+                    // experimental
+                    dispatchDeck({
+                        type: DECK_REDUCER_ACTIONS.DECK_ADD__DISCARD_BOT,
+                        payload: {
+                            pile: [getCardById("GM01"), getCardById("GM02"), getCardById("GM03")],
+                            upload: uploadProps
+                        }
+                    })
+                }
+            });
+        });
+    }
+
     const endTurnHandler = () => {
         if(goal.length) win();
 
@@ -1239,17 +1293,8 @@ export default function Game({setWinGameStats}: Props) {
             discardCardFromHand(ran, true);
         }
         if(rules.location === "MORYTANIA") {
-            const chance = Math.floor(Math.random() * 101);
-            if(chance <= 20) {
-                dispatchPlayers({
-                    type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__ADD,
-                    payload: {
-                        playerId: user?.uid ?? '',
-                        cards: [getCardById("KL02")],
-                        upload: uploadProps,
-                    }
-                });
-            }
+            ghostHandler();
+            ghostEffectHandler();
         }
         if(turn.duel.cooldown) {
             dispatchTurn({
