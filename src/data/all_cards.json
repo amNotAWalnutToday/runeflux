@@ -670,7 +670,7 @@
             "subtype": "LOCATION",
             "name": "Misthalin",
             "effects": ["LOCATION", "MISTHALIN"],
-            "text": "teleport all players to the location of misthalin, this location has no special effects."
+            "text": "When this card is in play, draw 1 at the end of each turn."
         },
         {
             "id": "RL02",

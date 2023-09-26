@@ -1314,6 +1314,9 @@ export default function Game({setWinGameStats}: Props) {
         setLocationCooldown(() => false);
 
         const thisPlayer = getPlayer(players, user?.uid ?? '');
+        if(rules.location === "MISTHALIN") {
+            drawCardsForPlayer(user?.uid ?? '', 1, 0);
+        }
         if(rules.location === "CRANDOR") {
             const ran = Math.floor(Math.random() * thisPlayer.state.hand.length);
             discardCardFromHand(ran, true);

@@ -26,7 +26,7 @@ export default function GameRules({
     const [isHover, setIsHover] = useState(false);
     
     const locationDescriptions = [
-        "No special effects here.",
+        "At the end of every turn draw 1 card.",
         "Double agenda(two goals) is in play here.",
         "At the end of every turn discard 1 random card",
         "Once per turn, Challenge an other players keeper for the chance to steal them",
