@@ -953,13 +953,21 @@ a:hover,
 
 .icon_picker {
   display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
+  max-width: 250px;
 }
 
 .icon_pick {
   padding: 0.5rem 0;
   border: 1px solid white;
   background-color: #111;
+}
+
+.icon_pick.locked {
+  opacity: 50%;
+  background-color: rgba(220, 20, 60, 0.15);
+  cursor: not-allowed !important;
 }
 
 .card_image {

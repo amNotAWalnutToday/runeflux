@@ -54,12 +54,15 @@ export default function Account() {
 
     const mapIcons = () => {
         return icons.map((icon, index) => {
+            let isLocked = false;
+            if(icon === "ghost" && !user?.goalWins.G30) isLocked = true;
+            
             return (
                 <button
                     key={`icon__${index}`}
-                    className='icon_pick'
+                    className={`icon_pick ${isLocked ? "locked" : ""}`}
                     onClick={async () => {
-                        if(!user) return;
+                        if(!user || isLocked) return;
                         await changeIcon(db, icon, user?.uid);
                         setUser((prev) => {
                             if(!prev) return;
