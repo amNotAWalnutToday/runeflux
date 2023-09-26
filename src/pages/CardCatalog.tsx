@@ -67,12 +67,22 @@ export default function CardCatalog() {
                         position='CATALOG'
                         cardState={{state: card, index: ind}}
                     />
+                    {
+                    playOrWon === "PLAY"
+                    ?
                     <p 
                         className="played_amount"
                         style={{backgroundColor: `var(--${getPlayAmountStyle(card)})`}}
                     >
                         Played: {user?.cardCatalog[`${card.id}`]}
                     </p>
+                    :
+                    <p
+                        className='played_amount'
+                    >
+                        Won: {user.goalWins ? user?.goalWins[`${card.id}`] : 0}
+                    </p>
+                    }
                 </div>
             ) : (
                 <CardBack 
