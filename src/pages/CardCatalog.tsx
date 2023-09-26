@@ -41,6 +41,14 @@ export default function CardCatalog() {
         return cardsPlayed ? Math.round((cardsPlayed / all_cards.length) * 100) : 0;
     }
 
+    const getPlayAmountStyle = (card: CardSchema) => {
+        if(!user) return;
+        if(user?.cardCatalog[`${card.id}`] > 499) return "golden_highlight"
+        else if(user?.cardCatalog[`${card.id}`] > 249) return "silver";
+        else if(user?.cardCatalog[`${card.id}`] > 49) return "brown";
+        else if(user?.cardCatalog[`${card.id}`] > 0) return "black-tooltip"
+    }
+
     const checkCardLogCon = (card: CardSchema) => {
         if(!user) return 0;
         if(playOrWon === "PLAY") return user?.cardCatalog[`${card.id}`] > 0;
@@ -52,11 +60,20 @@ export default function CardCatalog() {
         return all_cards.map((card, ind) => {
             if(filter && (card.type !== filter) && (card.subtype !== filter)) return;
             return checkCardLogCon(card) ? (
-                <Card
-                    key={`catalog_card__${ind}`} 
-                    position='CATALOG'
-                    cardState={{state: card, index: ind}}
-                />
+                <div
+                    key={`catalog_card__${ind}`}
+                >
+                    <Card
+                        position='CATALOG'
+                        cardState={{state: card, index: ind}}
+                    />
+                    <p 
+                        className="played_amount"
+                        style={{backgroundColor: `var(--${getPlayAmountStyle(card)})`}}
+                    >
+                        Played: {user?.cardCatalog[`${card.id}`]}
+                    </p>
+                </div>
             ) : (
                 <CardBack 
                     key={`catalog_card__locked_${ind}`}

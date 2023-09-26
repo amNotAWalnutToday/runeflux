@@ -3,6 +3,7 @@
   --black: #111;
   --black-fade: #1119;
   --black-fade-light: #121212df;
+  --black-tooltip: #123f;
   --black-shine: radial-gradient(#121212, #122);
   --white-fade: #fbfdfb99;
   --white: #fbfdfe;
@@ -144,6 +145,14 @@ body {
   padding: 1rem 1rem;
   box-shadow: 0px 2px 8px black;
   border-radius: 32px 0 0 32px;
+}
+
+.played_amount {
+  text-align: center;
+  margin-top: 0.5rem;
+  text-shadow: 0px 0px 1px black;
+  background-color: var(--black);
+  box-shadow: inset 0px 0px 4px black;
 }
 
 .card_picker::-webkit-scrollbar,
@@ -754,7 +763,7 @@ a:hover,
   position: absolute;
   top: 40px;
   right: 40px;
-  background-color: #123f;
+  background-color: var(--black-tooltip);
   font-size: 12px;
   padding: 0.1rem 0.5rem;
   border: 1px solid var(--black);
