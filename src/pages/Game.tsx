@@ -1514,6 +1514,7 @@ export default function Game({setWinGameStats}: Props) {
             <EndTurn 
                 table={table}
                 localPlayer={localPlayer}
+                showCardPiles={showCardPiles}
                 endTurn={endTurnHandler}
             />
             {

@@ -6,10 +6,11 @@ import ErrorMessage from './ErrorMessage';
 type Props = {
     table: GameSchema,
     localPlayer: PlayerSchema,
+    showCardPiles: {discard: boolean, pure: boolean},
     endTurn: () => void,
 }
 
-export default function EndTurn({table, localPlayer, endTurn}: Props) {
+export default function EndTurn({table, localPlayer, showCardPiles, endTurn}: Props) {
     const [errors, setErrors] = useState<string[]>([]);
     
     const checkIfDisabled = () => {
@@ -21,9 +22,10 @@ export default function EndTurn({table, localPlayer, endTurn}: Props) {
                              && !checkIfKeepersAllCreepers();
         const isTurn          = table.turn.player === localPlayer.user.uid; 
         const isUsingWormhole = table.turn.temporary.hand.length > 0;
+        const isUsingPickCard = showCardPiles.discard || showCardPiles.pure;
 
-        if(!hasDrawn || !hasPlayed || isHandFull || isKeepersFull || !isTurn || isUsingWormhole) {
-            return [hasDrawn, hasPlayed, isHandFull, isKeepersFull, isTurn, isUsingWormhole];
+        if(!hasDrawn || !hasPlayed || isHandFull || isKeepersFull || !isTurn || isUsingWormhole || isUsingPickCard) {
+            return [hasDrawn, hasPlayed, isHandFull, isKeepersFull, isTurn, isUsingWormhole, isUsingPickCard];
         }
         else return false;
     }
@@ -56,6 +58,9 @@ export default function EndTurn({table, localPlayer, endTurn}: Props) {
         }
         if(errors[5]) {
             errorMessages.push("Finish using all the cards in hand.");
+        }
+        if(errors[6]) {
+            errorMessages.push("Finish choosing a card to draw.");
         }
         setErrors(() => ([...errorMessages]));
     }
