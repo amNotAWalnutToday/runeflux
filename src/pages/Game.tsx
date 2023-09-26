@@ -1357,7 +1357,7 @@ export default function Game({setWinGameStats}: Props) {
 
     return (
         <div className='game_container' >
-            <button
+            {/* <button
                 className='menu_link'
                 onClick={() => {
                     dispatchPlayers({
@@ -1416,7 +1416,7 @@ export default function Game({setWinGameStats}: Props) {
                 }}
             >
                 seocnd coming
-            </button>
+            </button> */}
             {   
                 <Table 
                     table={table}

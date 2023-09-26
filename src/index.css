@@ -1197,3 +1197,39 @@ a:hover,
   background-size: contain;
   background-repeat: no-repeat;
 }
+
+.ahrim {
+  background: url("./assets/ahrim.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.karil {
+  background: url("./assets/karil.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.dharok {
+  background: url("./assets/dharok.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.guthan {
+  background: url("./assets/guthan.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.torag {
+  background: url("./assets/torag.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.verac {
+  background: url("./assets/verac.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
