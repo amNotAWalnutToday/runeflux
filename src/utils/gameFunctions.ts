@@ -158,8 +158,14 @@ export default (() => {
     }
     
     const deckReducer = (state: DeckSchema, action: DECK_ACTIONS) => {
-        const { pile, amount, cardIndex, init } = action.payload;
+        const { amount, cardIndex, init } = action.payload;
         const { db, gameId } = action.payload.upload;
+        let pile = action.payload.pile;
+        if(pile.length) {
+            pile = removeAttachments(pile);
+            pile = resetCardCooldowns(pile);
+        }
+
         switch(action.type) {
             case DECK_REDUCER_ACTIONS.INIT:
                 return Object.assign({}, state, {...init});
@@ -587,6 +593,23 @@ export default (() => {
             if(key === rule) return (startingRules[rule]);
         }
         return 0;
+    }
+
+    const resetCardCooldowns = (keepers: CardSchema[]) => {
+        for(const keeper of keepers) {
+            keeper.cooldown = false;
+        }
+        return keepers;
+    }
+
+    const removeAttachments = (keepers: CardSchema[]) => {
+        for(const keeper of keepers) {
+            if(keeper.attachment) {
+                keepers.push(keeper.attachment);
+                keeper.attachment = null;
+            }
+        }
+        return keepers;
     }
 
     const seperateCreepersAndKeepers = (keepers: CardSchema[]) => {

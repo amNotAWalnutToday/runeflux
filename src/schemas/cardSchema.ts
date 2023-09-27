@@ -5,7 +5,7 @@ interface CardSchema {
     name: string,
     effects: string[],
     text: string,
-    attachment?: CardSchema,
+    attachment?: CardSchema | null,
     cooldown?: boolean,
 }
 
