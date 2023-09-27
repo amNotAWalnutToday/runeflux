@@ -1242,3 +1242,38 @@ a:hover,
   background-size: contain;
   background-repeat: no-repeat;
 }
+
+.wilderness {
+  background: url("./assets/wilderness.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  filter: drop-shadow(0px 0px 2px white);
+}
+
+.misthalin {
+  background: url("./assets/misthalin.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  filter: drop-shadow(0px 0px 2px white);
+}
+
+.morytania {
+  background: url("./assets/morytania.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  filter: drop-shadow(0px 0px 2px white);
+}
+
+.asgarnia {
+  background: url("./assets/asgarnia.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  filter: drop-shadow(0px 0px 2px white);
+}
+
+.abyss {
+  background: url("./assets/abyss.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  filter: drop-shadow(0px 0px 2px white);
+}
