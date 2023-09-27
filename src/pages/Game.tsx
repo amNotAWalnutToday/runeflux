@@ -418,25 +418,27 @@ export default function Game({setWinGameStats}: Props) {
                 upload: uploadProps
             }
         });
-        if(creepers.length) return;
-        const keepers = seperateCreepersAndKeepers(deck.pure.slice(deck.pure.length - drawn)).keepers;
-        dispatchDeck({
-            type: DECK_REDUCER_ACTIONS.DECK_ADD__DISCARD_BOT,
-            payload: {
-                pile: [...keepers],
-                upload: uploadProps
-            }
-        });
-        dispatchTurn({
-            type: TURN_REDUCER_ACTION.DRAWN_ADD, 
-            payload: { 
-                player: table.turn.player && table.turn.player !== true 
-                    ? table.turn.player 
-                    : 'a', 
-                amount: turn.drawn + drawn, 
-                upload: uploadProps
-            }
-        });
+        if(!creepers.length) {
+            dispatchTurn({
+                type: TURN_REDUCER_ACTION.DRAWN_ADD, 
+                payload: { 
+                    player: table.turn.player && table.turn.player !== true 
+                        ? table.turn.player 
+                        : 'a', 
+                    amount: turn.drawn + drawn, 
+                    upload: uploadProps
+                }
+            });
+        } else {            
+            const keepers = seperateCreepersAndKeepers(deck.pure.slice(deck.pure.length - drawn)).keepers;
+            dispatchDeck({
+                type: DECK_REDUCER_ACTIONS.DECK_ADD__DISCARD_BOT,
+                payload: {
+                    pile: [...keepers],
+                    upload: uploadProps
+                }
+            });
+        }
     }
 
     const drawCardsForPlayer = (playerId: string, amount: number, fromTop: number) => {
@@ -1197,6 +1199,7 @@ export default function Game({setWinGameStats}: Props) {
         ]
         const ranAction = Math.floor(Math.random() * ruleActions.length);
         const amount = Math.ceil(Math.random() * 5);
+        console.log(ruleActions[ranAction], amount);
         dispatchRules({
             type: ruleActions[ranAction],
             payload: {
@@ -1223,13 +1226,9 @@ export default function Game({setWinGameStats}: Props) {
         } else if(keeperId === "K01") {
             drawCardsForPlayer(thisPlayer.state.user.uid, 1, 0);
         } else if(keeperId === "CR01") {
-            dispatchRules({
-                type: RULE_REDUCER_ACTIONS.RULE_CHANGE__LOCATION,
-                payload: {
-                    location: "CRANDOR",
-                    upload: uploadProps,
-                }
-            });
+            playCard(getCardById("RL07"), -1);
+        } else if(keeperId === "KE06") {
+            playCard(getCardById("RL08"), -1);
         } else if(keeperId === "KR08") {
             playCard(getCardById("A01"), -1);
         } else if(keeperId === "KR02") {
@@ -1392,6 +1391,9 @@ export default function Game({setWinGameStats}: Props) {
         if(rules.location === "MORYTANIA") {
             ghostHandler();
             ghostEffectHandler();
+        }
+        if(rules.location === "ZANARIS") {
+            cosmicHandler();
         }
         if(turn.duel.cooldown) {
             dispatchTurn({

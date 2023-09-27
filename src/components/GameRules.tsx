@@ -32,7 +32,8 @@ export default function GameRules({
         "Once per turn, Challenge an other players keeper for the chance to steal them",
         "Upon arriving here discard all current equipment keepers in play.",
         "10% chance to summon a ghost at the end of your turn.",
-        "Once per turn, You have the option to draw 1 and play it."
+        "Once per turn, You have the option to draw 1 and play it.",
+        "Each turn a random rule will randomize. Locations not included."
     ];
 
     return (

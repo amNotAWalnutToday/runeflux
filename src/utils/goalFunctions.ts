@@ -502,6 +502,19 @@ export default (() => {
         else return { hasWon: false, bypassCreeper: false };
     }
 
+    const checkG40 = (keepers: CardSchema[], location: string) => {
+        const requirements = { ernest: false, zanaris: false };
+        
+        keepers.forEach((keeper) => {
+            if(keeper.id === "KL01") requirements.ernest = true;
+        });
+
+        if(location === "ZANARIS") requirements.zanaris = true;
+
+        if(requirements.ernest && requirements.zanaris) return { hasWon: true, bypassCreeper: false };
+        else return { hasWon: false, bypassCreeper: false };
+    }
+
     const checkGM01 = (keepers: CardSchema[]) => {
         const requirements = { verac: false, torag: false };
         
@@ -626,6 +639,8 @@ export default (() => {
                 return checkG38(keepers);
             case "G39":
                 return checkG39(keepers);
+            case "G40":
+                return checkG40(keepers, location);
             case "GM01":
                 return checkGM01(keepers);
             case "GM02":

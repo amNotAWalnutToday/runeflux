@@ -277,8 +277,8 @@
             "type": "KEEPER",
             "subtype":"EQUIPMENT",
             "name": "Draman Staff",
-            "effects": [],
-            "text": ""
+            "effects": ["TELEPORT"],
+            "text": "Once per turn, teleport to Zanaris."
         },
         {
             "id": "KE07",
@@ -564,7 +564,7 @@
             "id": "G30",
             "type": "GOAL",
             "subtype": "",
-            "name": "Port-Phasmatys",
+            "name": "Port Phasmatys",
             "effects": [],
             "text": "Collection Type: |4 ghosts| and location |Morytania|"
         },
@@ -641,6 +641,14 @@
             "text": "A long journey begins after speaking to the |Cook|. Freeing the members of the banquet will require help from |Aris Maye|."
         },
         {
+            "id": "G40",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Plot Twisting Chicken",
+            "effects": [],
+            "text": "Didn't you know that |Ernest| the chicken was actually a astral projection from the evil chicken shrine in |Zanaris|."
+        },
+        {
             "id": "GM01",
             "type": "GOAL",
             "subtype": "",
@@ -660,9 +668,9 @@
             "id": "GM03",
             "type": "GOAL",
             "subtype": "",
-            "name": "Blighted mage and Tainted range",
+            "name": "Plash and Pierce.",
             "effects": [],
-            "text": "Collection type: |Ahrim| the blighted and |Karil| the tainted."
+            "text": "The sound of magic(|Ahrim|) and crossbows(|Karil|) resounds through the crypts."
         },
         {
             "id": "RL01",
@@ -719,6 +727,14 @@
             "name": "Crandor",
             "effects": ["LOCATION", "CRANDOR"],
             "text": "When this card is in play, at the end of every turn discard one card."
+        },
+        {
+            "id": "RL08",
+            "type": "RULE",
+            "subtype": "LOCATION",
+            "name": "Zanaris",
+            "effects": ["LOCATION", "ZANARIS"],
+            "text": "When this card is in play, each turn one rule will randomize except location."
         },
         {
             "id": "RB01",
