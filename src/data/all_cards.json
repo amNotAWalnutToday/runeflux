@@ -566,7 +566,7 @@
             "subtype": "",
             "name": "Port Phasmatys",
             "effects": [],
-            "text": "Collection Type: |4 ghosts| and location |Morytania|"
+            "text": "Collection Type: |3 ghosts|"
         },
         {
             "id": "G31",
@@ -598,7 +598,7 @@
             "subtype": "",
             "name": "Melee Setup",
             "effects": [],
-            "text": "Collection Type: |Rune Scimitar|, |Antidragon-fire shield|, |Cake|"
+            "text": "Collection Type: |Rune Scimitar|, |Antidragon-fire shield|"
         },
         {
             "id": "G35",

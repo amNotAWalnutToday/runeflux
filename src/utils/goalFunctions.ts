@@ -371,21 +371,19 @@ export default (() => {
         });
 
         if(location === "MORYTANIA") requirements.morytania = true;
-        console.log(requirements);
+
         if(requirements.ghost && requirements.morytania && requirements.vampyreJuvinate) return { hasWon: true, bypassCreeper: false };
         else return { hasWon: false, bypassCreeper: false };
     }
 
-    const checkG30 = (keepers: CardSchema[], location: string) => {
-        const requirements = { morytania: false, ghost: 0, }
-        /**4 ghosts */
+    const checkG30 = (keepers: CardSchema[]) => {
+        const requirements = { ghost: 0, }
+        /**3 ghosts */
         keepers.forEach((keeper) => {
-            if(keeper.id === "KL11") requirements.ghost += 1;
+            if(keeper.id === "KL02") requirements.ghost += 1;
         });
 
-        if(location === "MORYTANIA") requirements.morytania = true;
-
-        if(requirements.ghost >= 4 && requirements.morytania) return { hasWon: true, bypassCreeper: false };
+        if(requirements.ghost >= 3) return { hasWon: true, bypassCreeper: false };
         else return { hasWon: false, bypassCreeper: false };
     }
 
@@ -428,15 +426,14 @@ export default (() => {
     }
 
     const checkG34 = (keepers: CardSchema[]) => {
-        const requirements = { runeScimitar: false, antfireShield: false, cake: false };
+        const requirements = { runeScimitar: false, antfireShield: false };
         
         keepers.forEach((keeper) => {
             if(keeper.id === "KE07") requirements.runeScimitar = true;
             if(keeper.id === "KE02") requirements.antfireShield = true;
-            if(keeper.id === "K01") requirements.cake = true;
         });
 
-        if(requirements.antfireShield && requirements.cake && requirements.runeScimitar) return { hasWon: true, bypassCreeper: false };
+        if(requirements.antfireShield && requirements.runeScimitar) return { hasWon: true, bypassCreeper: false };
         else return { hasWon: false, bypassCreeper: false };
     }
 
@@ -620,7 +617,7 @@ export default (() => {
             case "G29":
                 return checkG29(keepers, location);
             case "G30":
-                return checkG30(keepers, location);
+                return checkG30(keepers);
             case "G31":
                 return checkG31(keepers, location);
             case "G32":
