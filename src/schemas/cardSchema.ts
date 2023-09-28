@@ -7,6 +7,7 @@ interface CardSchema {
     text: string,
     attachment?: CardSchema | null,
     cooldown?: boolean,
+    targets?: { id: string, index: number, playerIndex: number }[] | null,
 }
 
 export default CardSchema;

@@ -5,6 +5,7 @@ import TurnSchema from '../schemas/turnSchema';
 type Props = {
     rules: RuleSchema,
     turn: TurnSchema,
+    targetedRule: string[],
     selectedRuleGroup: string[],
     selectRuleGroup: (rule: string) => void,
     isTurn: boolean,
@@ -16,6 +17,7 @@ type Props = {
 export default function GameRules({
     rules, 
     turn,
+    targetedRule,
     selectedRuleGroup, 
     selectRuleGroup,
     isTurn,
@@ -36,12 +38,20 @@ export default function GameRules({
         "Each turn a random rule will randomize. Locations not included."
     ];
 
+    const checkTargeted = (rule: string) => {
+        if(!targetedRule.length) return {};
+        for(const tRule of targetedRule) {
+            if(rule === tRule) return {filter: "drop-shadow(0px 0px 2px var(--crimson))"};
+        }
+    }
+
     return (
         <div style={{zIndex: 20}} className="rules_container box_border " >
             <h2>Rules</h2>
             <hr />
             <ul>
                 <li 
+                    style={checkTargeted("location")}
                     className={`rule ${selectedRuleGroup.includes("location") ? "highlight" : ""} ${rules.location === "ABYSS" ? `location_btn ${cooldown || !isTurn ? "disabled" : ""}` : ""}`}
                     onClick={() => {
                         if(rules.location !== "ABYSS"
@@ -75,10 +85,12 @@ export default function GameRules({
                         { rules.location === "ENTRANA"   ? locationDescriptions[4] : "" }
                         { rules.location === "MORYTANIA" ? locationDescriptions[5] : "" }
                         { rules.location === "ABYSS"     ? locationDescriptions[6] : "" }
+                        { rules.location === "ZANARIS"   ? locationDescriptions[7] : "" }
                     </span>
                     }
                 </li>
                 <li 
+                    style={checkTargeted("drawAmount")}
                     className={`rule ${selectedRuleGroup.includes("drawAmount") ? "highlight" : ""}`}
                     onContextMenu={(e) => {
                         e.preventDefault();
@@ -88,6 +100,7 @@ export default function GameRules({
                     Draw: {turn.drawn} / {rules.drawAmount}
                 </li>
                 <li
+                    style={checkTargeted("playAmount")}
                     className={`rule ${selectedRuleGroup.includes("playAmount") ? "highlight" : ""}`}
                     onContextMenu={(e) => {
                         e.preventDefault();
@@ -97,6 +110,7 @@ export default function GameRules({
                     Play: {turn.played} / {rules.playAmount}
                 </li>
                 <li
+                    style={checkTargeted("handLimit")}
                     className={`rule ${selectedRuleGroup.includes("handLimit") ? "highlight" : ""}`}
                     onContextMenu={(e) => {
                         e.preventDefault();
@@ -106,6 +120,7 @@ export default function GameRules({
                     Hand Limit: {rules.handLimit}
                 </li>
                 <li
+                    style={checkTargeted("keeperLimit")}
                     className={`rule ${selectedRuleGroup.includes("keeperLimit") ? "highlight" : ""}`}
                     onContextMenu={(e) => {
                         e.preventDefault();
@@ -115,6 +130,7 @@ export default function GameRules({
                     Keeper Limit: {rules.keeperLimit}
                 </li>
                 <li
+                    style={checkTargeted("teleblock")}
                     className={`rule ${selectedRuleGroup.includes("teleblock") ? "highlight" : ""}`}
                     onContextMenu={(e) => {
                         e.preventDefault();

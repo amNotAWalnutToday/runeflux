@@ -221,6 +221,14 @@ export default function Game({setWinGameStats}: Props) {
     }, [goal]);
 
     useEffect(() => {
+        if(table.counter && table.counter !== true) {
+            if(table.counter.id === "CO03") { 
+                setShowCardPiles(() => ({discard: false, pure: false}));
+            }
+        }
+    }, [table.counter]);
+
+    useEffect(() => {
         if(!user) return navigate('/');
         if(!loading) return;
         tableInit();
@@ -668,9 +676,29 @@ export default function Game({setWinGameStats}: Props) {
         return false;
     }
 
+    const getTarget = (card: CardSchema) => {
+        switch(card.id) {
+            case "A04":
+                return [{ id: selectedPlayerGroup[0].user.uid, index: 0, playerIndex: 0 }];
+            case "A05":
+                return [{ id: selectedRuleGroup[0], index: 0, playerIndex: 0 }];
+            case "A06":
+            case "CO05":
+                return Array.from(selectedRuleGroup, (rule, index) => ({id: rule, index, playerIndex: index}));
+            case "A11":
+            case "A15":
+            case "CO04":
+            case "CO06":
+                return [{ id: selectedKeeperGroup[0].state.id, index: selectedKeeperGroup[0].index, playerIndex: selectedKeeperGroup[0].playerIndex }];
+            case "A12":
+                return Array.from(selectedKeeperGroup, (keeper) => ({id: keeper.state.id, index: keeper.index, playerIndex: keeper.playerIndex}));
+            default: 
+                return [];
+        }
+    }
+
     const playCard = (card: CardSchema | false, indexInHand: number) => {
         if(!card) return;
-        const prevPending = table.pending ?? null;
         if(user) {
             const playedAmount = (
                 user.cardCatalog[`${card.id}`] 
@@ -687,9 +715,9 @@ export default function Game({setWinGameStats}: Props) {
         if(turn.player !== user?.uid) {
             upload("COUNTER", db, {cardState: card}, joinedGameID);
             discardCardFromHand(indexInHand, checkShouldDiscard(card.type));
-            return resolvePlayCard(card, prevPending);
+            return resolvePlayCard(card);
         }
-        upload('PENDING', db, {cardState: card}, joinedGameID);
+        upload('PENDING', db, {cardState: {...card, targets: getTarget(card)} }, joinedGameID);
         if(indexInHand > -1
         && !checkKeepScry(card.id)
         && !checkKeeperHistory(card.id)) { 
@@ -707,14 +735,13 @@ export default function Game({setWinGameStats}: Props) {
             });
         }
         selectCard(null);
-        resolvePlayCard(card, prevPending);
+        resolvePlayCard(card);
     }
 
     const playTemporaryCard = (card: CardSchema | false, indexInHand: number) => {
         if(!card || !table.turn.temporary) return;
         if(user?.uid !== turn.player) return;
-        const prevPending = table.pending ?? null;
-        upload('PENDING', db, {cardState: card}, joinedGameID);
+        upload('PENDING', db, {cardState: {...card, targets: getTarget(card)} }, joinedGameID);
         discardTemporaryCard(indexInHand, checkShouldDiscard(card.type));
         if(turn.player === user?.uid) {
             dispatchTurn({
@@ -725,10 +752,10 @@ export default function Game({setWinGameStats}: Props) {
                 }
             });
         }
-        resolvePlayCard(card, prevPending);
+        resolvePlayCard(card);
     }
 
-    const resolvePlayCard = (card: CardSchema, prevPending: typeof table.pending | null) => {
+    const resolvePlayCard = (card: CardSchema) => {
         setTimeout(() => {
             if(table.counter) return;
             resetPending();
@@ -743,7 +770,7 @@ export default function Game({setWinGameStats}: Props) {
                 case "ACTION":
                     return playActionCards(card);
                 case "COUNTER":
-                    return playCounterCard(card, prevPending);
+                    return playCounterCard(card);
                 case "CREEPER":
                     return playCreeperCard(card);
             }
@@ -795,7 +822,7 @@ export default function Game({setWinGameStats}: Props) {
         }
     }
 
-    const playCounterCard = (card: CardSchema, prevPending: typeof table.pending | null) => {
+    const playCounterCard = (card: CardSchema) => {
         const isYourTurn = user?.uid === turn.player;
         if(card.effects.includes("TELESTOP_OR_LOCATION_MISTHALIN")) {
             if(isYourTurn) {
@@ -857,15 +884,15 @@ export default function Game({setWinGameStats}: Props) {
                 });
             } else {
                 uploadTable(db, table, joinedGameID);
-                upload("PENDING", db, {cardState: false}, joinedGameID);
                 dispatchPlayers({
                     type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__ADD,
                     payload: {
                         playerId: user?.uid ?? '',
-                        cards: prevPending && prevPending !== true ? [prevPending] : [],
+                        cards: table.pending && table.pending !== true && table.pending.targets ? [getCardById(table.pending.targets[0].id)] : [],
                         upload: uploadProps
                     }
                 });
+                upload("PENDING", db, {cardState: false}, joinedGameID);
                 dispatchDeck({
                     type: DECK_REDUCER_ACTIONS.DECK_ADD__DISCARD_BOT,
                     payload: {
@@ -1441,6 +1468,7 @@ export default function Game({setWinGameStats}: Props) {
                 <UserAccountBox 
                     key={`player_bar__${ind}`}
                     isSideBox={true}
+                    targets={table.pending && table.pending !== true && table.pending.targets ? Array.from(table.pending.targets, (target) => target.id) : []}
                     player={player}
                     isTurn={table.turn.player === player.user.uid}
                     selectedPlayerGroup={selectedPlayerGroup}
@@ -1529,6 +1557,7 @@ export default function Game({setWinGameStats}: Props) {
             <GameRules 
                 rules={table.rules}
                 turn={turn}
+                targetedRule={table.pending && table.pending !== true && table.pending.targets ? Array.from(table.pending.targets, (rule) => rule.id) : []}
                 selectRuleGroup={selectRuleGroup}
                 selectedRuleGroup={selectedRuleGroup}
                 wormhole={wormhole}

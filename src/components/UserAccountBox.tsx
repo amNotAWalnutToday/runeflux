@@ -5,6 +5,7 @@ import PlayerSchema from "../schemas/playerSchema";
 type Props = {
     isSideBox?: boolean,
     isTurn?: boolean,
+    targets?: string[],
     player?: PlayerSchema,
     selectedPlayerGroup?: PlayerSchema[],
     selectPlayerGroup?: (player: PlayerSchema) => void,
@@ -12,6 +13,7 @@ type Props = {
 
 export default function UserAccountBox({
     isSideBox, 
+    targets,
     player, 
     isTurn, 
     selectedPlayerGroup,
@@ -23,6 +25,14 @@ export default function UserAccountBox({
         if(!selectedPlayerGroup) return false;
         for(const selectedPlayer of selectedPlayerGroup) {
             if(selectedPlayer.user.uid === player?.user.uid) return true;
+        }
+        return false;
+    }
+
+    const checkTargeted = () => {
+        if(!targets || !targets.length) return false;
+        for(const target of targets) {
+            if(target === player?.user.uid) return true;
         }
         return false;
     }
@@ -44,6 +54,7 @@ export default function UserAccountBox({
 
     return isSideBox ? (
         <div 
+            style={checkTargeted() ? {boxShadow: "inset 0px 0px 12px crimson"} : {}}
             className={`user_bar ${isTurn ? "highlight" : "" } ${checkSelected() ? "selected" : ""}`}
             onContextMenu={(e) => {
                 e.preventDefault();

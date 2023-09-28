@@ -45,6 +45,7 @@ export default function Table({
                 <MiniCard 
                     key={`table_keepers__p${playerNum}_${index}`}
                     isSideWays={horizontal}
+                    targets={table.pending && table.pending !== true && table.pending.targets ? table.pending.targets : []}
                     cardState={{ state: keeper, index }}
                     inspectKeeper={inspectKeeper}
                     selectKeeperGroup={selectKeeperGroup}

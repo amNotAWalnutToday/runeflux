@@ -3,6 +3,7 @@ import Card from "./Card";
 
 type Props = {
     isSideWays: boolean,
+    targets?: { id: string, index: number, playerIndex: number }[],
     cardState: { state: CardSchema, index: number },
     inspectKeeper?: (card: { state: CardSchema, index: number, playerIndex: number } | null) => void,
     selectedKeeperGroup?: { state: CardSchema, index: number, playerIndex: number }[],
@@ -13,6 +14,7 @@ type Props = {
 
 export default function MiniCard({
     cardState, 
+    targets,
     isSideWays, 
     inspectKeeper,
     selectKeeperGroup,
@@ -30,10 +32,23 @@ export default function MiniCard({
         return false;
     }
 
+    const checkTargeted = () => {
+        if(!targets || !playerNum) return;
+        for(const target of targets) {
+            if(target.id === cardState.state.id
+            && target.index === cardState.index
+            && target.playerIndex === playerNum - 1) return true;
+        }
+        return false;
+    }
+
     return isSideWays ? (
         <div  
             className={`card__mini ${cardState.state.type.toLowerCase()} ${checkSelected() ? "selected" : ""}`}
-            style={(cardState.state.effects && !cardState.state.cooldown) ? {background: "var(--black-shine)"} : {} }
+            style={(cardState.state.effects && !cardState.state.cooldown) 
+                ? {background: "var(--black-shine)", boxShadow: checkTargeted() ? "inset 0px 0px 12px crimson" : ""} 
+                : {boxShadow: checkTargeted() ? "inset 0px 0px 12px crimson" : ""} 
+            }
             onClick={!cardState.state.attachment ? () => { 
                 if(!playerNum || !inspectKeeper) return;
                 inspectKeeper({...cardState, playerIndex: playerNum - 1})
