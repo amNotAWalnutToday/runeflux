@@ -26,6 +26,7 @@ import DECK_REDUCER_ACTIONS from '../schemas/reducers/DECK_REDUCER_ACTIONS';
 import RULE_REDUCER_ACTIONS from '../schemas/reducers/RULE_REDUCER_ACTIONS';
 import PLAYER_REDUCER_ACTIONS from '../schemas/reducers/PLAYER_REDUCER_ACTIONS';
 import GOAL_REDUCER_ACTIONS from '../schemas/reducers/GOAL_REDUCER_ACTIONS';
+import testsettings from '../../testsettings.json';
 
 const { 
     loadGame, 
@@ -1480,66 +1481,72 @@ export default function Game({setWinGameStats}: Props) {
 
     return (
         <div className='game_container' >
-            <button
-                className='menu_link'
-                onClick={() => {
-                    dispatchPlayers({
-                        type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
-                        payload: {
-                            playerId: user?.uid ?? '',
-                            cards: [        {
-                                "id": "A16",
-                                "type": "ACTION",
-                                "subtype": "",
-                                "name": "Scry and Acquire",
-                                "effects": ["DRAW_SPECIFIC_PURE"],
-                                "text": "See into the future and choose a card to acquire."
-                            },
-                            {
-                                "id": "A17",
-                                "type": "ACTION",
-                                "subtype": "",
-                                "name": "Historical Research",
-                                "effects": ["DRAW_SPECIFIC_DISCARD"],
-                                "text": "Look through past records and find the location of a card to acquire."
-                            },         {
-                                "id": "KL14",
-                                "type": "KEEPER",
-                                "subtype": "LIVING",
-                                "name": "Reldo",
-                                "effects": [],
-                                "text": "When using the Historical Records card, don't discard it."
-                            },
-                    ],
-                            upload: uploadProps
-                        }
-                    });     
-                }}
-            >
-                action card function test
-            </button>
-            <button
-                onClick={() => {
-                    dispatchPlayers({
-                        type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
-                        payload: {
-                            playerId: user?.uid ?? '',
-                            cards: [         {
-                                "id": "CO03",
-                                "type": "COUNTER",
-                                "subtype": "",
-                                "name": "Belay That!",
-                                "effects": ["ACTIONSTOP_OR_DISCARD_1_ALL"],
-                                "text": "Out of turn - stop another player while they are playing an action card| During turn every discards one."
-                            },
-                    ],
-                            upload: uploadProps
-                        }
-                    });
-                }}
-            >
-                seocnd coming
-            </button>
+            {
+            `${testsettings.domain}/game` === window.location.href
+            && 
+            <div>
+                <button
+                    className='menu_link'
+                    onClick={() => {
+                        dispatchPlayers({
+                            type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
+                            payload: {
+                                playerId: user?.uid ?? '',
+                                cards: [        {
+                                    "id": "A16",
+                                    "type": "ACTION",
+                                    "subtype": "",
+                                    "name": "Scry and Acquire",
+                                    "effects": ["DRAW_SPECIFIC_PURE"],
+                                    "text": "See into the future and choose a card to acquire."
+                                },
+                                {
+                                    "id": "A17",
+                                    "type": "ACTION",
+                                    "subtype": "",
+                                    "name": "Historical Research",
+                                    "effects": ["DRAW_SPECIFIC_DISCARD"],
+                                    "text": "Look through past records and find the location of a card to acquire."
+                                },         {
+                                    "id": "KL14",
+                                    "type": "KEEPER",
+                                    "subtype": "LIVING",
+                                    "name": "Reldo",
+                                    "effects": [],
+                                    "text": "When using the Historical Records card, don't discard it."
+                                },
+                        ],
+                                upload: uploadProps
+                            }
+                        });
+                    }}
+                >
+                    action card function test
+                </button>
+                <button
+                    onClick={() => {
+                        dispatchPlayers({
+                            type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
+                            payload: {
+                                playerId: user?.uid ?? '',
+                                cards: [         {
+                                    "id": "CO03",
+                                    "type": "COUNTER",
+                                    "subtype": "",
+                                    "name": "Belay That!",
+                                    "effects": ["ACTIONSTOP_OR_DISCARD_1_ALL"],
+                                    "text": "Out of turn - stop another player while they are playing an action card| During turn every discards one."
+                                },
+                        ],
+                                upload: uploadProps
+                            }
+                        });
+                    }}
+                >
+                    seocnd coming
+                </button>
+            </div>
+            }
             {   
                 <Table 
                     table={table}
