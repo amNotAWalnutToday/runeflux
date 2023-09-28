@@ -86,7 +86,10 @@ export default function MiniCard({
     ) : (
         <div  
             className={`side_card__mini card__mini  ${cardState.state.type.toLowerCase()} ${checkSelected() ? "selected" : ""}`}
-            style={(cardState.state.effects && !cardState.state.cooldown) ? {background: "var(--black-shine)"} : {} }
+            style={(cardState.state.effects && !cardState.state.cooldown) 
+                ? {background: "var(--black-shine)", boxShadow: checkTargeted() ? "inset 0px 0px 12px crimson" : ""} 
+                : {boxShadow: checkTargeted() ? "inset 0px 0px 12px crimson" : ""} 
+            }
             onClick={!cardState.state.attachment ? () => { 
                 if(drawSpecificCard) return drawSpecificCard(cardState.index);
                 if(!playerNum || !inspectKeeper) return;

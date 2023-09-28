@@ -12,6 +12,10 @@ interface GameSchema {
     turn: TurnSchema,
     pending: CardSchema | boolean,
     counter: CardSchema | boolean,
+    history: {
+        played: {id: string, target: string, player: string}[],
+        discarded: string[],
+    },
     phases: {
         morytania: number,
         abyss: number,

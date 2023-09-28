@@ -4,6 +4,7 @@ import PlayerSchema from '../schemas/playerSchema';
 import TurnSchema from '../schemas/turnSchema';
 import startDeckData from '../data/start_deck.json';
 import allDeckData from '../data/all_cards.json';
+import fakeCards from '../data/fake_cards.json';
 import start_rules from '../data/start_rules.json';
 import GameSchema from '../schemas/gameSchema';
 import UserSchema from '../schemas/userSchema';
@@ -309,6 +310,10 @@ export default (() => {
                 pure: [] as CardSchema[],
                 discard: [] as CardSchema[],
             },
+            history: {
+                played: [],
+                discarded: [],
+            },
             players: [{user: user ?? { username: 'hal', uid: '000001', isReady: true }, hand: [], keepers: [], isReady: false}] as PlayerSchema[],
             goal: [] as CardSchema[],
             round: 0,
@@ -364,6 +369,7 @@ export default (() => {
             counterData: CardSchema | false,
             winData: boolean,
             phaseData: { morytania: 0, abyss: 0, wilderness: 0 }, 
+            historyData: { played: {id: string, target: string, player: string}[], discarded: string[] },
         ) => void,
     ) => {
         try {
@@ -379,7 +385,8 @@ export default (() => {
                     data.pending,
                     data.counter,
                     data.isWon,
-                    data.phases
+                    data.phases,
+                    data.history,
                 );
             });
             await onValue(gameRef, async (snapshot) => {
@@ -393,7 +400,8 @@ export default (() => {
                     data.pending,
                     data.counter,
                     data.isWon,
-                    data.phases
+                    data.phases,
+                    data.history,
                 );
             });
         } catch(e) {
@@ -414,6 +422,7 @@ export default (() => {
             cardState?: CardSchema | false,
             goalState?: CardSchema[],
             phaseState?: {location: string, amount: number},
+            historyState?: string[] | {id: string, target: string, player: string}[],
             playerId?: string,
         },
         gameId: string
@@ -422,7 +431,7 @@ export default (() => {
             gameState, deckState, turnState, 
             playersState, playerId, roundState,
             ruleState, cardState, goalState,
-            phaseState,
+            phaseState, historyState,
         } = payload;
 
         switch(type) {
@@ -448,6 +457,10 @@ export default (() => {
                 return uploadWin(db, gameId);
             case "PHASE":
                 return uploadPhase(db, phaseState?.location ?? '', phaseState?.amount ?? 0, gameId);
+            case "HISTORY_PLAYED":
+                return uploadHistory(db, "played", historyState ?? [], gameId);
+            case "HISTORY_DISCARDED":
+                return uploadHistory(db, "discarded", historyState ?? [], gameId);
             default:
                 return uploadTable(db, gameState ?? {} as GameSchema, gameId);
         }
@@ -556,6 +569,15 @@ export default (() => {
         }
     }
 
+    const uploadHistory = async (db: Database, type: string, history: string[] | {id: string, target: string, player: string}[], gameId: string) => {
+        try {
+            const historyRef = ref(db, `/games/${gameId}/game/history/${type}`);
+            await set(historyRef, history.length ? history : false);
+        } catch(e) {
+            return console.error(e);
+        }
+    }
+
     const getPlayer = (players: PlayerSchema[], uid: string) => {
         for(let i = 0; i < players.length; i++) {
             if(uid === players[i].user.uid) return {state: players[i], index: i};
@@ -571,7 +593,23 @@ export default (() => {
         return false;
     }
 
+    const getFakeRuleCard = (type: string) => {
+        for(const card of fakeCards.fakeCards) {
+            if(type === "location" && card.id === "RLF01") return card;
+            if(type === "drawAmount" && card.id === "RBF02") return card;
+            if(type === "playAmount" && card.id === "RBF03") return card;
+            if(type === "handLimit" && card.id === "RBF04") return card;
+            if(type === "keeperLimit" && card.id === "RBF05") return card;
+            if(type === "teleblock" && card.id === "RBF06") return card;
+        }
+        return fakeCards.fakeCards[0];
+    }
+
     const getCardById = (cardId: string) => {
+        if(cardId === "playAmount" || cardId === "drawAmount"
+        || cardId === "handLimit"  || cardId === "keeperLimit"
+        || cardId === "location"   || cardId === "teleblock") return getFakeRuleCard(cardId);
+
         for(const card of allDeckData.allCards) {
             if(cardId === card.id) {
                 return card;

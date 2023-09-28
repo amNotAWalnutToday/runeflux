@@ -21,6 +21,7 @@ import Card from '../components/Card';
 import InspectKeeper from '../components/InspectKeeper';
 import Duel from '../components/Duel';
 import CardPile from '../components/CardPile';
+import History from '../components/History';
 import TURN_REDUCER_ACTION from '../schemas/reducers/TURN_REDUCER_ACTIONS';
 import DECK_REDUCER_ACTIONS from '../schemas/reducers/DECK_REDUCER_ACTIONS';
 import RULE_REDUCER_ACTIONS from '../schemas/reducers/RULE_REDUCER_ACTIONS';
@@ -84,6 +85,7 @@ export default function Game({setWinGameStats}: Props) {
     const [loading, setLoading] = useState(true);
     const [locationCooldown, setLocationCooldown] = useState(false);
     const [showCardPiles, setShowCardPiles] = useState({discard: false, pure: false});
+    const [showHistory, setShowHistory] = useState(false);
     const [previousPending, setPreviousPending] = useState<CardSchema>();
     const [selectedCard, setSelectedCard] = useState<{state: CardSchema, index: number} | null>(null);
     const [inspectedKeeper, setInspectedKeeper] = useState<{state: CardSchema, index: number, playerIndex: number} | null>(null);
@@ -235,11 +237,16 @@ export default function Game({setWinGameStats}: Props) {
         tableInit();
 
         const escapeHandler = (e: KeyboardEvent) => {
+            e.preventDefault();
             if(e.key === "Escape") {
                 resetGroups();
                 selectCard(null);
                 inspectKeeper(null);
+                setShowHistory(() => false);
             } 
+            if(e.key === "Tab") {
+                setShowHistory(() => !showHistory);
+            }
         }
         window.addEventListener("keydown", escapeHandler);
         return (() => window.removeEventListener("keydown", escapeHandler));
@@ -257,9 +264,12 @@ export default function Game({setWinGameStats}: Props) {
         counterData: CardSchema | false,
         winData: boolean,
         phaseData: {morytania: 0, abyss: 0, wilderness: 0},
+        historyData: {played: {id: string, target: string, player: string}[], discarded: string[]},
     ) => {
         if(!deckData.discard) deckData.discard = [];
         if(!deckData.pure) deckData.pure = [];
+        if(!historyData.played) historyData.played = [];
+        if(!historyData.discarded) historyData.discarded = []
         if(!goalData) goalData = [];
         for(const player of playerData) {
             if(!player.hand) player.hand = [];
@@ -312,6 +322,7 @@ export default function Game({setWinGameStats}: Props) {
             counter: counterData, 
             isWon: winData,
             phases: phaseData,
+            history: historyData,
         }));
         setLocalPlayer((prev) => {
             return { ...prev, ...getPlayer(playerData, user?.uid ?? '').state }
@@ -698,6 +709,13 @@ export default function Game({setWinGameStats}: Props) {
         }
     }
 
+    const uploadPlayed = (cardId: string, target: string, username: string) => {
+        const history = [...table.history.played, {id: cardId, target, player: username}];
+        if(history.length > 50) history.shift();
+        upload("HISTORY_PLAYED", db, {historyState: history}, joinedGameID);
+        console.log(history);
+    }
+
     const playCard = (card: CardSchema | false, indexInHand: number) => {
         if(!card) return;
         if(user) {
@@ -713,12 +731,13 @@ export default function Game({setWinGameStats}: Props) {
             });
             uploadStats("CARD", db, {cardKey: card.id, cardNum: playedAmount}, user?.uid);
         }
+        const target = getTarget(card);
         if(turn.player !== user?.uid) {
             upload("COUNTER", db, {cardState: card}, joinedGameID);
             discardCardFromHand(indexInHand, checkShouldDiscard(card.type));
-            return resolvePlayCard(card);
+            return resolvePlayCard(card, target);
         }
-        upload('PENDING', db, {cardState: {...card, targets: getTarget(card)} }, joinedGameID);
+        upload('PENDING', db, {cardState: {...card, targets: target} }, joinedGameID);
         if(indexInHand > -1
         && !checkKeepScry(card.id)
         && !checkKeeperHistory(card.id)) { 
@@ -736,12 +755,13 @@ export default function Game({setWinGameStats}: Props) {
             });
         }
         selectCard(null);
-        resolvePlayCard(card);
+        resolvePlayCard(card, target);
     }
 
     const playTemporaryCard = (card: CardSchema | false, indexInHand: number) => {
         if(!card || !table.turn.temporary) return;
         if(user?.uid !== turn.player) return;
+        const target = getTarget(card);
         upload('PENDING', db, {cardState: {...card, targets: getTarget(card)} }, joinedGameID);
         discardTemporaryCard(indexInHand, checkShouldDiscard(card.type));
         if(turn.player === user?.uid) {
@@ -753,13 +773,15 @@ export default function Game({setWinGameStats}: Props) {
                 }
             });
         }
-        resolvePlayCard(card);
+        resolvePlayCard(card, target);
     }
 
-    const resolvePlayCard = (card: CardSchema) => {
+    const resolvePlayCard = (card: CardSchema, targets: {id: string}[]) => {
         setTimeout(() => {
             if(table.counter) return;
             resetPending();
+            console.log(card.targets);
+            uploadPlayed(card.id, targets.length ? targets[0].id : '', user?.username ?? '');
             setPreviousPending((prev) => ({...prev, ...card}));
             switch(card.type) {
                 case "KEEPER":
@@ -1669,12 +1691,17 @@ export default function Game({setWinGameStats}: Props) {
                 />
             }
             {
-                previousPending
+                table.history.played && table.history.played.length
                 &&
-                <Card
-                    position='PREVIOUS_PENDING'
-                    cardState={{state: previousPending, index: 0}}
-                />
+                <div
+                    className='last_played'
+                    onClick={() => setShowHistory(() => !showHistory)}
+                >
+                    <Card
+                        position='PREVIOUS_PENDING'
+                        cardState={{state: getCardById(table.history.played[table.history.played.length - 1].id), index: 0}}
+                    />
+                </div>
             }
             {
                 showCardPiles.pure
@@ -1692,6 +1719,13 @@ export default function Game({setWinGameStats}: Props) {
                     type={"DISCARD"}
                     pile={deck.discard}
                     drawSpecificCard={drawSpecificCard}
+                />
+            }
+            {
+                showHistory
+                &&
+                <History 
+                    history={table.history}
                 />
             }
         </div>

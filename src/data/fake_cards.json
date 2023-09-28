@@ -1,0 +1,52 @@
+{
+    "fakeCards": [
+        {
+            "id": "RLF01",
+            "type": "RULE",
+            "subtype": "LOCATION",
+            "name": "Location",
+            "effects": [],
+            "text": ""
+        },
+        {
+            "id": "RBF02",
+            "type": "RULE",
+            "subtype": "BASIC",
+            "name": "Draw",
+            "effects": [],
+            "text": ""
+        },
+        {
+            "id": "RBF03",
+            "type": "RULE",
+            "subtype": "BASIC",
+            "name": "Play",
+            "effects": [],
+            "text": ""
+        },
+        {
+            "id": "RBF04",
+            "type": "RULE",
+            "subtype": "BASIC",
+            "name": "Hand Limit",
+            "effects": [],
+            "text": ""
+        },
+        {
+            "id": "RBF05",
+            "type": "RULE",
+            "subtype": "BASIC",
+            "name": "Keeper Limit",
+            "effects": [],
+            "text": ""
+        },
+        {
+            "id": "RBF06",
+            "type": "RULE",
+            "subtype": "BASIC",
+            "name": "Teleblock",
+            "effects": [],
+            "text": ""
+        }
+    ]
+}

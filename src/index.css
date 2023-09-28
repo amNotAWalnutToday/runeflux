@@ -155,6 +155,20 @@ body {
   box-shadow: inset 0px 0px 4px black;
 }
 
+.history.card_picker {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 1rem;
+}
+
+.history_play {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+}
+
 .card_picker::-webkit-scrollbar,
 .catalog::-webkit-scrollbar {
   background-color: #000;
@@ -884,12 +898,18 @@ a:hover,
   font-size: 32px;
 }
 
-.card.previous_pending {
+.last_played {
   position: absolute;
   left: 130px;
   bottom: 200px;
   transform: scale(0.5);
 }
+
+.last_played:hover {
+  cursor: pointer;
+  filter: drop-shadow(0px 0px 1px white);
+}
+
 
 .hand_card {
   transition: transform ease-out 0.2s;

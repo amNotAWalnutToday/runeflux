@@ -94,6 +94,10 @@ export default (() => {
                 pure: [] as CardSchema[],
                 discard: false,
             },
+            history: {
+                played: false,
+                discarded: false,
+            },
             players: [{user: user ?? createUser("00001", "hally", false), hand: false, keepers: false}],
             goal: false,
             turn: {
