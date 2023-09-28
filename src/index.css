@@ -1277,3 +1277,17 @@ a:hover,
   background-repeat: no-repeat;
   filter: drop-shadow(0px 0px 2px white);
 }
+
+.entrana {
+  background: url("./assets/entrana.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  filter: drop-shadow(0px 0px 2px white);
+}
+
+.zanaris {
+  background: url("./assets/zanaris.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  filter: drop-shadow(0px 0px 2px white);
+}
