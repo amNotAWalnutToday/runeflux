@@ -52,11 +52,35 @@ export default function Account() {
         return cardsPlayed;
     }
 
+    const getDefaultCatalogs = () => {
+        const { cardCatalog, goalWins } = {
+            cardCatalog: {
+                RL04: 0, 
+                RL02: 0,
+                RL03: 0,
+                RL05: 0,
+                RL06: 0,
+                RL08: 0,
+            }, 
+            goalWins: {
+                G30: 0,
+            }
+        }
+        return { cardCatalog, goalWins };
+    }
+
     const mapIcons = () => {
         return icons.map((icon, index) => {
             let isLocked = false;
-            if(icon === "ghost" && !user?.goalWins.G30) isLocked = true;
-            
+            const { goalWins, cardCatalog } = user ?? getDefaultCatalogs();
+            if(icon === "ghost" && !goalWins.G30) isLocked = true;
+            if(icon === "morytania" && cardCatalog.RL04 < 50) isLocked = true;
+            if(icon === "abyss" && cardCatalog.RL02 < 50) isLocked = true;
+            if(icon === "asgarnia" && cardCatalog.RL03 < 50) isLocked = true;
+            if(icon === "wilderness" && cardCatalog.RL05 < 50) isLocked = true;
+            if(icon === "entrana" && cardCatalog.RL06 < 50) isLocked = true;
+            if(icon === "zanaris" && cardCatalog.RL08 < 50) isLocked = true;
+
             return (
                 <button
                     key={`icon__${index}`}

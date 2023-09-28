@@ -3,6 +3,13 @@
         "living_subtype",
         "rune_subtype",
         "equipment_subtype",
+        "misthalin",
+        "asgarnia",
+        "morytania",
+        "abyss",
+        "wilderness",
+        "entrana",
+        "zanaris",
         "ghost"
     ]
 }
