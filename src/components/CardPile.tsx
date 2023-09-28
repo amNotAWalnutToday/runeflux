@@ -5,9 +5,10 @@ type Props = {
     type: string,
     pile: CardSchema[],
     drawSpecificCard: (cardIndex: number, fromDiscard?: boolean, playerId?: string) => void,
+    playCard?: (card: CardSchema) => void,
 }
 
-export default function CardPile({type, pile, drawSpecificCard}: Props) {
+export default function CardPile({type, pile, drawSpecificCard, playCard}: Props) {
     const drawSpecificFunc = (cardIndex: number) => {
         drawSpecificCard(cardIndex, type === "DISCARD");
     }
@@ -22,6 +23,7 @@ export default function CardPile({type, pile, drawSpecificCard}: Props) {
                     isSideWays={false}
                     cardState={{state: card, index: ind}}
                     drawSpecificCard={drawSpecificFunc}
+                    playCard={playCard}
                 />
             )
         });
@@ -29,7 +31,7 @@ export default function CardPile({type, pile, drawSpecificCard}: Props) {
     
     return (
         <div className="popup" >
-            <h2>Select One To Draw</h2>
+            <h2>Select One To {playCard ? "Play" : "Draw"}</h2>
             <div
                 className="card_picker"
             >

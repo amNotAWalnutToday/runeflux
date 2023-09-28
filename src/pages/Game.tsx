@@ -1,6 +1,7 @@
 import { useEffect, useState, useReducer, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import UserContext from '../data/Context';
+import { allCards as all_cards } from '../data/all_cards.json';
 import GameSchema from '../schemas/gameSchema';
 import CardSchema from '../schemas/cardSchema';
 import RuleSchema from '../schemas/ruleSchema';
@@ -35,7 +36,6 @@ const {
     getPlayerKeeper,
     getCardById,
     seperateCreepersAndKeepers,
-    // getDeckCardById,
     connectGame, 
     chooseWhoGoesFirst,
     checkShouldDiscard,
@@ -84,9 +84,8 @@ export default function Game({setWinGameStats}: Props) {
     /*LOCAL STATE*/
     const [loading, setLoading] = useState(true);
     const [locationCooldown, setLocationCooldown] = useState(false);
-    const [showCardPiles, setShowCardPiles] = useState({discard: false, pure: false});
+    const [showCardPiles, setShowCardPiles] = useState({discard: false, pure: false, locations: false});
     const [showHistory, setShowHistory] = useState(false);
-    const [previousPending, setPreviousPending] = useState<CardSchema>();
     const [selectedCard, setSelectedCard] = useState<{state: CardSchema, index: number} | null>(null);
     const [inspectedKeeper, setInspectedKeeper] = useState<{state: CardSchema, index: number, playerIndex: number} | null>(null);
     const [selectedRuleGroup, setSelectedRuleGroup] = useState<string[]>([]);
@@ -226,7 +225,7 @@ export default function Game({setWinGameStats}: Props) {
     useEffect(() => {
         if(table.counter && table.counter !== true) {
             if(table.counter.id === "CO03") { 
-                setShowCardPiles(() => ({discard: false, pure: false}));
+                setShowCardPiles(() => ({discard: false, pure: false, locations: false}));
             }
         }
     }, [table.counter]);
@@ -713,7 +712,6 @@ export default function Game({setWinGameStats}: Props) {
         const history = [...table.history.played, {id: cardId, target, player: username}];
         if(history.length > 50) history.shift();
         upload("HISTORY_PLAYED", db, {historyState: history}, joinedGameID);
-        console.log(history);
     }
 
     const playCard = (card: CardSchema | false, indexInHand: number) => {
@@ -780,9 +778,7 @@ export default function Game({setWinGameStats}: Props) {
         setTimeout(() => {
             if(table.counter) return;
             resetPending();
-            console.log(card.targets);
             uploadPlayed(card.id, targets.length ? targets[0].id : '', user?.username ?? '');
-            setPreviousPending((prev) => ({...prev, ...card}));
             switch(card.type) {
                 case "KEEPER":
                     return playKeeperCard(card);
@@ -1104,7 +1100,9 @@ export default function Game({setWinGameStats}: Props) {
                 }
             });
         } else if(card.effects.includes("TELEPORT")) teleport();
-        else if(card.effects.includes("RULE_RESET_CHOOSE")) {
+        else if(card.effects.includes("TELEPORT_SPECIFIC")) {
+            setShowCardPiles((prev) => ({...prev, locations: true}));
+        } else if(card.effects.includes("RULE_RESET_CHOOSE")) {
             for(let i = 0; i <= (card.effects.length > 1 ? 2 : 0); i++) {
                 dispatchRules({
                     type: RULE_REDUCER_ACTIONS.RULE_RESET__CHOICE,
@@ -1249,7 +1247,7 @@ export default function Game({setWinGameStats}: Props) {
         ]
         const ranAction = Math.floor(Math.random() * ruleActions.length);
         const amount = Math.ceil(Math.random() * 5);
-        console.log(ruleActions[ranAction], amount);
+
         dispatchRules({
             type: ruleActions[ranAction],
             payload: {
@@ -1719,6 +1717,19 @@ export default function Game({setWinGameStats}: Props) {
                     type={"DISCARD"}
                     pile={deck.discard}
                     drawSpecificCard={drawSpecificCard}
+                />
+            }
+            {
+                showCardPiles.locations
+                &&
+                <CardPile 
+                    type={"LOCATIONS"}
+                    pile={Array.from(all_cards.filter((card) => card.subtype === "LOCATION"))}
+                    drawSpecificCard={drawSpecificCard}
+                    playCard={(card: CardSchema) => {
+                        playCard(card, -1);
+                        setShowCardPiles((prev) => ({...prev, locations: false}));
+                    }}
                 />
             }
             {

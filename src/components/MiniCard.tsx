@@ -9,6 +9,7 @@ type Props = {
     selectedKeeperGroup?: { state: CardSchema, index: number, playerIndex: number }[],
     selectKeeperGroup?: (card: { state: CardSchema, index: number, playerIndex: number }) => void,
     drawSpecificCard?: (cardIndex: number, fromDiscard?: boolean, playerId?: string) => void,
+    playCard?: (card: CardSchema) => void,
     playerNum?: number,
 }
 
@@ -21,6 +22,7 @@ export default function MiniCard({
     selectedKeeperGroup,
     playerNum,
     drawSpecificCard,
+    playCard,
 }: Props) {
     const checkSelected = () => {
         if(!selectedKeeperGroup || !playerNum) return false;
@@ -91,6 +93,7 @@ export default function MiniCard({
                 : {boxShadow: checkTargeted() ? "inset 0px 0px 12px crimson" : ""} 
             }
             onClick={!cardState.state.attachment ? () => { 
+                if(playCard) return playCard(cardState.state);
                 if(drawSpecificCard) return drawSpecificCard(cardState.index);
                 if(!playerNum || !inspectKeeper) return;
                 inspectKeeper({...cardState, playerIndex: playerNum - 1})

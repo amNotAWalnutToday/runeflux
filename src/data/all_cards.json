@@ -993,6 +993,14 @@
             "text": "Look through past records and find the location of a card to acquire."
         },
         {
+            "id": "A18",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Direct Teleport",
+            "effects": ["TELEPORT_SPECIFIC"],
+            "text": "Choose any location to teleport to."
+        },
+        {
             "id": "CO01",
             "type": "COUNTER",
             "subtype": "",
