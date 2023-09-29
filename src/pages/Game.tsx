@@ -263,7 +263,7 @@ export default function Game({setWinGameStats}: Props) {
         counterData: CardSchema | false,
         winData: boolean,
         phaseData: {morytania: 0, abyss: 0, wilderness: 0},
-        historyData: {played: {id: string, target: string, player: string}[], discarded: string[]},
+        historyData: {played: {id: string, target: string[], player: string}[], discarded: string[]},
     ) => {
         if(!deckData.discard) deckData.discard = [];
         if(!deckData.pure) deckData.pure = [];
@@ -708,7 +708,7 @@ export default function Game({setWinGameStats}: Props) {
         }
     }
 
-    const uploadPlayed = (cardId: string, target: string, username: string) => {
+    const uploadPlayed = (cardId: string, target: string[], username: string) => {
         const history = [...table.history.played, {id: cardId, target, player: username}];
         if(history.length > 50) history.shift();
         upload("HISTORY_PLAYED", db, {historyState: history}, joinedGameID);
@@ -778,7 +778,7 @@ export default function Game({setWinGameStats}: Props) {
         setTimeout(() => {
             if(table.counter) return;
             resetPending();
-            uploadPlayed(card.id, targets.length ? targets[0].id : '', user?.username ?? '');
+            uploadPlayed(card.id, targets.length ? Array.from(targets, (t) => t.id) : [], user?.username ?? '');
             switch(card.type) {
                 case "KEEPER":
                     return playKeeperCard(card);

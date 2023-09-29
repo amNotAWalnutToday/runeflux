@@ -369,7 +369,7 @@ export default (() => {
             counterData: CardSchema | false,
             winData: boolean,
             phaseData: { morytania: 0, abyss: 0, wilderness: 0 }, 
-            historyData: { played: {id: string, target: string, player: string}[], discarded: string[] },
+            historyData: { played: {id: string, target: string[], player: string}[], discarded: string[] },
         ) => void,
     ) => {
         try {
@@ -422,7 +422,7 @@ export default (() => {
             cardState?: CardSchema | false,
             goalState?: CardSchema[],
             phaseState?: {location: string, amount: number},
-            historyState?: string[] | {id: string, target: string, player: string}[],
+            historyState?: string[] | {id: string, target: string[], player: string}[],
             playerId?: string,
         },
         gameId: string
@@ -569,7 +569,7 @@ export default (() => {
         }
     }
 
-    const uploadHistory = async (db: Database, type: string, history: string[] | {id: string, target: string, player: string}[], gameId: string) => {
+    const uploadHistory = async (db: Database, type: string, history: string[] | {id: string, target: string[], player: string}[], gameId: string) => {
         try {
             const historyRef = ref(db, `/games/${gameId}/game/history/${type}`);
             await set(historyRef, history.length ? history : false);
@@ -595,20 +595,20 @@ export default (() => {
 
     const getFakeRuleCard = (type: string) => {
         for(const card of fakeCards.fakeCards) {
-            if(type === "location" && card.id === "RLF01") return card;
-            if(type === "drawAmount" && card.id === "RBF02") return card;
-            if(type === "playAmount" && card.id === "RBF03") return card;
-            if(type === "handLimit" && card.id === "RBF04") return card;
-            if(type === "keeperLimit" && card.id === "RBF05") return card;
-            if(type === "teleblock" && card.id === "RBF06") return card;
+            if(type === "location" && card.id === "RLF01") return { card, error: false };
+            if(type === "drawAmount" && card.id === "RBF02") return { card, error: false };
+            if(type === "playAmount" && card.id === "RBF03") return { card, error: false };
+            if(type === "handLimit" && card.id === "RBF04") return { card, error: false };
+            if(type === "keeperLimit" && card.id === "RBF05") return { card, error: false};
+            if(type === "teleblock" && card.id === "RBF06") return { card, error: false };
         }
-        return fakeCards.fakeCards[0];
+        return { card: fakeCards.fakeCards[0], error: true };
     }
 
     const getCardById = (cardId: string) => {
         if(cardId === "playAmount" || cardId === "drawAmount"
         || cardId === "handLimit"  || cardId === "keeperLimit"
-        || cardId === "location"   || cardId === "teleblock") return getFakeRuleCard(cardId);
+        || cardId === "location"   || cardId === "teleblock") return getFakeRuleCard(cardId).card;
 
         for(const card of allDeckData.allCards) {
             if(cardId === card.id) {
@@ -798,6 +798,7 @@ export default (() => {
         getPlayer,
         getPlayerKeeper,
         getCardById,
+        getFakeRuleCard,
         getDeckCardById,
         getInitRule,
         seperateCreepersAndKeepers,

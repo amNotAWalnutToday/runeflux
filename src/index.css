@@ -169,6 +169,12 @@ body {
   gap: 2.5rem;
 }
 
+.history_targets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
 .card_picker::-webkit-scrollbar,
 .catalog::-webkit-scrollbar {
   background-color: #000;

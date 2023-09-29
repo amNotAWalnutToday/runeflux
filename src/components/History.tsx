@@ -6,7 +6,7 @@ const { getCardById } = gameFunctions;
 
 type Props = {
     history: {
-        played: {id: string, target: string, player: string}[],
+        played: {id: string, target: string[], player: string}[],
         discarded: string[]
     }
 }
@@ -36,14 +36,22 @@ export default function History({history}: Props) {
                         cardState={{state: getCardById(item.id), index }}
                     />
                     {
-                    item.target
+                    item.target && item.target.length
                     &&
-                    <MiniCard
-                        isSideWays={false}
-                        playerNum={1}
-                        targets={[{id: item.target, index: 0, playerIndex: 0}]}
-                        cardState={{state: getCardById(item.target), index: 0}}
-                    />
+                    <div className='history_targets' >
+                        {item.target.map((targetCard, ind) => {
+                            return (
+                                <MiniCard
+                                    key={`play_history__target_${ind}`}
+                                    isSideWays={false}
+                                    playerNum={1}
+                                    targets={[{id: targetCard, index: 0, playerIndex: 0}]}
+                                    cardState={{state: getCardById(targetCard), index: 0}}
+                                />
+                            );
+                        })}
+                    </div>
+
                     }
                 </div>
             )

@@ -1,5 +1,8 @@
 import CardSchema from "../schemas/cardSchema"
 import Card from "./Card";
+import gameFunctions from "../utils/gameFunctions";
+
+const { getFakeRuleCard } = gameFunctions;
 
 type Props = {
     isSideWays: boolean,
@@ -37,6 +40,7 @@ export default function MiniCard({
     const checkTargeted = () => {
         if(!targets || !playerNum) return;
         for(const target of targets) {
+            if(cardState.state.type === "RULE" && !getFakeRuleCard(target.id).error) return true;
             if(target.id === cardState.state.id
             && target.index === cardState.index
             && target.playerIndex === playerNum - 1) return true;

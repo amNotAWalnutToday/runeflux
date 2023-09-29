@@ -13,7 +13,7 @@ interface GameSchema {
     pending: CardSchema | boolean,
     counter: CardSchema | boolean,
     history: {
-        played: {id: string, target: string, player: string}[],
+        played: {id: string, target: string[], player: string}[],
         discarded: string[],
     },
     phases: {
