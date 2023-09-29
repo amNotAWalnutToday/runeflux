@@ -690,9 +690,9 @@ export default function Game({setWinGameStats}: Props) {
     const getTarget = (card: CardSchema) => {
         switch(card.id) {
             case "A04":
-                return [{ id: selectedPlayerGroup[0].user.uid, index: 0, playerIndex: 0 }];
+                return selectedPlayerGroup.length ? [{ id: selectedPlayerGroup[0].user.uid, index: 0, playerIndex: 0 }] : [];
             case "A05":
-                return [{ id: selectedRuleGroup[0], index: 0, playerIndex: 0 }];
+                return selectedRuleGroup.length ? [{ id: selectedRuleGroup[0], index: 0, playerIndex: 0 }] : [];
             case "A06":
             case "CO05":
                 return Array.from(selectedRuleGroup, (rule, index) => ({id: rule, index, playerIndex: index}));
@@ -700,7 +700,7 @@ export default function Game({setWinGameStats}: Props) {
             case "A15":
             case "CO04":
             case "CO06":
-                return [{ id: selectedKeeperGroup[0].state.id, index: selectedKeeperGroup[0].index, playerIndex: selectedKeeperGroup[0].playerIndex }];
+                return selectedKeeperGroup.length ? [{ id: selectedKeeperGroup[0].state.id, index: selectedKeeperGroup[0].index, playerIndex: selectedKeeperGroup[0].playerIndex }] : [];
             case "A12":
                 return Array.from(selectedKeeperGroup, (keeper) => ({id: keeper.state.id, index: keeper.index, playerIndex: keeper.playerIndex}));
             default: 
