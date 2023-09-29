@@ -6,7 +6,7 @@ import UserAccountBox from '../components/UserAccountBox';
 import { icons } from '../data/icons.json';
 import accountFunctions from '../utils/accountFunctions';
 
-const { changeName, changeIcon } = accountFunctions;
+const { changeName, changeIcon, changeGoalSetting } = accountFunctions;
 
 export default function Account() {
     const { user, db, setUser } = useContext(UserContext);
@@ -196,6 +196,16 @@ export default function Account() {
                         }}
                     >
                         Change Name
+                    </button>
+                    <button
+                        className={`discard_btn__card ${user?.goalImages ? "enabled" : ""}`}
+                        onClick={async () => {
+                            if(!user) return;
+                            await changeGoalSetting(db, !user?.goalImages, user?.uid ?? '')
+                            setUser((prev) => prev ? ({...prev, goalImages: !user.goalImages}) : prev)
+                        }}
+                    >
+                        Goal Image Mode
                     </button>
                 </div>
             </div>

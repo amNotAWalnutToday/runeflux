@@ -48,6 +48,17 @@ export default function MiniCard({
         return false;
     }
 
+    const mapGoalImage = () => {
+        return cardState.state.text.split("|").map((segment, ind) => {
+            if(ind % 2 !== 1) return;
+            return (
+                <div
+                    className={`${segment.split(' ').join("_").toLowerCase()} mini_card_image sideways`}
+                />
+            )
+        });
+    }
+
     return isSideWays ? (
         <div  
             className={`card__mini ${cardState.state.type.toLowerCase()} ${checkSelected() ? "selected" : ""}`}
@@ -117,6 +128,11 @@ export default function MiniCard({
             </div>
             <div className="side_card_container__inner_right" >
                 <div className={`${cardState.state.name.split("'").join("").split(" ").join("_").toLowerCase()} mini_card_image sideways`} />
+                {
+                    cardState.state.type === "GOAL"
+                    && 
+                    <div className="mini_goal_images" > {mapGoalImage()}</div> 
+                }
             </div>
             {
             cardState.state.attachment

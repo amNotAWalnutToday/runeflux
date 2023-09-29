@@ -27,6 +27,7 @@ export default (() => {
                         username: "Anon",
                         uid,
                         icon: "",
+                        goalImages: false,
                         isReady: false,
                         stats: {
                             wins: 0,
@@ -157,6 +158,15 @@ export default (() => {
         }
     }
 
+    const changeGoalSetting = async (db: Database, bool: boolean, uid: string) => {
+        try {
+            const settingRef = ref(db, `/users/${uid}/goalImages`);
+            await set(settingRef, bool);
+        } catch(e) {
+            return console.error(e);
+        }
+    }
+
     const signout = async (auth: Auth) => {
         try {
             await signOut(auth);
@@ -181,6 +191,7 @@ export default (() => {
                 username, 
                 uid: username, 
                 isReady: false, 
+                goalImages: true,
                 cardCatalog: {}, 
                 goalWins: {},
                 icon: '',
@@ -212,6 +223,7 @@ export default (() => {
         uploadStats,
         changeName,
         changeIcon,
+        changeGoalSetting,
         signout,
         testUserSignIn,
         combineUsers,

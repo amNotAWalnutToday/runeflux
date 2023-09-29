@@ -276,7 +276,7 @@
             "id": "KE06",
             "type": "KEEPER",
             "subtype":"EQUIPMENT",
-            "name": "Draman Staff",
+            "name": "Dramen Staff",
             "effects": ["TELEPORT"],
             "text": "Once per turn, teleport to Zanaris."
         },
@@ -342,7 +342,7 @@
             "subtype": "",
             "name": "Restless Ghost",
             "effects": [],
-            "text": "In the cemetary of lumbridge you must put the |ghost| to rest. QUEST REQUIREMENTS: |ghost|, |ghostspeak amulet|, |father aereck|"
+            "text": "In the cemetary of lumbridge you must put the ghost to rest. QUEST REQUIREMENTS: |ghost|, |ghostspeak amulet|, |father aereck|"
         },
         {
             "id": "G03",
@@ -350,7 +350,7 @@
             "subtype": "",
             "name": "Ready To Slay A Dragon",
             "effects": [],
-            "text": "Speak to |Duke Horacio| to get your |antifire shield|, then you can believe you can fight a dragon."
+            "text": "Speak to |Duke Horacio| to get your |anti dragonfire shield|, then you can believe you can fight a dragon."
         },
         {
             "id": "G04",
@@ -358,7 +358,7 @@
             "subtype": "",
             "name": "Dragon Slayer",
             "effects": [],
-            "text": "Find your way to |crandor|, off the coast of misthalin and fight the dragon known as |Elvarg|. |antifire shield| is required."
+            "text": "Find your way to |crandor|, off the coast of misthalin and fight the dragon known as |Elvarg|. |anti dragonfire shield| is required."
         },
         {
             "id": "G05",
@@ -382,7 +382,7 @@
             "subtype": "",
             "name": "Elemental Runes",
             "effects": [],
-            "text": "Collection type: any 3 elemental |runes| from |Air|, |Water|, |Earth| or |Fire|"
+            "text": "Collection type: any 3 of |Air rune|, |Water rune|, |Earth rune| or |Fire rune|"
         },
         {
             "id": "G08",
@@ -390,7 +390,7 @@
             "subtype": "",
             "name": "Rune Mysteries",
             "effects": [],
-            "text": "The path to unlocking runecraft requires the power of |Air|, QUEST REQUIREMENTS: |Air Rune|, |Archmage Sedridor|, |Duke Horacio|"
+            "text": "The path to unlocking runecraft requires the power of Air, QUEST REQUIREMENTS: |Air Rune|, |Archmage Sedridor|, |Duke Horacio|"
         },
         {
             "id": "G09",
@@ -422,7 +422,7 @@
             "subtype": "",
             "name": "Alchemy",
             "effects": [],
-            "text": "To cast alchemy spell you must have a |Nature rune| and |Fire Runes|"
+            "text": "To cast alchemy spell you must have a |Nature rune| and |Fire Rune|"
         },
         {
             "id": "G13",
@@ -430,7 +430,7 @@
             "subtype": "",
             "name": "Cursed",
             "effects": [],
-            "text": "Not the spell, but someone who gains all 3 creepers must have bad luck right well now they can win, |Any 3 creepers|"
+            "text": "Not the spell, but someone who gains all 3 creepers must have bad luck right well now they can win, |Elvarg|, |Wizard Mind Bomb|, |Poison|"
         },
         {
             "id": "G14",
@@ -478,7 +478,7 @@
             "subtype": "",
             "name": "Entrana",
             "effects": [],
-            "text": "Collection Type: |Law Rune|, |Draman Staff|"
+            "text": "Collection Type: |Law Rune|, |Dramen Staff|"
         },
         {
             "id": "G20",
@@ -486,7 +486,7 @@
             "subtype": "",
             "name": "Smuggler",
             "effects": [],
-            "text": "Since equipment isn't allowed on entrana, find a way to get them there. Requirements: |Entrana|, |Any 2 equipment keepers|."
+            "text": "Since equipment isn't allowed on entrana, find a way to get them there. Requirements: |Entrana|, |equipment_subtype| and |equipment_subtype| keepers"
         },
         {
             "id": "G21",
@@ -556,7 +556,7 @@
             "id": "G29",
             "type": "GOAL",
             "subtype": "",
-            "name": "Morytanias Low-Tier Undead",
+            "name": "Morytania's Undead",
             "effects": [],
             "text": "Collection Type: |Morytania|, |Ghost|, |Vampyre Juvinate|"
         },
@@ -566,7 +566,7 @@
             "subtype": "",
             "name": "Port Phasmatys",
             "effects": [],
-            "text": "Collection Type: |3 ghosts|"
+            "text": "Collection Type: |Ghost|, |Ghost|, |Ghost|"
         },
         {
             "id": "G31",
@@ -598,7 +598,7 @@
             "subtype": "",
             "name": "Melee Setup",
             "effects": [],
-            "text": "Collection Type: |Rune Scimitar|, |Antidragon-fire shield|"
+            "text": "Collection Type: |Rune Scimitar|, |Anti dragonfire shield|"
         },
         {
             "id": "G35",
@@ -614,7 +614,7 @@
             "subtype": "",
             "name": "Poison Removal",
             "effects": [],
-            "text": "just gotta drink |Anti-Poison| to cure |Poison|."
+            "text": "just gotta drink |Anti Poison| to cure |Poison|."
         },
         {
             "id": "G37",
@@ -668,7 +668,7 @@
             "id": "GM03",
             "type": "GOAL",
             "subtype": "",
-            "name": "Plash and Pierce.",
+            "name": "Plash and Pierce",
             "effects": [],
             "text": "The sound of magic(|Ahrim|) and crossbows(|Karil|) resounds through the crypts."
         },

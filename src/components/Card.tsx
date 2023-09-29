@@ -72,6 +72,17 @@ export default function Card({
         });
     }
 
+    const mapGoalImage = () => {
+        return cardState.state.text.split("|").map((segment, ind) => {
+            if(ind % 2 !== 1) return;
+            return (
+                <div 
+                    className={`${convertNameToImage(segment)} goal_image`}
+                />
+            )
+        });
+    }
+
     const mapCounterText = () => {
         return cardState.state.text.split("|").map((paragraph, ind) => {
             return (
@@ -124,15 +135,24 @@ export default function Card({
                 <h3 className="card_title" >{cardState.state.name}</h3>
                 <hr className='card_hr__thick' />
                 <p>{cardState.state.type === "GOAL" 
-                        ? mapGoalText() 
+                        ? !user?.goalImages 
+                            ? mapGoalText()
+                            : '' 
                         : cardState.state.type === "COUNTER" 
                             ? mapCounterText() 
                             : cardState.state.text
                             }
                 </p>
+                {cardState.state.type !== "GOAL"
+                &&
                 <div
                     className={`${convertNameToImage(cardState.state.name)} card_image`}
                 />
+                }
+                {user?.goalImages && cardState.state.type === "GOAL"
+                &&
+                    <div className="goal_images" >{ mapGoalImage() }</div>
+                }
             </div>
         </div>
     ) : null
