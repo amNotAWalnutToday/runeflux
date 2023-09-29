@@ -30,14 +30,18 @@ export default function History({history}: Props) {
                     key={`play_history__${index}`}
                     className='history_play'
                 >
-                    <h3>{item.player}</h3>
-                    <MiniCard
-                        isSideWays={false}
-                        cardState={{state: getCardById(item.id), index }}
-                    />
+                    <div
+                        className='history_inner_left'
+                    >
+                        <h3>{item.player}</h3>
+                        <MiniCard
+                            isSideWays={false}
+                            cardState={{state: getCardById(item.id), index }}
+                        />
+                    </div>
                     {
                     item.target && item.target.length
-                    &&
+                    ?
                     <div className='history_targets' >
                         {item.target.map((targetCard, ind) => {
                             return (
@@ -51,7 +55,12 @@ export default function History({history}: Props) {
                             );
                         })}
                     </div>
+                    :
+                    <div
+                        style={{width: '150px', height: "75px"}}
+                    >
 
+                    </div>
                     }
                 </div>
             )

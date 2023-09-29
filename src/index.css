@@ -163,9 +163,18 @@ body {
   padding: 1rem;
 }
 
+.history_inner_left {
+  display: flex;
+  justify-content: space-between;
+  width: 275px;
+  max-width: 275px;
+  min-width: 275px;
+}
+
 .history_play {
   display: flex;
   align-items: center;
+  justify-items: space-between;
   gap: 2.5rem;
 }
 

@@ -39,6 +39,16 @@ export default function Table({
         if(players[3].user.uid === user?.uid) return "270deg";
     }
 
+    const getFlexDir = () => {
+        if(players.length > 3) {
+            if(players[2].user.uid === user?.uid
+            || players[3].user.uid === user?.uid) return true;
+        } else if(players.length > 2) {
+            if(players[2].user.uid === user?.uid) return true;
+        }
+        return false;
+    }
+
     const mapKeepers = (keepers: CardSchema[], horizontal: boolean, playerNum: number) => {
         return keepers.map((keeper, index) => {
             return (
@@ -73,7 +83,11 @@ export default function Table({
     return ( 
         <div 
             className="table_container"
-            style={{transform: `rotateZ(${getRotation()})`}}
+            style={{
+                width: getFlexDir() ? '660px' : '',
+                height: getFlexDir() ? '900px' : '',
+                transform: ` ${getFlexDir() ? 'translateY(-100px)' : ''} rotateZ(${getRotation()})`
+            }}
         >
             <div className={`player_1_keepers keeper_container ${players[0].keepers.length > 1 ? "length_2plus" : "length_1"}`}>
                 {
@@ -119,7 +133,12 @@ export default function Table({
             {
             players.length > 3
             &&
-            <div className={`player_4_keepers keeper_container ${players[3].keepers.length > 1 ? "length_2plus" : "length_1"}`}>
+            <div 
+                style={{
+                    transform: 'translateX(-185px)',
+                }}
+                className={`player_4_keepers keeper_container ${players[3].keepers.length > 1 ? "length_2plus" : "length_1"}`}
+            >
                 {
                     players[3].keepers.length
                         ? mapKeepers(players[3].keepers, false, 4)
@@ -133,8 +152,7 @@ export default function Table({
             <div 
                 className={`table_goals`} 
                 style={{
-                    transform: `rotateZ(${getGoalRotation()})`,
-                    flexDirection: players.length > 2 && (players[3].user.uid === user?.uid || players[4].user.uid === user?.uid) ? "column" : "row"
+                    transform: `${getFlexDir() ? 'translateX(-92px)' : ''} rotateZ(${getGoalRotation()})`,
                 }}
             >
                 {

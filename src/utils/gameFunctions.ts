@@ -747,6 +747,7 @@ export default (() => {
     }
 
     const removeCard = (cards: CardSchema[], cardIndex: number) => {
+        if(!cards.length) return cards;
         const firstHalf = cards.slice(0, cardIndex);
         const lastHalf = cards.slice(cardIndex + 1);
         return firstHalf.concat(lastHalf);
