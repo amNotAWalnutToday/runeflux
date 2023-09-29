@@ -1006,47 +1006,47 @@
             "subtype": "",
             "name": "Telestop",
             "effects": ["TELESTOP_OR_LOCATION_MISTHALIN"],
-            "text": "Out of turn - stop an opposing players teleport| During your turn teleport to misthalin."
+            "text": "Out of turn - Stop a teleport| During turn - Teleport to Misthalin."
         },
         {
             "id": "CO02",
             "type": "COUNTER",
             "subtype": "",
-            "name": "Canceled Plans",
+            "name": "Cancel Plans",
             "effects": ["GOALSTOP_OR_GOALS_NONE"],
-            "text": "Out of turn - stop another player while they are playing a goal card| During turn discard all goals in play."
+            "text": "Out of turn - Stop a goal card| During turn - Discard all goals in play."
         },
         {
             "id": "CO03",
             "type": "COUNTER",
             "subtype": "",
-            "name": "Belay That!",
+            "name": "Belay That",
             "effects": ["ACTIONSTOP_OR_DISCARD_1_ALL"],
-            "text": "Out of turn - stop another player while they are playing an action card| During turn every discards one."
+            "text": "Out of turn - Stop an action card| During turn - Everyone discards one."
         },
         {
             "id": "CO04",
             "type": "COUNTER",
             "subtype": "",
-            "name": "That's Mine!",
+            "name": "That's Mine",
             "effects": ["KEEPER_STEALSTOP_OR_KEEPER_STEAL"],
-            "text": "Out of turn - when another player trys to steal a keeper you steal it instead| During turn - choose a keeper to steal."
+            "text": "Out of turn - Steal a keeper being stolen.| During turn - Choose a keeper to steal."
         },
         {
             "id": "CO05",
             "type": "COUNTER",
             "subtype": "",
-            "name": "Veto!",
+            "name": "Veto",
             "effects": ["RULESTOP_OR_RULE_RESET_3"],
-            "text": "Out of turn - stop another player while they are playing a rule card| During turn - reset up to 3 rules."
+            "text": "Out of turn - Stop another player while they are playing a rule card| During turn - Reset up to 3 rules."
         },
         {
             "id": "CO06",
             "type": "COUNTER",
             "subtype": "",
-            "name": "It's a Trap!",
+            "name": "It's a Trap",
             "effects": ["KEEPER_DISCARD_REFLECT_OR_KEEPER_DISCARD"],
-            "text": "Out of turn - when another player trys to destroy one of your keepers destroy a random one of theirs instead| During turn, choose a keeper to discard."
+            "text": "Out of turn - Reflect a destroy card.| During turn - Choose a keeper to discard."
         }
     ]
 }

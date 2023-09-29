@@ -536,6 +536,11 @@ a:hover,
   background-color: var(--light-purple);
 }
 
+.card.counter .card_title::after {
+  content: "!";
+  display: inline;
+}
+
 .card.counter h3, 
 .card.counter h2 {
   color: var(--light-purple);
@@ -1316,4 +1321,49 @@ a:hover,
   background-size: contain;
   background-repeat: no-repeat;
   filter: drop-shadow(0px 0px 2px white);
+}
+
+.crandor {
+  background: url("./assets/crandor.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  filter: drop-shadow(0px 0px 2px white);
+}
+
+.veto {
+  background: url("./assets/rule.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  filter: drop-shadow(0px 0px 1px white);
+  transform: translateX(225%) scale(2);
+  margin-left: -10%;
+}
+
+.belay_that {
+  background: url("./assets/action.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  filter: drop-shadow(0px 0px 1px white);
+}
+
+.cancel_plans {
+  background: url("./assets/goal.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  filter: drop-shadow(0px 0px 1px white);
+}
+
+.telestop {
+  background: url("./assets/rule_action.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  filter: drop-shadow(0px 0px 1px white);
+}
+
+.its_a_trap,
+.thats_mine {
+  background: url("./assets/rule_keeper.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  filter: drop-shadow(0px 0px 1px white);
 }

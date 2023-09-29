@@ -56,7 +56,7 @@ export default function Card({
     }
 
     const convertNameToImage = (name: string) => {
-        return name.split(" ").join("_").toLowerCase();
+        return name.split("'").join("").split(" ").join("_").toLowerCase();
     }
 
     const mapGoalText = () => {
@@ -121,7 +121,7 @@ export default function Card({
                     {cardState.state.type}
                     <span className={`${cardState.state.subtype.toLowerCase()}_subtype icon card_subtype`} ></span>
                 </h2>
-                <h3>{cardState.state.name}</h3>
+                <h3 className="card_title" >{cardState.state.name}</h3>
                 <hr className='card_hr__thick' />
                 <p>{cardState.state.type === "GOAL" 
                         ? mapGoalText() 
