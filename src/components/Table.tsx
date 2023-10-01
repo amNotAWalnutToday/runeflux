@@ -60,6 +60,7 @@ export default function Table({
                     inspectKeeper={inspectKeeper}
                     selectKeeperGroup={selectKeeperGroup}
                     selectedKeeperGroup={selectedKeeperGroup}
+                    player={players[playerNum - 1]}
                     playerNum={playerNum}
                 />
             )

@@ -203,6 +203,7 @@ export default function InspectKeeper({
                 <Card
                     cardState={cardState}
                     position={"SELECT"}
+                    player={table.players[cardState.playerIndex]}
                 />
                 <div className={`play_btn_group__card length_${table.rules.location === "WILDERNESS" ? "3" : "2"}`}>
                     <div className="errors_container__play" >

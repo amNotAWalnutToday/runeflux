@@ -1680,6 +1680,7 @@ export default function Game({setWinGameStats}: Props) {
                 <Card 
                     position={"PENDING"}
                     cardState={{state:  table.pending , index: 0}}
+                    player={getPlayer(players, turn.player && turn.player !== true ? turn.player : '').state}
                 />
             }
             {

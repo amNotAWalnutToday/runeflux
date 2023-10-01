@@ -1,11 +1,13 @@
 import { useState, useEffect, useContext } from "react";
 import CardSchema from "../schemas/cardSchema";
+import PlayerSchema from "../schemas/playerSchema";
 import UserContext from "../data/Context";
 
 type Props = {
     cardState: { state: CardSchema, index: number },
     position: "HAND" | "SELECT" | "PENDING" | "TABLE" | "CREEPER" | "CATALOG" | "PREVIOUS_PENDING",
     numberInLine?: number,
+    player?: PlayerSchema,
     inspectKeeper?: (card: { state: CardSchema, index: number, playerIndex: number } | null) => void,
     selectCard?: (card: { state: CardSchema, index: number } | null) => void,
     selectGoalGroup?: (goal: { state: CardSchema, index: number }) => void,
@@ -16,6 +18,7 @@ export default function Card({
     cardState, 
     position, 
     numberInLine,
+    player,
     inspectKeeper,
     selectCard,
     selectedGoalGroup,
@@ -44,9 +47,14 @@ export default function Card({
     }
 
     const getStyle = () => {
-        if(!user?.cardCatalog) return;
-        if(position === "HAND" || position === "SELECT" || position === "CATALOG") {
-            const playedAmount = user?.cardCatalog[`${cardState.state.id}`];
+        if(!user?.cardCatalog || (player && !player.user.cardCatalog)) return;
+        if(position === "HAND" || position === "SELECT" || position === "CATALOG"
+        || position === "PENDING" || position === "PREVIOUS_PENDING") {
+            const playedAmount = (
+                player  
+                    ? player.user.cardCatalog[`${cardState.state.id}`]
+                    : user?.cardCatalog[`${cardState.state.id}`]
+            );
             if(!playedAmount) return "";
             if(playedAmount > 999) return "gtrim twilight";
             else if(playedAmount > 499) return "gtrim";
@@ -76,7 +84,8 @@ export default function Card({
         return cardState.state.text.split("|").map((segment, ind) => {
             if(ind % 2 !== 1) return;
             return (
-                <div 
+                <div
+                    key={`goal_image__${segment}_${ind}`} 
                     className={`${convertNameToImage(segment)} goal_image`}
                 />
             )

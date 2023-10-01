@@ -453,20 +453,24 @@ a:hover,
   background-color: var(--black);
 }
 
+.card__mini.btrim,
 .card.btrim {
   outline: 1px solid var(--brown);
 }
 
+.card__mini.strim,
 .card.strim {
   outline: 2px outset var(--silver);
 }
 
+.card__mini.gtrim,
 .card.gtrim {
   outline: 3px outset var(--golden_highlight);
 }
 
+.card__mini.twilight,
 .card.twilight {
-  background: linear-gradient(-134deg, var(--black) 40%, #214);
+  background: linear-gradient(-134deg, var(--black) 40%, #214) !important;
 }
 
 .card.goal_selected {

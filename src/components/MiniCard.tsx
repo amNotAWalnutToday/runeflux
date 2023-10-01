@@ -1,6 +1,9 @@
+import { useContext } from 'react';
 import CardSchema from "../schemas/cardSchema"
 import Card from "./Card";
 import gameFunctions from "../utils/gameFunctions";
+import UserContext from "../data/Context";
+import PlayerSchema from '../schemas/playerSchema';
 
 const { getFakeRuleCard } = gameFunctions;
 
@@ -14,6 +17,7 @@ type Props = {
     drawSpecificCard?: (cardIndex: number, fromDiscard?: boolean, playerId?: string) => void,
     playCard?: (card: CardSchema) => void,
     playerNum?: number,
+    player?: PlayerSchema,
 }
 
 export default function MiniCard({
@@ -24,9 +28,12 @@ export default function MiniCard({
     selectKeeperGroup,
     selectedKeeperGroup,
     playerNum,
+    player,
     drawSpecificCard,
     playCard,
 }: Props) {
+    const { user } = useContext(UserContext);
+
     const checkSelected = () => {
         if(!selectedKeeperGroup || !playerNum) return false;
         for(const keeper of selectedKeeperGroup) {
@@ -48,11 +55,26 @@ export default function MiniCard({
         return false;
     }
 
+    const getStyle = () => {
+        if(!user?.cardCatalog || (player && !player.user.cardCatalog)) return;
+        const playedAmount = (
+            player  
+                ? player.user.cardCatalog[`${cardState.state.id}`]
+                : user?.cardCatalog[`${cardState.state.id}`]
+        );
+        if(!playedAmount) return "";
+        if(playedAmount > 999) return "gtrim twilight";
+        else if(playedAmount > 499) return "gtrim";
+        else if(playedAmount > 249) return "strim";
+        else if(playedAmount > 49) return "btrim"
+    }
+
     const mapGoalImage = () => {
         return cardState.state.text.split("|").map((segment, ind) => {
             if(ind % 2 !== 1) return;
             return (
                 <div
+                    key={`mini_goal_image__${segment}_${ind}`}
                     className={`${segment.split("'").join("").split(' ').join("_").toLowerCase()} mini_card_image sideways`}
                 />
             )
@@ -61,7 +83,7 @@ export default function MiniCard({
 
     return isSideWays ? (
         <div  
-            className={`card__mini ${cardState.state.type.toLowerCase()} ${checkSelected() ? "selected" : ""}`}
+            className={`${getStyle()} card__mini ${cardState.state.type.toLowerCase()} ${checkSelected() ? "selected" : ""}`}
             style={(cardState.state.effects && !cardState.state.cooldown) 
                 ? {background: "var(--black-shine)", boxShadow: checkTargeted() ? "inset 0px 0px 12px crimson" : ""} 
                 : {boxShadow: checkTargeted() ? "inset 0px 0px 12px crimson" : ""} 
@@ -102,7 +124,7 @@ export default function MiniCard({
         </div>
     ) : (
         <div  
-            className={`side_card__mini card__mini  ${cardState.state.type.toLowerCase()} ${checkSelected() ? "selected" : ""}`}
+            className={`${getStyle()} side_card__mini card__mini  ${cardState.state.type.toLowerCase()} ${checkSelected() ? "selected" : ""}`}
             style={(cardState.state.effects && !cardState.state.cooldown) 
                 ? {background: "var(--black-shine)", boxShadow: checkTargeted() ? "inset 0px 0px 12px crimson" : ""} 
                 : {boxShadow: checkTargeted() ? "inset 0px 0px 12px crimson" : ""} 

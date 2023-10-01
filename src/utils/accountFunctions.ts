@@ -185,6 +185,11 @@ export default (() => {
             if(user.name.toLowerCase() === username
             && user.pass.toLowerCase() === pass) isUser = true;
         }
+        const cardCatalog: {[key: string]: number} = {};
+        for(const card of all_cards) {
+            cardCatalog[`${card.id}`] = 0;
+        }
+
         if(isUser) setter((prev) => {
             return {
                 ...prev, 
@@ -192,7 +197,7 @@ export default (() => {
                 uid: username, 
                 isReady: false, 
                 goalImages: true,
-                cardCatalog: {}, 
+                cardCatalog, 
                 goalWins: {},
                 icon: '',
                 stats: {
