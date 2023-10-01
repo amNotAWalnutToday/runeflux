@@ -43,6 +43,9 @@ export default (() => {
 
         keepers.forEach((keeper) => {
             if(keeper.id === "CR01") requirements.elvarg = true;
+            if(keeper.attachment) {
+                if(keeper.attachment.id === "CR01") requirements.elvarg = true;
+            } 
             if(keeper.id === "KE02") requirements.antifireShield = true;
         });
 
@@ -120,7 +123,10 @@ export default (() => {
 
         keepers.forEach((keeper) => {
             if(keeper.id === "KL06") requirements.drunkenDwarf = true;
-            if(keeper.id === "CR03") requirements.wizardBeer = true
+            if(keeper.id === "CR03") requirements.wizardBeer = true;
+            if(keeper.attachment) {
+                if(keeper.attachment.id === "CR03") requirements.wizardBeer = true;
+            }
         });
 
         if(requirements.drunkenDwarf && requirements.wizardBeer) return { hasWon: true, bypassCreeper: true };
@@ -132,10 +138,13 @@ export default (() => {
 
         keepers.forEach((keeper) => {
             if(keeper.id === "KL07") requirements.archmage = true;
-            if(keeper.id === "CR03") requirements.wizardBeer = true
+            if(keeper.id === "CR03") requirements.wizardBeer = true;
+            if(keeper.attachment) {
+                if(keeper.attachment.id === "CR03") requirements.wizardBeer = true;
+            }
         });
         
-        if(requirements.archmage && requirements.wizardBeer) return { hasWon: true, bypassCreeper: false };
+        if(requirements.archmage && requirements.wizardBeer) return { hasWon: true, bypassCreeper: true };
         else return { hasWon: false, bypassCreeper: false };
     }
 
@@ -168,6 +177,7 @@ export default (() => {
         /**based on number of creepers 3*/
         keepers.forEach((keeper) => {
             if(keeper.type === "CREEPER") requirements++;
+            if(keeper.attachment) requirements++;
         }); 
 
         if(requirements >= 3) return { hasWon: true, bypassCreeper: true };
@@ -179,7 +189,10 @@ export default (() => {
 
         keepers.forEach((keeper) => {
             if(keeper.id === "KL08") requirements.kingRoald = true;
-            if(keeper.id === "CR02") requirements.poison = true
+            if(keeper.id === "CR02") requirements.poison = true;
+            if(keeper.attachment) {
+                if(keeper.attachment.id === "CR02") requirements.poison = true;
+            }
         });
 
         if(requirements.kingRoald && requirements.poison) return { hasWon: true, bypassCreeper: true };
@@ -314,7 +327,7 @@ export default (() => {
         const requirements = { lawR: false, natureR: false, cosmicR: false };
 
         keepers.forEach((keeper) => {
-            if(keeper.id === "KE07") requirements.natureR = true
+            if(keeper.id === "KR07") requirements.natureR = true
             if(keeper.id === "KR08") requirements.lawR = true
             if(keeper.id === "KR09") requirements.cosmicR = true
         });
@@ -454,6 +467,9 @@ export default (() => {
         
         keepers.forEach((keeper) => {
             if(keeper.id === "CR02") requirements.poison = true;
+            if(keeper.attachment) {
+                if(keeper.attachment.id === "CR02") requirements.poison = true;
+            }
             if(keeper.id === "K02") requirements.antiPoison = true;
         });
 
