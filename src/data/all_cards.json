@@ -900,7 +900,7 @@
             "id": "A06",
             "type": "ACTION",
             "subtype": "",
-            "name": "Reset half of rules(upto)",
+            "name": "Let's Simplify",
             "effects": ["RULE_RESET_CHOOSE", "HALF", "OPTIONAL"],
             "text": "When played, choose up to half the rules to reset."
         },
@@ -999,6 +999,22 @@
             "name": "Direct Teleport",
             "effects": ["TELEPORT_SPECIFIC"],
             "text": "Choose any location to teleport to."
+        },
+        {
+            "id": "AF02",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "STEAL RCB",
+            "effects": ["STEAL_RUNE_CROSSBOW"],
+            "text": "STEAL!, STEAL!, STEAL!"
+        },
+        {
+            "id": "AF03",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "RULE FLUX",
+            "effects": ["RULE_RANDOM"],
+            "text": "Randomize a rule."
         },
         {
             "id": "CO01",

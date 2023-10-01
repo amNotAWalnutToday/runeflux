@@ -1313,14 +1313,7 @@ export default function Game({setWinGameStats}: Props) {
             // destroy cards //
             playCard(getCardById("A15"), -1);
         } else if(keeperId === "KL10") {
-            playCard({
-                "id": "AF02",
-                "type": "ACTION",
-                "subtype": "",
-                "name": "STEAL RCB",
-                "effects": ["STEAL_RUNE_CROSSBOW"],
-                "text": "STEAL!, STEAL!, STEAL!"
-            }, -1);
+            playCard(getCardById("AF02"), -1);
         } else if(
             keeperId === "KLM01" || keeperId === "KLM02" || keeperId === "KLM03"
             || keeperId === "KLM04" || keeperId === "KLM05" || keeperId === "KLM06" 
@@ -1329,14 +1322,7 @@ export default function Game({setWinGameStats}: Props) {
         } else if(keeperId === "KE01") {
             playCard(getCardById("A14"), -1);
         } else if(keeperId === "KR09") {
-            playCard({
-                "id": "AF03",
-                "type": "ACTION",
-                "subtype": "",
-                "name": "RULE FLUX",
-                "effects": ["RULE_RANDOM"],
-                "text": "Randomize a rule."
-            }, -1);
+            playCard(getCardById("AF03"), -1);
         }
 
         dispatchPlayers({
