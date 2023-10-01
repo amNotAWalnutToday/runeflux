@@ -53,7 +53,7 @@ export default function MiniCard({
             if(ind % 2 !== 1) return;
             return (
                 <div
-                    className={`${segment.split(' ').join("_").toLowerCase()} mini_card_image sideways`}
+                    className={`${segment.split("'").join("").split(' ').join("_").toLowerCase()} mini_card_image sideways`}
                 />
             )
         });
