@@ -714,21 +714,24 @@ export default function Game({setWinGameStats}: Props) {
         upload("HISTORY_PLAYED", db, {historyState: history}, joinedGameID);
     }
 
+    const updateCatalog = (card: CardSchema) => {
+        if(!user) return;
+        const playedAmount = (
+            user.cardCatalog[`${card.id}`] 
+                ? user.cardCatalog[`${card.id}`] + 1
+                : 1 
+        );
+        
+        setUser((prev) => {
+            if(!prev) return;
+            return {...prev, cardCatalog: Object.assign({}, prev?.cardCatalog, {[`${card.id}`]: playedAmount})}
+        });
+        uploadStats("CARD", db, {cardKey: card.id, cardNum: playedAmount}, user?.uid);
+    }
+
     const playCard = (card: CardSchema | false, indexInHand: number) => {
         if(!card) return;
-        if(user) {
-            const playedAmount = (
-                user.cardCatalog[`${card.id}`] 
-                    ? user.cardCatalog[`${card.id}`] + 1
-                    : 1 
-            );
-            
-            setUser((prev) => {
-                if(!prev) return;
-                return {...prev, cardCatalog: Object.assign({}, prev?.cardCatalog, {[`${card.id}`]: playedAmount})}
-            });
-            uploadStats("CARD", db, {cardKey: card.id, cardNum: playedAmount}, user?.uid);
-        }
+        updateCatalog(card);
         const target = getTarget(card);
         if(turn.player !== user?.uid) {
             upload("COUNTER", db, {cardState: card}, joinedGameID);
@@ -759,6 +762,7 @@ export default function Game({setWinGameStats}: Props) {
     const playTemporaryCard = (card: CardSchema | false, indexInHand: number) => {
         if(!card || !table.turn.temporary) return;
         if(user?.uid !== turn.player) return;
+        updateCatalog(card);
         const target = getTarget(card);
         upload('PENDING', db, {cardState: {...card, targets: getTarget(card)} }, joinedGameID);
         discardTemporaryCard(indexInHand, checkShouldDiscard(card.type));

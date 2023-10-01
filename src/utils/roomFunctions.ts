@@ -48,6 +48,7 @@ export default (() => {
         username: string, 
         isReady: boolean
     ) => {
+        const goalImages = true;
         const cardCatalog = {};
         const goalWins = {}
         const stats = {
@@ -60,6 +61,7 @@ export default (() => {
             uid, 
             username, 
             isReady,
+            goalImages,
             cardCatalog,
             goalWins,
             stats,
