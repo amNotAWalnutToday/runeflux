@@ -453,6 +453,10 @@ a:hover,
   background-color: var(--black);
 }
 
+.card_title {
+  line-height: 1.3rem;
+}
+
 .card__mini.btrim,
 .card.btrim {
   outline: 1px solid var(--brown);
@@ -1272,6 +1276,55 @@ a:hover,
 
 .reldo {
   background: url("./assets/reldo.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.bronze_defender {
+  background: url("./assets/bronze_defender.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.iron_defender {
+  background: url("./assets/iron_defender.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.steel_defender {
+  background: url("./assets/steel_defender.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.black_defender {
+  background: url("./assets/black_defender.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  filter: drop-shadow(0px 0px 1px white);
+}
+
+.mithril_defender {
+  background: url("./assets/mithril_defender.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.adamant_defender {
+  background: url("./assets/adamant_defender.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.rune_defender {
+  background: url("./assets/rune_defender.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.dragon_defender {
+  background: url("./assets/dragon_defender.png");
   background-size: contain;
   background-repeat: no-repeat;
 }

@@ -3,6 +3,7 @@ import CardSchema from "./cardSchema";
 import PlayerSchema from "./playerSchema";
 import DeckSchema from "./deckSchema";
 import TurnSchema from "./turnSchema";
+import PhaseSchema from "./PhaseSchema";
 
 interface GameSchema {
     deck: DeckSchema,
@@ -16,11 +17,7 @@ interface GameSchema {
         played: {id: string, target: string[], player: string}[],
         discarded: string[],
     },
-    phases: {
-        morytania: number,
-        abyss: number,
-        wilderness: number,
-    },
+    phases: PhaseSchema,
     round: number,
     isWon: boolean,
 }

@@ -289,6 +289,70 @@
             "text": ""
         },
         {
+            "id": "KEA01",
+            "type": "KEEPER",
+            "subtype":"EQUIPMENT",
+            "name": "Bronze Defender",
+            "effects": ["UPGRADE"],
+            "text": "After playing a goal upgrade to a Iron Defender and return to hand."
+        },
+        {
+            "id": "KEA02",
+            "type": "KEEPER",
+            "subtype":"EQUIPMENT",
+            "name": "Iron Defender",
+            "effects": ["UPGRADE"],
+            "text": "After playing a goal upgrade to a Steel Defender and return to hand."
+        },
+        {
+            "id": "KEA03",
+            "type": "KEEPER",
+            "subtype":"EQUIPMENT",
+            "name": "Steel Defender",
+            "effects": ["UPGRADE"],
+            "text": "After playing a goal upgrade to a Black Defender and return to hand."
+        },
+        {
+            "id": "KEA04",
+            "type": "KEEPER",
+            "subtype":"EQUIPMENT",
+            "name": "Black Defender",
+            "effects": ["UPGRADE"],
+            "text": "After playing a goal upgrade to a Mithril Defender and return to hand."
+        },
+        {
+            "id": "KEA05",
+            "type": "KEEPER",
+            "subtype":"EQUIPMENT",
+            "name": "Mithril Defender",
+            "effects": ["UPGRADE"],
+            "text": "After playing a goal upgrade to an Adamant Defender and return to hand."
+        },
+        {
+            "id": "KEA06",
+            "type": "KEEPER",
+            "subtype":"EQUIPMENT",
+            "name": "Adamant Defender",
+            "effects": ["UPGRADE"],
+            "text": "After playing a goal upgrade to an Rune Defender and return to hand."
+        },
+        {
+            "id": "KEA07",
+            "type": "KEEPER",
+            "subtype":"EQUIPMENT",
+            "name": "Rune Defender",
+            "effects": ["UPGRADE"],
+            "text": "After playing a goal upgrade to a Dragon Defender and return to hand."
+        },
+        {
+            "id": "KEA08",
+            "type": "KEEPER",
+            "subtype":"EQUIPMENT",
+            "name": "Dragon Defender",
+            "effects": ["CREATE_GOAL"],
+            "text": "Once per turn, Create Goal Dragon Defender in hand."
+        },
+        {
             "id": "K01",
             "type": "KEEPER",
             "subtype": "",
@@ -647,6 +711,14 @@
             "name": "Plot Twisting Chicken",
             "effects": [],
             "text": "Didn't you know that |Ernest| the chicken was actually a astral projection from the evil chicken shrine in |Zanaris|."
+        },
+        {
+            "id": "GA01",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Dragon Defender!",
+            "effects": [],
+            "text": "A long grind at cyclops in the warriors guild yields a |Dragon Defender|."
         },
         {
             "id": "GM01",

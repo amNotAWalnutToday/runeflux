@@ -126,6 +126,7 @@ export default (() => {
                 morytania: 0,
                 abyss: 0,
                 wilderness: 0,
+                asgarnia: 0,
             },
             pending: false,
             isWon: false,

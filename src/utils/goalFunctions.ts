@@ -528,6 +528,17 @@ export default (() => {
         else return { hasWon: false, bypassCreeper: false };
     }
 
+    const checkGA01 = (keepers: CardSchema[]) => {
+        const requirements = { dragonDefender: false };
+        
+        keepers.forEach((keeper) => {
+            if(keeper.id === "KEA08") requirements.dragonDefender = true;
+        });
+
+        if(requirements.dragonDefender) return { hasWon: true, bypassCreeper: false };
+        else return { hasWon: false, bypassCreeper: false };
+    } 
+
     const checkGM01 = (keepers: CardSchema[]) => {
         const requirements = { verac: false, torag: false };
         
@@ -654,6 +665,8 @@ export default (() => {
                 return checkG39(keepers);
             case "G40":
                 return checkG40(keepers, location);
+            case "GA01":
+                return checkGA01(keepers);
             case "GM01":
                 return checkGM01(keepers);
             case "GM02":

@@ -29,6 +29,7 @@ import RULE_REDUCER_ACTIONS from '../schemas/reducers/RULE_REDUCER_ACTIONS';
 import PLAYER_REDUCER_ACTIONS from '../schemas/reducers/PLAYER_REDUCER_ACTIONS';
 import GOAL_REDUCER_ACTIONS from '../schemas/reducers/GOAL_REDUCER_ACTIONS';
 import testsettings from '../../testsettings.json';
+import PhaseSchema from '../schemas/PhaseSchema';
 
 const { 
     loadGame, 
@@ -262,7 +263,7 @@ export default function Game({setWinGameStats}: Props) {
         pendingData: CardSchema | false,
         counterData: CardSchema | false,
         winData: boolean,
-        phaseData: {morytania: 0, abyss: 0, wilderness: 0},
+        phaseData: PhaseSchema,
         historyData: {played: {id: string, target: string[], player: string}[], discarded: string[]},
     ) => {
         if(!deckData.discard) deckData.discard = [];
@@ -732,6 +733,40 @@ export default function Game({setWinGameStats}: Props) {
         uploadStats("CARD", db, {cardKey: card.id, cardNum: playedAmount}, user?.uid);
     }
 
+    const asgarniaHandler = () => {
+        upload("PHASE", db, {phaseState: {location: "asgarnia", amount: table.phases.asgarnia + 1}}, joinedGameID);
+        if(table.phases.asgarnia === 20) {
+            dispatchDeck({
+                type: DECK_REDUCER_ACTIONS.DECK_ADD__DISCARD_BOT,
+                payload: {
+                    pile: [getCardById("KEA01")],
+                    upload: uploadProps
+                }
+            });
+        }
+    }
+
+    const defenderHandler = () => {
+        const player = getPlayer(players, user?.uid ?? '');
+        if(!player.state.keepers) return;
+        const defenderIds = Array.from([1, 2, 3, 4, 5, 6, 7], (id) => `KEA0${id}`);
+        for(const id of defenderIds) {
+            const keeper = checkPlayersForKeeper(players, id);
+            if(keeper.playerIndex === player.index
+            && keeper.keeper !== null) {
+                dispatchPlayers({
+                    type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
+                    payload: {
+                        playerId: user?.uid ?? '',
+                        cards: [getCardById(`KEA0${Number(id[4]) + 1}`)],
+                        upload: uploadProps
+                    }
+                });
+                discardKeeper(keeper.index, false);
+            }
+        }
+    }
+
     const playCard = (card: CardSchema | false, indexInHand: number) => {
         if(!card) return;
         updateCatalog(card);
@@ -792,6 +827,8 @@ export default function Game({setWinGameStats}: Props) {
                 case "RULE":
                     return playRuleCard(card);
                 case "GOAL":
+                    asgarniaHandler();
+                    if(table.phases.asgarnia > 19) defenderHandler();
                     return playGoalCard(card);
                 case "ACTION":
                     return playActionCards(card);
@@ -1297,6 +1334,15 @@ export default function Game({setWinGameStats}: Props) {
             playCard(getCardById("A14"), -1);
         } else if(keeperId === "KR09") {
             playCard(getCardById("AF03"), -1);
+        } else if(keeperId === "KEA08") {
+            dispatchPlayers({
+                type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
+                payload: {
+                    playerId: user?.uid ?? '',
+                    cards: [getCardById("GA01")],
+                    upload: uploadProps,
+                }
+            });
         }
 
         dispatchPlayers({

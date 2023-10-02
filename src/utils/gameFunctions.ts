@@ -17,6 +17,7 @@ import DECK_REDUCER_ACTIONS from '../schemas/reducers/DECK_REDUCER_ACTIONS';
 import RULE_REDUCER_ACTIONS from '../schemas/reducers/RULE_REDUCER_ACTIONS';
 import PLAYER_REDUCER_ACTIONS from '../schemas/reducers/PLAYER_REDUCER_ACTIONS';
 import GOAL_REDUCER_ACTIONS from '../schemas/reducers/GOAL_REDUCER_ACTIONS';
+import PhaseSchema from '../schemas/PhaseSchema';
 
 const { compareKeepersToGoal } = goalFunctions;
 const { convertGameToRoomGame, convertToRoomPlayer } = roomFunctions;
@@ -324,6 +325,7 @@ export default (() => {
                 morytania: 0,
                 abyss: 0,
                 wilderness: 0,
+                asgarnia: 0,
             }
         }
         for(const cardRef of startDeckData.startDeck) {
@@ -368,7 +370,7 @@ export default (() => {
             pendingData: CardSchema | false,
             counterData: CardSchema | false,
             winData: boolean,
-            phaseData: { morytania: 0, abyss: 0, wilderness: 0 }, 
+            phaseData: PhaseSchema, 
             historyData: { played: {id: string, target: string[], player: string}[], discarded: string[] },
         ) => void,
     ) => {
