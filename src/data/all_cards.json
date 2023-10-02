@@ -45,8 +45,8 @@
             "type": "KEEPER",
             "subtype": "LIVING",
             "name": "Drunken Dwarf",
-            "effects": ["DISCARD_OR_DRAW_RANDOM_1_2"],
-            "text": "Once per turn, randomly draw or discard between 1 - 2 cards"
+            "effects": ["DESTROY_1"],
+            "text": "Once per turn, can destroy wizard mind bomb creeper."
         },
         {
             "id": "KL07",

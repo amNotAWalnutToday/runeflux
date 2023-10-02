@@ -67,6 +67,10 @@ export default function InspectKeeper({
             if(!selectedKeeperGroup.length) return false;
             if(selectedKeeperGroup[0].state.id !== "CR01"
             && selectedKeeperGroup[0].state.attachment?.id !== "CR01") return false;
+        } else if(cardState.state.id === "KL06") {
+            if(!selectedKeeperGroup.length) return false;
+            if(selectedKeeperGroup[0].state.id !== "CR03"
+            && selectedKeeperGroup[0].state.attachment?.id !== "CR03") return false;
         } else if(cardState.state.id === "KLM01") {
             if(!selectedKeeperGroup.length) return false;
             if(selectedKeeperGroup[0].state.id !== "KLM04"
@@ -173,8 +177,6 @@ export default function InspectKeeper({
         const isYours = table.players[cardState.playerIndex].user.uid === user?.uid;
         const isOnCooldown = table.turn.duel.cooldown;
         const isCorrectLocation = table.rules.location === "WILDERNESS";
-
-        console.log(isTurn, isYours, isOnCooldown, isCorrectLocation);
 
         if(!isTurn || isYours || isOnCooldown || !isCorrectLocation) {
             return [isTurn, isYours, isOnCooldown, isCorrectLocation];

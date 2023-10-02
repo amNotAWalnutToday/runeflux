@@ -891,21 +891,17 @@ export default function Game({setWinGameStats}: Props) {
             }
         } else if(card.effects.includes("KEEPER_STEALSTOP_OR_KEEPER_STEAL")) {
             if(isYourTurn) {
+                discardKeeperFromPlayer(
+                    selectedKeeperGroup[0].index, 
+                    players[selectedKeeperGroup[0].playerIndex].user.uid, 
+                    false
+                );
                 dispatchPlayers({
                     type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__ADD,
                     payload: {
                         playerId: user.uid,
                         cards: [selectedKeeperGroup[0].state],
                         upload: uploadProps,
-                    }
-                });
-                const updatedKeepers = removeCard(players[selectedKeeperGroup[0].playerIndex].keepers, selectedKeeperGroup[0].index);
-                dispatchPlayers({
-                    type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__REMOVE,
-                    payload: {
-                        playerId: players[selectedKeeperGroup[0].playerIndex].user.uid,
-                        cards: [...updatedKeepers],
-                        upload: uploadProps
                     }
                 });
             } else {
@@ -1198,15 +1194,7 @@ export default function Game({setWinGameStats}: Props) {
         } else if(card.effects.includes("STEAL_RUNE_CROSSBOW")) {
             const keeper = checkPlayersForKeeper(players, "KE04");
             if(!keeper.keeper) return;
-            const updatedKeepers = removeCard(players[keeper.playerIndex].keepers, keeper.index);
-            dispatchPlayers({
-                type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__REMOVE,
-                payload: {
-                    playerId: players[keeper.playerIndex].user.uid,
-                    cards: updatedKeepers,
-                    upload: uploadProps
-                }
-            });
+            discardKeeperFromPlayer(keeper.index, players[keeper.playerIndex].user.uid, false);
             dispatchPlayers({
                 type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__ADD,
                 payload: {
@@ -1280,18 +1268,7 @@ export default function Game({setWinGameStats}: Props) {
 
     const playKeeperEffect = (keeperId: string, keeperIndex: number) => {
         const thisPlayer = getPlayer(players, user?.uid ?? '');
-        if(keeperId === "KL06") {
-            const discardOrDraw = Math.ceil(Math.random() * 2);
-            const amount = Math.ceil(Math.random() * 2);
-            if(discardOrDraw === 1) {
-                drawCardsForPlayer(thisPlayer.state.user.uid, amount, 0);
-            }
-            else {
-                for(let i = 0; i < amount; i++) { 
-                    discardCardFromHand(Math.floor(Math.random() * thisPlayer.state.hand.length));
-                }
-            }
-        } else if(keeperId === "K01") {
+        if(keeperId === "K01") {
             drawCardsForPlayer(thisPlayer.state.user.uid, 1, 0);
         } else if(keeperId === "CR01") {
             playCard(getCardById("RL07"), -1);
@@ -1305,7 +1282,7 @@ export default function Game({setWinGameStats}: Props) {
             playCard(getCardById("AF01"), -1);
         } else if(
             keeperId === "KL07" || keeperId === "KR07" || keeperId === "KE04"
-            || keeperId === "K02" || keeperId === "KE02"
+            || keeperId === "K02" || keeperId === "KE02" || keeperId === "KL06"
         ) {
             // destroy cards //
             playCard(getCardById("A15"), -1);
@@ -1416,20 +1393,22 @@ export default function Game({setWinGameStats}: Props) {
         setLocationCooldown(() => false);
 
         const thisPlayer = getPlayer(players, user?.uid ?? '');
-        if(rules.location === "MISTHALIN") {
-            drawCardsForPlayer(user?.uid ?? '', 1, 0);
+        switch(rules.location) {
+            case "MISTHALIN":
+                drawCardsForPlayer(user?.uid ?? '', 1, 0);
+                break;
+            case "CRANDOR":
+                discardCardFromHand(Math.floor(Math.random() * thisPlayer.state.hand.length), true);
+                break;
+            case "MORYTANIA":
+                ghostHandler();
+                ghostEffectHandler();
+                break;
+            case "ZANARIS":
+                cosmicHandler();
+                break;
         }
-        if(rules.location === "CRANDOR") {
-            const ran = Math.floor(Math.random() * thisPlayer.state.hand.length);
-            discardCardFromHand(ran, true);
-        }
-        if(rules.location === "MORYTANIA") {
-            ghostHandler();
-            ghostEffectHandler();
-        }
-        if(rules.location === "ZANARIS") {
-            cosmicHandler();
-        }
+
         if(turn.duel.cooldown) {
             dispatchTurn({
                 type: TURN_REDUCER_ACTION.DUEL_COOLDOWN,
