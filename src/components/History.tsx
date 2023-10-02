@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import gameFunctions from '../utils/gameFunctions';
 import MiniCard from "./MiniCard";
+import PlayerSchema from '../schemas/playerSchema';
 
 const { getCardById } = gameFunctions;
 
@@ -8,10 +9,11 @@ type Props = {
     history: {
         played: {id: string, target: string[], player: string}[],
         discarded: string[]
-    }
+    },
+    players: PlayerSchema[],
 }
 
-export default function History({history}: Props) {
+export default function History({history, players}: Props) {
     const container = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -50,7 +52,7 @@ export default function History({history}: Props) {
                                     isSideWays={false}
                                     playerNum={1}
                                     targets={[{id: targetCard, index: 0, playerIndex: 0}]}
-                                    cardState={{state: getCardById(targetCard), index: 0}}
+                                    cardState={{state: getCardById(targetCard, players), index: 0}}
                                 />
                             );
                         })}

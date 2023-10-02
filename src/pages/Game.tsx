@@ -602,15 +602,17 @@ export default function Game({setWinGameStats}: Props) {
         setSelectedCard(() => null);
     }
 
-    const discardCardFromPlayer = (cardIndex: number, playerId: string) => {
+    const discardCardFromPlayer = (cardIndex: number, playerId: string, addToDiscard = true) => {
         const player = getPlayer(players, playerId);
-        dispatchDeck({
-            type: DECK_REDUCER_ACTIONS.DECK_ADD__DISCARD_BOT,
-            payload: {
-                pile: [player.state.hand[cardIndex]],
-                upload: uploadProps
-            }
-        });
+        if(addToDiscard) {
+            dispatchDeck({
+                type: DECK_REDUCER_ACTIONS.DECK_ADD__DISCARD_BOT,
+                payload: {
+                    pile: [player.state.hand[cardIndex]],
+                    upload: uploadProps
+                }
+            }); 
+        }
 
         const updatedHand = removeCard(player.state.hand, cardIndex);
         dispatchPlayers({
@@ -690,6 +692,7 @@ export default function Game({setWinGameStats}: Props) {
     const getTarget = (card: CardSchema) => {
         switch(card.id) {
             case "A04":
+            case "AF01":
                 return selectedPlayerGroup.length ? [{ id: selectedPlayerGroup[0].user.uid, index: 0, playerIndex: 0 }] : [];
             case "A05":
                 return selectedRuleGroup.length ? [{ id: selectedRuleGroup[0], index: 0, playerIndex: 0 }] : [];
@@ -1227,6 +1230,19 @@ export default function Game({setWinGameStats}: Props) {
             setShowCardPiles((prev) => ({...prev, discard: true}));
         } else if(card.effects.includes("RULE_RANDOM")) {
             cosmicHandler();
+        } else if(card.effects.includes("STEAL_CARD_RANDOM")) {
+            if(!selectedPlayerGroup.length || !selectedPlayerGroup[0].hand) return;
+            const ran = Math.floor(Math.random() * selectedPlayerGroup[0].hand.length);
+            const card = selectedPlayerGroup[0].hand[ran];
+            dispatchPlayers({
+                type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
+                payload: {
+                    playerId: user?.uid ?? '',
+                    cards: [card],
+                    upload: uploadProps
+                }
+            });
+            discardCardFromPlayer(ran, selectedPlayerGroup[0].user.uid, false);
         }
         resetGroups();
     }
@@ -1286,26 +1302,7 @@ export default function Game({setWinGameStats}: Props) {
         } else if(keeperId === "KR02") {
             wormhole(1, 0);
         } else if(keeperId === "KE05") {
-            const ran = Math.floor(Math.random() * selectedPlayerGroup[0].hand.length);
-            if(!selectedPlayerGroup[0].hand) return;
-            const card = selectedPlayerGroup[0].hand[ran];
-            dispatchPlayers({
-                type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
-                payload: {
-                    playerId: user?.uid ?? '',
-                    cards: [card],
-                    upload: uploadProps
-                }
-            });
-            const updatedHand = removeCard(selectedPlayerGroup[0].hand, ran);
-            dispatchPlayers({
-                type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__REMOVE,
-                payload: {
-                    playerId: selectedPlayerGroup[0].user.uid,
-                    cards: [...updatedHand],
-                    upload: uploadProps
-                }
-            });
+            playCard(getCardById("AF01"), -1);
         } else if(
             keeperId === "KL07" || keeperId === "KR07" || keeperId === "KE04"
             || keeperId === "K02" || keeperId === "KE02"
@@ -1496,64 +1493,20 @@ export default function Game({setWinGameStats}: Props) {
             && 
             <div>
                 <button
-                    className='menu_link'
+                    className='play_btn__card'
                     onClick={() => {
-                        dispatchPlayers({
-                            type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
-                            payload: {
-                                playerId: user?.uid ?? '',
-                                cards: [        {
-                                    "id": "A16",
-                                    "type": "ACTION",
-                                    "subtype": "",
-                                    "name": "Scry and Acquire",
-                                    "effects": ["DRAW_SPECIFIC_PURE"],
-                                    "text": "See into the future and choose a card to acquire."
-                                },
-                                {
-                                    "id": "A17",
-                                    "type": "ACTION",
-                                    "subtype": "",
-                                    "name": "Historical Research",
-                                    "effects": ["DRAW_SPECIFIC_DISCARD"],
-                                    "text": "Look through past records and find the location of a card to acquire."
-                                },         {
-                                    "id": "KL14",
-                                    "type": "KEEPER",
-                                    "subtype": "LIVING",
-                                    "name": "Reldo",
-                                    "effects": [],
-                                    "text": "When using the Historical Records card, don't discard it."
-                                },
-                        ],
-                                upload: uploadProps
-                            }
-                        });
+                        playCard(getCardById("A16"), -1);
                     }}
                 >
-                    action card function test
+                    Scry
                 </button>
                 <button
+                    className='discard_btn__card'
                     onClick={() => {
-                        dispatchPlayers({
-                            type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
-                            payload: {
-                                playerId: user?.uid ?? '',
-                                cards: [         {
-                                    "id": "CO03",
-                                    "type": "COUNTER",
-                                    "subtype": "",
-                                    "name": "Belay That!",
-                                    "effects": ["ACTIONSTOP_OR_DISCARD_1_ALL"],
-                                    "text": "Out of turn - stop another player while they are playing an action card| During turn every discards one."
-                                },
-                        ],
-                                upload: uploadProps
-                            }
-                        });
+                        playCard(getCardById("A17"), -1);
                     }}
                 >
-                    seocnd coming
+                    History
                 </button>
             </div>
             }
@@ -1727,6 +1680,7 @@ export default function Game({setWinGameStats}: Props) {
                 showHistory
                 &&
                 <History 
+                    players={players}
                     history={table.history}
                 />
             }

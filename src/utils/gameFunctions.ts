@@ -578,6 +578,17 @@ export default (() => {
         }
     }
 
+    const createFakeCard = (
+        id: string,
+        type: string, 
+        subtype = "", 
+        name: string, 
+        effects: string[] = [], 
+        text = ""
+    ) => {
+        return { id, type, subtype, name, effects, text }
+    }
+
     const getPlayer = (players: PlayerSchema[], uid: string) => {
         for(let i = 0; i < players.length; i++) {
             if(uid === players[i].user.uid) return {state: players[i], index: i};
@@ -605,7 +616,7 @@ export default (() => {
         return { card: fakeCards.fakeCards[0], error: true };
     }
 
-    const getCardById = (cardId: string) => {
+    const getCardById = (cardId: string, players?: PlayerSchema[]) => {
         if(cardId === "playAmount" || cardId === "drawAmount"
         || cardId === "handLimit"  || cardId === "keeperLimit"
         || cardId === "location"   || cardId === "teleblock") return getFakeRuleCard(cardId).card;
@@ -615,6 +626,12 @@ export default (() => {
                 return card;
             }
         }
+        if(players) {
+            for(const player of players) {
+                if(player.user.uid === cardId) return createFakeCard(player.user.uid, "keeper", "LIVING", player.user.username, [], "");
+            }
+        }
+
         return allDeckData.allCards[0];
     }
 

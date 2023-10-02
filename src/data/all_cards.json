@@ -550,7 +550,7 @@
             "subtype": "",
             "name": "Starter Monsters",
             "effects": [],
-            "text": "Collection Type: |Imp|, |Goblin|, |Ernest(he's a chicken right)|"
+            "text": "Collection Type: |Imp|, |Goblin|, |Ernest|(he's a chicken right)"
         },
         {
             "id": "G29",
@@ -999,6 +999,14 @@
             "name": "Direct Teleport",
             "effects": ["TELEPORT_SPECIFIC"],
             "text": "Choose any location to teleport to."
+        },
+        {
+            "id": "AF01",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Attract Card",
+            "effects": ["STEAL_CARD_RANDOM"],
+            "text": "Attracts a card from an opposing players hand."
         },
         {
             "id": "AF02",
