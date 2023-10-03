@@ -1329,6 +1329,36 @@ a:hover,
   background-repeat: no-repeat;
 }
 
+.abyssal_sire {
+  background: url("./assets/abyssal_sire.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.abyssal_demon {
+  background: url("./assets/abyssal_demon.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.unsired {
+  background: url("./assets/unsired.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.abyssal_dagger {
+  background: url("./assets/abyssal_dagger.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.abyssal_whip {
+  background: url("./assets/abyssal_whip.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
 .ahrim {
   background: url("./assets/ahrim.png");
   background-size: contain;
