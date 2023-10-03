@@ -238,14 +238,14 @@ export default (() => {
     }
 
     const checkG18 = (keepers: CardSchema[]) => {
-        const requirements = { runeXbow: false, vampyreJuvinate: false };
+        const requirements = { runeXbow: false, feralVampyre: false };
 
         keepers.forEach((keeper) => {
             if(keeper.id === "KE04") requirements.runeXbow = true;
-            if(keeper.id === "KL10") requirements.vampyreJuvinate = true
+            if(keeper.id === "KL10") requirements.feralVampyre = true
         });
 
-        if(requirements.runeXbow && requirements.vampyreJuvinate) return { hasWon: true, bypassCreeper: false };
+        if(requirements.runeXbow && requirements.feralVampyre) return { hasWon: true, bypassCreeper: false };
         else return { hasWon: false, bypassCreeper: false };
     }
 
@@ -375,17 +375,15 @@ export default (() => {
         else return { hasWon: false, bypassCreeper: false };
     }
 
-    const checkG29 = (keepers: CardSchema[], location: string) => {
-        const requirements = { morytania: false, ghost: false, vampyreJuvinate: false };
+    const checkG29 = (keepers: CardSchema[]) => {
+        const requirements = { feralVampyre: false, vampyreJuvinate: false };
 
         keepers.forEach((keeper) => {
-            if(keeper.id === "KL02") requirements.ghost = true
-            if(keeper.id === "KL10") requirements.vampyreJuvinate = true
+            if(keeper.id === "KL10") requirements.feralVampyre = true
+            if(keeper.id === "KL15") requirements.vampyreJuvinate = true
         });
 
-        if(location === "MORYTANIA") requirements.morytania = true;
-
-        if(requirements.ghost && requirements.morytania && requirements.vampyreJuvinate) return { hasWon: true, bypassCreeper: false };
+        if(requirements.feralVampyre && requirements.vampyreJuvinate) return { hasWon: true, bypassCreeper: false };
         else return { hasWon: false, bypassCreeper: false };
     }
 
@@ -417,7 +415,7 @@ export default (() => {
         const requirements = { vampyreJuvinate: false, airStaff: false };
 
         keepers.forEach((keeper) => {
-            if(keeper.id === "KL10") requirements.vampyreJuvinate = true;
+            if(keeper.id === "KL15") requirements.vampyreJuvinate = true;
             if(keeper.id === "KE03") requirements.airStaff = true;
         });
 
@@ -688,7 +686,7 @@ export default (() => {
             case "G28":
                 return checkG28(keepers);
             case "G29":
-                return checkG29(keepers, location);
+                return checkG29(keepers);
             case "G30":
                 return checkG30(keepers);
             case "G31":

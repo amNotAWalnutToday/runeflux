@@ -76,7 +76,7 @@
             "id": "KL10",
             "type": "KEEPER",
             "subtype": "LIVING",
-            "name": "Vampyre Juvinate",
+            "name": "Feral Vampyre",
             "effects": ["STEAL_RUNE_CROSSBOW"],
             "text": "Once per turn, steal the rune crossbow from another player."
         },
@@ -111,6 +111,14 @@
             "name": "Reldo",
             "effects": [],
             "text": "When using the Historical Records card, don't discard it."
+        },
+        {
+            "id": "KL15",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Vampyre Juvinate",
+            "effects": [],
+            "text": ""
         },
         {
             "id": "KLM01",
@@ -574,7 +582,7 @@
             "subtype": "",
             "name": "Swampmans Nightmares",
             "effects": [],
-            "text": "|Rune Crossbow| and |Vampyre Juvinate|. You get the rest."
+            "text": "|Rune Crossbow| and |Feral Vamypre|. You get the rest."
         },
         {
             "id": "G19",
@@ -660,9 +668,9 @@
             "id": "G29",
             "type": "GOAL",
             "subtype": "",
-            "name": "Morytania's Undead",
+            "name": "Vampyres",
             "effects": [],
-            "text": "Collection Type: |Morytania|, |Ghost|, |Vampyre Juvinate|"
+            "text": "Collection Type: |Feral Vampyre|, |Vampyre Juvinate|"
         },
         {
             "id": "G30",
@@ -686,7 +694,7 @@
             "subtype": "",
             "name": "Juvinile 'Rare Drop'",
             "effects": [],
-            "text": "After defeating a |Vampyre juvinate|, you have been graced with the staff of utmost versatility the |Air Staff|."
+            "text": "After defeating a |Vampyre Juvinate|, you have been graced with the staff of utmost versatility the |Air Staff|."
         },
         {
             "id": "G33",

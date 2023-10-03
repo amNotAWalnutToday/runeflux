@@ -481,7 +481,6 @@ a:hover,
   outline: 2px dashed var(--light-pink);
 }
 
-
 .card__mini.rule .side_card_header__background,
 .card__mini.rule .card_header__background,
 .card.rule .card_header__background {
@@ -1250,8 +1249,14 @@ a:hover,
   background-repeat: no-repeat;
 }
 
-.vampyre_juvinate {
+.feral_vampyre {
   background: url("./assets/feral_vampyre.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.vampyre_juvinate {
+  background: url("./assets/vampyre_juvinate.png");
   background-size: contain;
   background-repeat: no-repeat;
 }
