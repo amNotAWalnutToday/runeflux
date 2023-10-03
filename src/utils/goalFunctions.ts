@@ -539,6 +539,52 @@ export default (() => {
         else return { hasWon: false, bypassCreeper: false };
     } 
 
+    const checkGAB01 = (keepers: CardSchema[]) => {
+        const requirements = { sire: false };
+        
+        keepers.forEach((keeper) => {
+            if(keeper.id === "KLAB01") requirements.sire = true;
+        });
+
+        if(requirements.sire) return { hasWon: true, bypassCreeper: false };
+        else return { hasWon: false, bypassCreeper: false };
+    }
+
+    const checkGAB02 = (keepers: CardSchema[]) => {
+        const requirements = { unsired: false };
+        
+        keepers.forEach((keeper) => {
+            if(keeper.id === "KAB01") requirements.unsired = true;
+        });
+
+        if(requirements.unsired) return { hasWon: true, bypassCreeper: false };
+        else return { hasWon: false, bypassCreeper: false };
+    }
+
+    const checkGAB03 = (keepers: CardSchema[]) => {
+        const requirements = { whip: false, abyssalDagger: false };
+        
+        keepers.forEach((keeper) => {
+            if(keeper.id === "KEAB01") requirements.whip = true;
+            if(keeper.id === "KEAB02") requirements.abyssalDagger = true;
+        });
+
+        if(requirements.abyssalDagger && requirements.whip) return { hasWon: true, bypassCreeper: false };
+        else return { hasWon: false, bypassCreeper: false };
+    }
+
+    const checkGAB04 = (keepers: CardSchema[]) => {
+        const requirements = { whip: false, abyssalDemon: false };
+        
+        keepers.forEach((keeper) => {
+            if(keeper.id === "KEAB01") requirements.whip = true;
+            if(keeper.id === "KLAB02") requirements.abyssalDemon = true;
+        });
+
+        if(requirements.abyssalDemon && requirements.whip) return { hasWon: true, bypassCreeper: false };
+        else return { hasWon: false, bypassCreeper: false };
+    }
+
     const checkGM01 = (keepers: CardSchema[]) => {
         const requirements = { verac: false, torag: false };
         
@@ -665,6 +711,14 @@ export default (() => {
                 return checkG39(keepers);
             case "G40":
                 return checkG40(keepers, location);
+            case "GAB01":
+                return checkGAB01(keepers);
+            case "GAB02":
+                return checkGAB02(keepers);
+            case "GAB03":
+                return checkGAB03(keepers);
+            case "GAB04":
+                return checkGAB04(keepers);
             case "GA01":
                 return checkGA01(keepers);
             case "GM01":

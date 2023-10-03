@@ -95,6 +95,9 @@ export default function InspectKeeper({
             if(!selectedKeeperGroup.length) return false;
             if(selectedKeeperGroup[0].state.id !== "KLM01"
             && selectedKeeperGroup[0].state.id !== "KLM03") return false;
+        } else if(cardState.state.id === "KLAB02") {
+            if(!selectedKeeperGroup.length) return false;
+            if(selectedKeeperGroup[0].playerIndex === player.index) return false;
         }
 
         return true;

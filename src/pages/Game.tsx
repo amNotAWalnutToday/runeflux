@@ -679,13 +679,13 @@ export default function Game({setWinGameStats}: Props) {
     }
 
     const checkKeepScry = (cardId: string) => {
-        if(getPlayerKeeper(getPlayer(players, user?.uid ?? '').state, "KL13")
+        if(getPlayerKeeper(getPlayer(players, user?.uid ?? '').state, "KL13").state
         && cardId === "A16") return true;
         return false;
     }
 
     const checkKeeperHistory = (cardId: string) => {
-        if(getPlayerKeeper(getPlayer(players, user?.uid ?? '').state, "KL14")
+        if(getPlayerKeeper(getPlayer(players, user?.uid ?? '').state, "KL14").state
         && cardId === "A17") return true;
         return false;
     }
@@ -702,6 +702,7 @@ export default function Game({setWinGameStats}: Props) {
                 return Array.from(selectedRuleGroup, (rule, index) => ({id: rule, index, playerIndex: index}));
             case "A11":
             case "A15":
+            case "AF04":
             case "CO04":
             case "CO06":
                 return selectedKeeperGroup.length ? [{ id: selectedKeeperGroup[0].state.id, index: selectedKeeperGroup[0].index, playerIndex: selectedKeeperGroup[0].playerIndex }] : [];
@@ -731,6 +732,19 @@ export default function Game({setWinGameStats}: Props) {
             return {...prev, cardCatalog: Object.assign({}, prev?.cardCatalog, {[`${card.id}`]: playedAmount})}
         });
         uploadStats("CARD", db, {cardKey: card.id, cardNum: playedAmount}, user?.uid);
+    }
+
+    const abyssHandler = () => {
+        upload("PHASE", db, {phaseState: {location: "abyss", amount: table.phases.abyss + 1}}, joinedGameID);
+        if(table.phases.abyss === 20) {
+            dispatchDeck({
+                type: DECK_REDUCER_ACTIONS.DECK_ADD__DISCARD_BOT,
+                payload: {
+                    pile: Array.from(["KLAB01", "KLAB02", "KEAB01", "KAB01", "AAB01", "AAB01", "AAB01", "GAB01", "GAB03", "GAB04"], (id) => getCardById(id)),
+                    upload: uploadProps
+                }
+            })
+        }
     }
 
     const asgarniaHandler = () => {
@@ -813,6 +827,7 @@ export default function Game({setWinGameStats}: Props) {
                 }
             });
         }
+        abyssHandler();
         resolvePlayCard(card, target);
     }
 
@@ -1198,6 +1213,19 @@ export default function Game({setWinGameStats}: Props) {
                     upload: uploadProps
                 }
             });
+        } else if(card.effects.includes("SWAP")) {
+            const player = getPlayer(players, user?.uid ?? '');
+            const abyssDemon = { ...getPlayerKeeper(player.state, "KLAB02"), playerIndex: player.index };
+            if(!abyssDemon.state) return;
+            dispatchPlayers({
+                type: PLAYER_REDUCER_ACTIONS.KEEPER_CARDS__EXCHANGE,
+                payload: {
+                    playerId: "",
+                    keepersToExchange: [abyssDemon, selectedKeeperGroup[0]],
+                    cards: [abyssDemon.state, selectedKeeperGroup[0].state],
+                    upload: uploadProps,
+                }
+            })
         } else if(card.effects.includes("KEEPER_STEAL_CHOOSE")) {
             discardKeeperFromPlayer(selectedKeeperGroup[0].index, players[selectedKeeperGroup[0].playerIndex].user.uid, false);
             dispatchPlayers({
@@ -1214,6 +1242,8 @@ export default function Game({setWinGameStats}: Props) {
             wormhole(3, 2);
         } else if(card.effects.includes("DRAW_3_PLAY_2")) {
             wormhole(2, 1);
+        } else if(card.effects.includes("DRAW_8_PLAY_5")) {
+            wormhole(5, 3);
         } else if(card.effects.includes("DISCARD_1")) {
             players.forEach((player) => {
                 const cardToDiscard = Math.floor(Math.random() * player.hand.length);
@@ -1343,8 +1373,19 @@ export default function Game({setWinGameStats}: Props) {
                     upload: uploadProps,
                 }
             });
+        } else if(keeperId === "KLAB01") {
+            playCard(getCardById("AAB01"), -1);
+        } else if(keeperId === "KLAB02") {
+            playCard(getCardById("AF04"), -1);
+        } else if(keeperId === "KAB01") {
+            const choices = ["KEAB01", "KEAB02", "A07", "A08", "A09", "AAB01", "GAB02"];
+            const ran = Math.floor(Math.random() * choices.length);
+            playCard(getCardById(choices[ran]), -1);
         }
 
+        resetGroups();
+        inspectKeeper(null);
+        if(keeperId === "KLAB02") return;
         dispatchPlayers({
             type: PLAYER_REDUCER_ACTIONS.KEEPER_COOLDOWN__SET,
             payload: {
@@ -1354,8 +1395,6 @@ export default function Game({setWinGameStats}: Props) {
                 upload: uploadProps
             }
         });
-        resetGroups();
-        inspectKeeper(null);
     }
 
     const warp = () => {

@@ -599,11 +599,11 @@ export default (() => {
     }
 
     const getPlayerKeeper = (player: PlayerSchema, kid: string) => {
-        if(!player.keepers) return false;
-        for(const keeper of player.keepers) {
-            if(keeper.id === kid) return keeper;
+        if(!player.keepers) return { state: null, index: 0 };
+        for(let i = 0; i < player.keepers.length; i++) {
+            if(player.keepers[i].id === kid) return { state: player.keepers[i], index: i };
         }
-        return false;
+        return { state: null, index: 0 };
     }
 
     const getFakeRuleCard = (type: string) => {

@@ -161,6 +161,22 @@
             "text": "Once per turn, steal Torag or Guthan"
         },
         {
+            "id": "KLAB01",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Abyssal Sire",
+            "effects": ["DRAW_8_PLAY_5"],
+            "text": "Once per turn, can draw another 8 cards and from those play 5."
+        },
+        {
+            "id": "KLAB02",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Abyssal Demon",
+            "effects": ["EXCHANGE"],
+            "text": "Once per turn, select a keeper to swap with."
+        },
+        {
             "id": "KR01",
             "type": "KEEPER",
             "subtype": "RUNE",
@@ -353,6 +369,22 @@
             "text": "Once per turn, Create Goal Dragon Defender in hand."
         },
         {
+            "id": "KEAB01",
+            "type": "KEEPER",
+            "subtype": "EQUIPMENT",
+            "name": "Abyssal Whip",
+            "effects": [],
+            "text": ""
+        },
+        {
+            "id": "KEAB02",
+            "type": "KEEPER",
+            "subtype": "EQUIPMENT",
+            "name": "Abyssal Dagger",
+            "effects": [],
+            "text": ""
+        },
+        {
             "id": "K01",
             "type": "KEEPER",
             "subtype": "",
@@ -367,6 +399,14 @@
             "name": "Anti Poison",
             "effects": ["DESTROY_1"],
             "text": "Once per turn, can destroy the poison creeper."
+        },
+        {
+            "id": "KAB01",
+            "type": "KEEPER",
+            "subtype": "",
+            "name": "Unsired",
+            "effects": ["JACKPOT"],
+            "text": "Once per turn, draw an item from the font of consumption."
         },
         {
             "id": "CR01",
@@ -712,6 +752,38 @@
             "effects": [],
             "text": "Didn't you know that |Ernest| the chicken was actually a astral projection from the evil chicken shrine in |Zanaris|."
         },
+        {
+            "id": "GAB01",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Sire",
+            "effects": [],
+            "text": "The |Abyssal Sire| brings instant victory."
+        },
+        {
+            "id": "GAB02",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Jackpot",
+            "effects": [],
+            "text": "Among the loot from the |Unsired| is a chance for an easy win."
+        },
+        {
+            "id": "GAB03",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Abyssal Weapons",
+            "effects": [],
+            "text": "Collection type: |Abyssal Whip| and |Abyssal Dagger|"
+        },
+        {
+            "id": "GAB04",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Whip Drop",
+            "effects": [],
+            "text": "The iconic drop of an |Abyssal Demon| is the |Abyssal Whip|."
+        },        
         {
             "id": "GA01",
             "type": "GOAL",
@@ -1073,6 +1145,14 @@
             "text": "Choose any location to teleport to."
         },
         {
+            "id": "AAB01",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Draw 8, Play 5",
+            "effects": ["DRAW_8_PLAY_5"],
+            "text": "Draw 8 cards, play 5 of them and discard the rest."
+        },
+        {
             "id": "AF01",
             "type": "ACTION",
             "subtype": "",
@@ -1095,6 +1175,14 @@
             "name": "RULE FLUX",
             "effects": ["RULE_RANDOM"],
             "text": "Randomize a rule."
+        },
+        {
+            "id": "AF04",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Swap",
+            "effects": ["SWAP"],
+            "text": "Swaps places with a selected keeper."
         },
         {
             "id": "CO01",
