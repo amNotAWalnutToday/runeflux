@@ -136,7 +136,7 @@ export default function Table({
             &&
             <div 
                 style={{
-                    transform: 'translateX(-185px)',
+                    transform: 'translateX(9px)',
                 }}
                 className={`player_4_keepers keeper_container ${players[3].keepers.length > 1 ? "length_2plus" : "length_1"}`}
             >
@@ -153,7 +153,8 @@ export default function Table({
             <div 
                 className={`table_goals`} 
                 style={{
-                    transform: `${getFlexDir() ? 'translateX(-92px)' : ''} rotateZ(${getGoalRotation()})`,
+                    position: "absolute",
+                    transform: `${getFlexDir() ? 'translateX(5px)' : ''} rotateZ(${getGoalRotation()})`,
                 }}
             >
                 {

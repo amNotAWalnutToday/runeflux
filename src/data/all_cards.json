@@ -993,6 +993,14 @@
             "text": "When this card is in play, each player can have 1 keepers in play."
         },
         {
+            "id": "RB16",
+            "type": "RULE",
+            "subtype": "BASIC",
+            "name": "Keeper Unlimited",
+            "effects": ["RULE_KEEPER_LIMIT", "99"],
+            "text": "When this card is in play, there is no limit on how many keepers can be in play."
+        },
+        {
             "id": "RB15",
             "type": "RULE",
             "subtype": "BASIC",
@@ -1183,6 +1191,14 @@
             "name": "Swap",
             "effects": ["SWAP"],
             "text": "Swaps places with a selected keeper."
+        },
+        {
+            "id": "AF05",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Self Destruct",
+            "effects": ["SELF_DESTRUCT"],
+            "text": "Any keeper that uses this will be discarded."
         },
         {
             "id": "CO01",

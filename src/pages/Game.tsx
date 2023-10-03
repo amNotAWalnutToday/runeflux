@@ -743,7 +743,7 @@ export default function Game({setWinGameStats}: Props) {
                     pile: Array.from(["KLAB01", "KLAB02", "KEAB01", "KAB01", "AAB01", "AAB01", "AAB01", "GAB01", "GAB03", "GAB04"], (id) => getCardById(id)),
                     upload: uploadProps
                 }
-            })
+            });
         }
     }
 
@@ -1298,6 +1298,10 @@ export default function Game({setWinGameStats}: Props) {
                 }
             });
             discardCardFromPlayer(ran, selectedPlayerGroup[0].user.uid, false);
+        } else if(card.effects.includes("SELF_DESTRUCT")) {
+            const thisPlayer = getPlayer(players, user?.uid ?? '');
+            const thisKeeper = getPlayerKeeper(thisPlayer.state, card.id);
+            discardKeeper(thisKeeper.index, true);
         }
         resetGroups();
     }
@@ -1378,7 +1382,7 @@ export default function Game({setWinGameStats}: Props) {
         } else if(keeperId === "KLAB02") {
             playCard(getCardById("AF04"), -1);
         } else if(keeperId === "KAB01") {
-            const choices = ["KEAB01", "KEAB02", "A07", "A08", "A09", "AAB01", "GAB02"];
+            const choices = ["KEAB01", "KEAB02", "A07", "A08", "A09", "AAB01", "GAB02", "RB16", "RL02", "AF05"];
             const ran = Math.floor(Math.random() * choices.length);
             playCard(getCardById(choices[ran]), -1);
         }
