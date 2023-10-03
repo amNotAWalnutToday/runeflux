@@ -364,6 +364,8 @@ export default function Game({setWinGameStats}: Props) {
                 upload: uploadProps
             }
         });
+        inspectKeeper(null);
+        resetGroups();
     }
 
     const rollForDuel = () => {
@@ -1311,6 +1313,7 @@ export default function Game({setWinGameStats}: Props) {
         dispatchRules({
             type: RULE_REDUCER_ACTIONS.RULE_CHANGE__LOCATION_RANDOM,
             payload: {
+                location: rules.location,
                 upload: uploadProps
             }
         });  
@@ -1325,13 +1328,20 @@ export default function Game({setWinGameStats}: Props) {
             RULE_REDUCER_ACTIONS.RULE_CHANGE__TELEBLOCK
         ]
         const ranAction = Math.floor(Math.random() * ruleActions.length);
-        const amount = Math.ceil(Math.random() * 5);
+        const amounts = [1, 2, 3, 4, 5].filter((num) => { 
+            if(ranAction === 0 && num !== rules.drawAmount) return num;
+            if(ranAction === 1 && num !== rules.playAmount) return num;
+            if(ranAction === 2 && num !== rules.handLimit) return num;
+            if(ranAction === 3 && num !== rules.keeperLimit) return num;
+            if(ranAction === 4) return rules.teleblock ? 1 : 5;
+        })
+        const amount = Math.floor(Math.random() * amounts.length);
 
         dispatchRules({
             type: ruleActions[ranAction],
             payload: {
-                amount,
-                teleblock: amount > 2,
+                amount: amounts[amount],
+                teleblock: !rules.teleblock,
                 upload: uploadProps,
             }
         })

@@ -107,7 +107,7 @@ export default (() => {
     const rulesReducer = (state: RuleSchema, action: RULE_ACTIONS) => {
         const { init, ruleKey, amount, location, teleblock } = action.payload;
         const { db, gameId } = action.payload.upload;
-        const locations = ["MISTHALIN", "ASGARNIA", "MORYTANIA", "ABYSS", "WILDERNESS"];
+        const locations = ["MISTHALIN", "ASGARNIA", "MORYTANIA", "ABYSS", "WILDERNESS"].filter((l) => l !== location);
         const ran = Math.floor(Math.random() * locations.length);
     
         switch(action.type) {
