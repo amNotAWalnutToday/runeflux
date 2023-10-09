@@ -7,10 +7,11 @@ import UserContext from '../data/Context';
 
 
 type Props = {
-    pageType: "LOBBY" | "ACCOUNT" | "CATALOG",
+    pageType: "LOBBY" | "ACCOUNT" | "CATALOG" | "GAME",
+    leaveGame: () => void,
 }
 
-export default function Header({pageType}: Props) {
+export default function Header({pageType, leaveGame}: Props) {
     const { setUser } = useContext(UserContext);
     const navigate = useNavigate();
 
@@ -52,6 +53,16 @@ export default function Header({pageType}: Props) {
                 >
                     Log Out
                 </button>
+                {
+                    pageType === "GAME"
+                    &&
+                    <button
+                        className="header_btn"
+                        onClick={leaveGame}
+                    >
+                        Leave Game
+                    </button>
+                }
             </div>
         </div>
     )

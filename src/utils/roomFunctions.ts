@@ -361,6 +361,7 @@ export default (() => {
         createRoom,
         destroyRoom,
         getRooms,
+        getUser,
         joinRoom,
         leaveRoom,
         connectRoom,

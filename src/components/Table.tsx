@@ -26,25 +26,28 @@ export default function Table({
     const { user } = useContext(UserContext);
 
     const getRotation = () => {
-        if(players[0].user.uid === user?.uid) return "180deg";
-        if(players[1].user.uid === user?.uid) return "0deg";
-        if(players[2].user.uid === user?.uid) return "270deg";
-        if(players[3].user.uid === user?.uid) return "90deg";
+        if(!user) return;
+        if(players[0]?.user.uid === user?.uid) return "180deg";
+        if(players[1]?.user.uid === user?.uid) return "0deg";
+        if(players[2]?.user.uid === user?.uid) return "270deg";
+        if(players[3]?.user.uid === user?.uid) return "90deg";
     }
 
     const getGoalRotation = () => {
-        if(players[0].user.uid === user?.uid) return "180deg";
-        if(players[1].user.uid === user?.uid) return "0deg";
-        if(players[2].user.uid === user?.uid) return "90deg";
-        if(players[3].user.uid === user?.uid) return "270deg";
+        if(!user) return;
+        if(players[0]?.user.uid === user?.uid) return "180deg";
+        if(players[1]?.user.uid === user?.uid) return "0deg";
+        if(players[2]?.user.uid === user?.uid) return "90deg";
+        if(players[3]?.user.uid === user?.uid) return "270deg";
     }
 
     const getFlexDir = () => {
+        if(!user) return;
         if(players.length > 3) {
-            if(players[2].user.uid === user?.uid
-            || players[3].user.uid === user?.uid) return true;
+            if(players[2]?.user.uid === user?.uid
+            || players[3]?.user.uid === user?.uid) return true;
         } else if(players.length > 2) {
-            if(players[2].user.uid === user?.uid) return true;
+            if(players[2]?.user.uid === user?.uid) return true;
         }
         return false;
     }

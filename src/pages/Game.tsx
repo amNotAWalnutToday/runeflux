@@ -68,11 +68,11 @@ type Props = {
 }
 
 export default function Game({setWinGameStats}: Props) {
-    const { startGame, checkGameInProgress } = roomFunctions;
+    const { startGame, checkGameInProgress, leaveRoom, destroyRoom, getUser } = roomFunctions;
 
     const navigate = useNavigate();
 
-    const { db, user, joinedGameID, setUser } = useContext(UserContext);
+    const { db, user, joinedGameID, setJoinedGameID, setUser } = useContext(UserContext);
     const uploadProps = { db, gameId: joinedGameID }
     
     /*GLOBAL STATE*/
@@ -1560,6 +1560,26 @@ export default function Game({setWinGameStats}: Props) {
         } 
     }
 
+    const leaveGame = () => {
+        if(!user) return;
+        navigate('/lobby');
+        if(!getUser(Array.from([...players], (v) => v.user), user.uid).error) {
+            const roundAmount = user?.stats.totalRounds + table.round;
+            const gamesPlayedAmount = user?.stats.played + 1;
+            uploadStats("ROUNDS", db, {amount: roundAmount}, user.uid);
+            uploadStats("PLAYED", db, {amount: gamesPlayedAmount}, user.uid);
+            setUser((prev) => {
+                if(!prev) return;
+                return {
+                    ...prev,
+                    stats: Object.assign({}, prev.stats, {played: gamesPlayedAmount, totalRounds: roundAmount}),
+                }
+            });
+        }
+        if(user.uid === joinedGameID) destroyRoom(db, joinedGameID, setJoinedGameID);
+        else leaveRoom(db, joinedGameID, user, setJoinedGameID);
+    }
+
     const mapPlayerBars = () => {
         return table.players.map((player: PlayerSchema, ind: number) => {
             return (
@@ -1614,7 +1634,8 @@ export default function Game({setWinGameStats}: Props) {
                 showHeader
                 &&
                 <Header 
-                    pageType='LOBBY'
+                    pageType='GAME'
+                    leaveGame={leaveGame}
                 />
             }
             <UserAccountBox 
