@@ -93,6 +93,7 @@ export default (() => {
         type: RULE_REDUCER_ACTIONS
         payload: {
             init? : RuleSchema,
+            initRules?: typeof start_rules, 
             ruleKey? : string,
             amount?: number,
             location?: string,
@@ -105,7 +106,7 @@ export default (() => {
     }
     
     const rulesReducer = (state: RuleSchema, action: RULE_ACTIONS) => {
-        const { init, ruleKey, amount, location, teleblock } = action.payload;
+        const { init, initRules, ruleKey, amount, location, teleblock } = action.payload;
         const { db, gameId } = action.payload.upload;
         const locations = ["MISTHALIN", "ASGARNIA", "MORYTANIA", "ABYSS", "WILDERNESS"].filter((l) => l !== location);
         const ran = Math.floor(Math.random() * locations.length);
@@ -135,11 +136,11 @@ export default (() => {
                 upload("RULES", db, {ruleState: {...state, teleblock: teleblock ?? false}}, gameId);
                 return Object.assign({}, state, {teleblock: teleblock ?? false});
             case RULE_REDUCER_ACTIONS.RULE_RESET__CHOICE: 
-                upload("RULES", db, {ruleState: {...state, [`${ruleKey}`]: getInitRule(ruleKey ?? "")}}, gameId);
-                return Object.assign({}, state, {[`${ruleKey}`]: getInitRule(ruleKey ?? "")});
+                upload("RULES", db, {ruleState: {...state, [`${ruleKey}`]: getInitRule(ruleKey ?? "", initRules ?? {} as typeof start_rules)}}, gameId);
+                return Object.assign({}, state, {[`${ruleKey}`]: getInitRule(ruleKey ?? "", initRules ?? {} as typeof start_rules)});
             case RULE_REDUCER_ACTIONS.RULE_RESET__ALL:
-                upload("RULES", db, { ruleState: {...start_rules} }, gameId);
-                return Object.assign({}, state, { ...start_rules });
+                upload("RULES", db, { ruleState: initRules ?? start_rules }, gameId);
+                return Object.assign({}, state, initRules ?? start_rules);
             default: 
                 return state;
         }
@@ -354,7 +355,7 @@ export default (() => {
                 }
             }
         }
-        return Object.assign({}, game, {rules: start_rules, turn});
+        return Object.assign({}, game, {initRules: start_rules, rules: start_rules, turn});
     }
 
     const connectGame = async (
@@ -372,6 +373,7 @@ export default (() => {
             winData: boolean,
             phaseData: PhaseSchema, 
             historyData: { played: {id: string, target: string[], player: string}[], discarded: string[] },
+            initRuleData: RuleSchema,
         ) => void,
     ) => {
         try {
@@ -389,6 +391,7 @@ export default (() => {
                     data.isWon,
                     data.phases,
                     data.history,
+                    data.initRules,
                 );
             });
             await onValue(gameRef, async (snapshot) => {
@@ -404,6 +407,7 @@ export default (() => {
                     data.isWon,
                     data.phases,
                     data.history,
+                    data.initRules,
                 );
             });
         } catch(e) {
@@ -442,7 +446,9 @@ export default (() => {
             case "DECK_DISCARD":
                 return uploadDeck(db, deckState ?? [], gameId, true);
             case "RULES":
-                return uploadRules(db, ruleState ?? {} as RuleSchema, gameId);
+                return uploadRules(db, ruleState ?? {} as RuleSchema, false, gameId);
+            case "INIT_RULES":
+                return uploadRules(db, ruleState ?? {} as RuleSchema, true, gameId);
             case "TURN":
                 return uploadTurn(db, turnState ?? {} as TurnSchema, gameId);
             case "PLAYER": 
@@ -497,9 +503,9 @@ export default (() => {
         }
     }
 
-    const uploadRules = async (db: Database, rules: RuleSchema, gameId: string) => {
+    const uploadRules = async (db: Database, rules: RuleSchema, isInit = false, gameId: string) => {
         try {
-            const ruleRef = ref(db, `/games/${gameId}/game/rules`);
+            const ruleRef = ref(db, `/games/${gameId}/game/${isInit ? "initRules" : "rules"}`);
             await set(ruleRef, rules);
         } catch(e) {
             return console.error(e);
@@ -644,8 +650,8 @@ export default (() => {
         return { state: deck[0], index: 0 };
     }
 
-    const getInitRule = (key: string): number | string | boolean => {
-        const startingRules: {[key: string]: number | string | boolean} = start_rules
+    const getInitRule = (key: string, rules: typeof start_rules): number | string | boolean => {
+        const startingRules: {[key: string]: number | string | boolean} = rules ?? start_rules;
         for(const rule in startingRules) {
             if(key === rule) return (startingRules[rule]);
         }

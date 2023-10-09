@@ -265,6 +265,7 @@ export default function Game({setWinGameStats}: Props) {
         winData: boolean,
         phaseData: PhaseSchema,
         historyData: {played: {id: string, target: string[], player: string}[], discarded: string[]},
+        initRuleData: RuleSchema,
     ) => {
         if(!deckData.discard) deckData.discard = [];
         if(!deckData.pure) deckData.pure = [];
@@ -323,6 +324,7 @@ export default function Game({setWinGameStats}: Props) {
             isWon: winData,
             phases: phaseData,
             history: historyData,
+            initRules: initRuleData,
         }));
         setLocalPlayer((prev) => {
             return { ...prev, ...getPlayer(playerData, user?.uid ?? '').state }
@@ -984,6 +986,7 @@ export default function Game({setWinGameStats}: Props) {
                         type: RULE_REDUCER_ACTIONS.RULE_RESET__CHOICE,
                         payload: {
                             ruleKey: selectedRuleGroup[i],
+                            initRules: table.initRules,
                             upload: uploadProps
                         }
                     });
@@ -1153,6 +1156,7 @@ export default function Game({setWinGameStats}: Props) {
             dispatchRules({
                 type: RULE_REDUCER_ACTIONS.RULE_RESET__ALL,
                 payload: {
+                    initRules: table.initRules,
                     upload: uploadProps,
                 }
             });
@@ -1165,6 +1169,7 @@ export default function Game({setWinGameStats}: Props) {
                     type: RULE_REDUCER_ACTIONS.RULE_RESET__CHOICE,
                     payload: {
                         ruleKey: selectedRuleGroup[i],
+                        initRules: table.initRules,
                         upload: uploadProps
                     }
                 });

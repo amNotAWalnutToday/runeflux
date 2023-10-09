@@ -8,6 +8,7 @@ import PhaseSchema from "./PhaseSchema";
 interface GameSchema {
     deck: DeckSchema,
     goal: CardSchema[],
+    initRules: RuleSchema,
     rules: RuleSchema,
     players: PlayerSchema[],
     turn: TurnSchema,

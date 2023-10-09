@@ -2,20 +2,34 @@ import { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'
 import UserAccountBox from '../components/UserAccountBox';
 import roomFunctions from '../utils/roomFunctions'
+import gameFunctions from '../utils/gameFunctions';
 import UserContext from '../data/Context';
 import RoomSchema from '../schemas/RoomSchema';
 import UserSchema from '../schemas/userSchema';
 import Header from '../components/Header';
+import GameSettings from '../components/GameSettings';
+import start_rules from '../data/start_rules.json';
+import RuleSchema from '../schemas/ruleSchema';
 
-export default function Lobby() {
+const { upload } = gameFunctions;
+
+type Props = {
+    initRules: typeof start_rules,
+    setInitRules: (type: string) => void,
+}
+
+export default function Lobby({initRules, setInitRules}: Props) {
     const { createRoom, getRooms, joinRoom, leaveRoom, destroyRoom, readyUp, connectRoom } = roomFunctions;
     const { db, user, joinedGameID, setJoinedGameID, setUser } = useContext(UserContext);
     const navigate = useNavigate();
 
     const [rooms, setRooms] = useState<RoomSchema[]>([]);
+    const [showGameSettings, setShowGameSettings] = useState(false);
     const [isAllReady, setIsAllReady] = useState(false);
     const [refreshCD, setRefreshCD] = useState(false);
     const [isPlayerReady, setIsPlayerReady] = useState(false);
+
+    const toggleShowGameSettings = () => setShowGameSettings(() => !showGameSettings);
 
     useEffect(() => {
         if(!user) return navigate('/');
@@ -31,6 +45,11 @@ export default function Lobby() {
         if(isAllReady) navigate('/game');
         /*eslint-disable-next-line*/
     }, [isAllReady]);
+
+    const uploadInitRules = async (rules: RuleSchema) => {
+        await upload("RULES", db, {ruleState: {...rules}}, joinedGameID);
+        await upload("INIT_RULES", db, {ruleState: {...rules}}, joinedGameID);
+    }
 
     const getCurrentRoom = () => {
         for(const room of rooms) {
@@ -130,17 +149,40 @@ export default function Lobby() {
             <UserAccountBox />
             <div className='menu lobby'>
                 <h2>Current Session: { getCurrentRoom()?.users[0].username }</h2>
-                { mapRoomPlayers() }
-                <button
-                    style={{marginTop: "1rem"}}
-                    className={`lobby_link ${isPlayerReady ? "disabled" : ""}`}
-                    onClick={() => {
-                        setIsPlayerReady(() => true);
-                        readyUp(db, joinedGameID, user ?? {} as UserSchema, setUser);
-                    }}
-                >
-                    Ready
-                </button>
+                {!showGameSettings
+                ?
+                <>
+                    { mapRoomPlayers() }
+                    <div className='lobby_btn_group' >
+                        <button
+                            style={{width: "100%", backgroundColor: "orangered"}}
+                            className={`play_btn__card ${isPlayerReady ? "disabled" : ""}`}
+                            onClick={() => {
+                                setIsPlayerReady(() => true);
+                                readyUp(db, joinedGameID, user ?? {} as UserSchema, setUser);
+                            }}
+                        >
+                            Ready
+                        </button>
+                        <button
+                            style={{width: "100%"}}
+                            className='play_btn__card flipped'
+                            onClick={() => {
+                                toggleShowGameSettings();
+                            }}
+                        >
+                            Settings
+                        </button>
+                    </div>
+                </>
+                :
+                <GameSettings 
+                    initRules={initRules}
+                    setInitRules={setInitRules}
+                    toggleShowGameSettings={toggleShowGameSettings}
+                    uploadInitRules={uploadInitRules}
+                />
+                }
             </div>
         </div>
     )

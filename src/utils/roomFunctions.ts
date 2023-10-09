@@ -7,6 +7,7 @@ import CardSchema from '../schemas/cardSchema';
 import RoomSchema from '../schemas/RoomSchema';
 import roomGameSchema from '../schemas/roomGameSchema';
 import PlayerSchema from '../schemas/playerSchema';
+import INIT_RULES_REDUCER_ACTIONS from '../schemas/reducers/INIT_RULE_REDUCER_ACTIONS';
 
 interface RoomPlayer {
     hand: boolean | CardSchema[],
@@ -15,6 +16,48 @@ interface RoomPlayer {
 }
 
 export default (() => {
+    type INIT_RULES_ACTIONS = {
+        type: INIT_RULES_REDUCER_ACTIONS,
+        payload: {
+            location?: string,
+            amount?: number,
+        }
+    }
+
+    const initRulesReducer = (state: typeof startRuleData, action: INIT_RULES_ACTIONS) => {
+        const locations = ["MISTHALIN", "ABYSS", "ASGARNIA", "MORYTANIA", "WILDERNESS", "ENTRANA", "CRANDOR", "ZANARIS"];
+        const locationIndex = locations.findIndex((v) => v === state.location);
+        
+        switch(action.type) {
+            case INIT_RULES_REDUCER_ACTIONS.DRAW_INCREMENT:
+                return Object.assign({}, state, {drawAmount: state.drawAmount >= 5 ? 1 : state.drawAmount + 1});
+            case INIT_RULES_REDUCER_ACTIONS.DRAW_DECREMENT:
+                return Object.assign({}, state, {drawAmount: state.drawAmount <= 1 ? 5 : state.drawAmount - 1});
+            case INIT_RULES_REDUCER_ACTIONS.PLAY_INCREMENT:
+                return Object.assign({}, state, {playAmount: state.playAmount >= 5 ? 1 : state.playAmount + 1});
+            case INIT_RULES_REDUCER_ACTIONS.PLAY_DECREMENT:
+                return Object.assign({}, state, {playAmount: state.playAmount <= 1 ? 5 : state.playAmount - 1});
+            case INIT_RULES_REDUCER_ACTIONS.HAND_LIMIT_INCREMENT:
+                return Object.assign({}, state, {handLimit: state.handLimit >= 5 ? 0 : state.handLimit + 1});
+            case INIT_RULES_REDUCER_ACTIONS.HAND_LIMIT_DECREMENT:
+                return Object.assign({}, state, {handLimit: state.handLimit <= 0 ? 5 : state.handLimit - 1});
+            case INIT_RULES_REDUCER_ACTIONS.KEEPER_LIMIT_INCREMENT:
+                return Object.assign({}, state, {keeperLimit: state.keeperLimit >= 5 ? 0 : state.keeperLimit + 1});
+            case INIT_RULES_REDUCER_ACTIONS.KEEPER_LIMIT_DECREMENT:
+                return Object.assign({}, state, {keeperLimit: state.keeperLimit <= 0 ? 5 : state.keeperLimit - 1});
+            case INIT_RULES_REDUCER_ACTIONS.LOCATION_RIGHT:
+                return Object.assign({}, state, {location: locations[locationIndex >= (locations.length - 1) ? 0 :  locationIndex + 1]});
+            case INIT_RULES_REDUCER_ACTIONS.LOCATION_LEFT:
+                return Object.assign({}, state, {location: locations[locationIndex <= 0 ? locations.length - 1 : locationIndex - 1]});
+            case INIT_RULES_REDUCER_ACTIONS.TELEBLOCK_ON:
+                return Object.assign({}, state, {teleblock: true});
+            case INIT_RULES_REDUCER_ACTIONS.TELEBLOCK_OFF:
+                return Object.assign({}, state, {teleblock: false});
+            case INIT_RULES_REDUCER_ACTIONS.RESET: 
+                return Object.assign({}, state, {...startRuleData});
+        }
+    }
+
     const convertGameToRoomGame = (game: roomGameSchema) => {
         if(Array.isArray(game.deck.discard) && !game.deck.discard.length) {
             game.deck.discard = false;
@@ -138,7 +181,7 @@ export default (() => {
             }
         }
         const room: RoomSchema = {
-            game: Object.assign({}, game, {rules: startRuleData}),
+            game: Object.assign({}, game, {initRules: startRuleData, rules: startRuleData}),
             id: user?.uid ?? '',
             displayName: user?.username ?? '',
             inProgress: false,
@@ -312,6 +355,7 @@ export default (() => {
     }
 
     return {
+        initRulesReducer,
         convertGameToRoomGame,
         convertToRoomPlayer,
         createRoom,
