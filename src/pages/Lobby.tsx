@@ -146,6 +146,9 @@ export default function Lobby({initRules, setInitRules}: Props) {
         </div>
     ) : (
         <div className='main_menu'>
+            <Header
+                pageType='LOBBY'
+            />
             <UserAccountBox />
             <div className='menu lobby'>
                 <h2>Current Session: { getCurrentRoom()?.users[0].username }</h2>

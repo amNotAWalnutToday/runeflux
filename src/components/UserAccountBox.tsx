@@ -9,6 +9,7 @@ type Props = {
     player?: PlayerSchema,
     selectedPlayerGroup?: PlayerSchema[],
     selectPlayerGroup?: (player: PlayerSchema) => void,
+    toggleShowHeader?: () => void, 
 }
 
 export default function UserAccountBox({
@@ -18,6 +19,7 @@ export default function UserAccountBox({
     isTurn, 
     selectedPlayerGroup,
     selectPlayerGroup,
+    toggleShowHeader,
 }: Props) {
     const { user } = useContext(UserContext);
 
@@ -69,7 +71,10 @@ export default function UserAccountBox({
             </p>
         </div>
     ) : (
-        <div className="user_bar game_user__this_user">
+        <div 
+            className="user_bar game_user__this_user"
+            onClick={toggleShowHeader}
+        >
             <p>{user?.username ?? "Not Signed In!"}</p>
             <p className="user_bar__uid" >{user?.uid ?? "000000000"}</p>
         </div>

@@ -30,6 +30,7 @@ import PLAYER_REDUCER_ACTIONS from '../schemas/reducers/PLAYER_REDUCER_ACTIONS';
 import GOAL_REDUCER_ACTIONS from '../schemas/reducers/GOAL_REDUCER_ACTIONS';
 import testsettings from '../../testsettings.json';
 import PhaseSchema from '../schemas/PhaseSchema';
+import Header from '../components/Header';
 
 const { 
     loadGame, 
@@ -85,6 +86,7 @@ export default function Game({setWinGameStats}: Props) {
     /*LOCAL STATE*/
     const [loading, setLoading] = useState(true);
     const [locationCooldown, setLocationCooldown] = useState(false);
+    const [showHeader, setShowHeader] = useState(false);
     const [showCardPiles, setShowCardPiles] = useState({discard: false, pure: false, locations: false});
     const [showHistory, setShowHistory] = useState(false);
     const [selectedCard, setSelectedCard] = useState<{state: CardSchema, index: number} | null>(null);
@@ -94,6 +96,11 @@ export default function Game({setWinGameStats}: Props) {
     const [selectedKeeperGroup, setSelectedKeeperGroup] = useState<{ state: CardSchema, index: number, playerIndex: number }[]>([]);
     const [selectedGoalGroup, setSelectedGoalGroup] = useState<{ state: CardSchema, index: number }[]>([]);
     const [localPlayer, setLocalPlayer] = useState(getPlayer(table.players, user?.uid ?? '').state);
+
+    const toggleHeader = () => { 
+        setShowHeader(() => !showHeader);
+        setTimeout(() => setShowHeader(() => false), 3000);
+    }
 
     const selectCard = (card: { state: CardSchema, index: number } | null) => {
         setSelectedCard((prev) => {
@@ -1603,7 +1610,16 @@ export default function Game({setWinGameStats}: Props) {
                     selectedGoalGroup={selectedGoalGroup}
                 />
             }
-            <UserAccountBox />
+            {
+                showHeader
+                &&
+                <Header 
+                    pageType='LOBBY'
+                />
+            }
+            <UserAccountBox 
+                toggleShowHeader={toggleHeader}
+            />
             <div className='user_bars__container'>
                 { mapPlayerBars() }
             </div>
