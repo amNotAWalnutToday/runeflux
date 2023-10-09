@@ -166,10 +166,11 @@ export default function Lobby({initRules, setInitRules}: Props) {
                         </button>
                         <button
                             style={{width: "100%"}}
-                            className='play_btn__card flipped'
+                            className={`play_btn__card flipped ${getCurrentRoom()?.id === user?.uid ? "" : "disabled"}`}
                             onClick={() => {
                                 toggleShowGameSettings();
                             }}
+                            disabled={getCurrentRoom()?.id === user?.uid ? false : true}
                         >
                             Settings
                         </button>
