@@ -185,6 +185,30 @@
             "text": "Once per turn, select a keeper to swap with."
         },
         {
+            "id": "KLW01",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "King Black Dragon",
+            "effects": ["DESTROY_1"],
+            "text": "Once per turn, destroy any keeper of any time in play."
+        },
+        {
+            "id": "KLW02",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Chaos Elemental",
+            "effects": ["TO_HAND_1"],
+            "text": "Once per turn, send any keeper in play to that players hand."
+        },
+        {
+            "id": "KLW03",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Chaos Fanatic",
+            "effects": ["TO_HAND_1"],
+            "text": "Once per turn, send any keeper in play to that players hand."
+        },
+        {
             "id": "KR01",
             "type": "KEEPER",
             "subtype": "RUNE",
@@ -391,6 +415,14 @@
             "name": "Abyssal Dagger",
             "effects": [],
             "text": ""
+        },
+        {
+            "id": "KEW01",
+            "type": "KEEPER",
+            "subtype": "EQUIPMENT",
+            "name": "Burning Amulet",
+            "effects": ["TELEPORT_WILDERNESS"],
+            "text": "Once per turn, teleport to wilderness and teleblock."
         },
         {
             "id": "K01",
@@ -825,6 +857,30 @@
             "text": "The sound of magic(|Ahrim|) and crossbows(|Karil|) resounds through the crypts."
         },
         {
+            "id": "GW01",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Disarm",
+            "effects": [],
+            "text": "The bosses of the wilderness who remove equipment from the player. |Chaos Elemental| and |Chaos Fanatic|."
+        },
+        {
+            "id": "GW02",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Dragons",
+            "effects": [],
+            "text": "Collection type: |Elvarg|, |King Black Dragon|."
+        },
+        {
+            "id": "GW03",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Amulets",
+            "effects": [],
+            "text": "Collection type: |Ghostspeak Amulet|, |Burning Amulet|."
+        },
+        {
             "id": "RL01",
             "type": "RULE",
             "subtype": "LOCATION",
@@ -887,6 +943,14 @@
             "name": "Zanaris",
             "effects": ["LOCATION", "ZANARIS"],
             "text": "When this card is in play, each turn one rule will randomize except location."
+        },
+        {
+            "id": "RL09",
+            "type": "RULE",
+            "subtype": "LOCATION",
+            "name": "Deep Wilderness",
+            "effects": ["LOCATION", "WILDERNESS"],
+            "text": "Once per turn, choose a keeper to challenge, on entering teleblock."
         },
         {
             "id": "RB01",
@@ -1207,6 +1271,14 @@
             "name": "Self Destruct",
             "effects": ["SELF_DESTRUCT"],
             "text": "Any keeper that uses this will be discarded."
+        },
+        {
+            "id": "AF06",
+            "type": "ACTION",
+            "subtype": "",
+            "name": "Disarmed",
+            "effects": ["TO_HAND_1"],
+            "text": "Send 1 keeper to owners hand."
         },
         {
             "id": "CO01",

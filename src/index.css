@@ -1320,6 +1320,30 @@ a:hover,
   background-repeat: no-repeat;
 }
 
+.king_black_dragon {
+  background: url("./assets/kbd.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.chaos_elemental {
+  background: url("./assets/chaos_elemental.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.chaos_fanatic {
+  background: url("./assets/chaos_fanatic.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.burning_amulet {
+  background: url("./assets/burning_amulet.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
 .bronze_defender {
   background: url("./assets/bronze_defender.png");
   background-size: contain;
@@ -1435,6 +1459,7 @@ a:hover,
   background-repeat: no-repeat;
 }
 
+.deep_wilderness,
 .wilderness {
   background: url("./assets/wilderness.png");
   background-size: contain;

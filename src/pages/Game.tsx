@@ -373,6 +373,18 @@ export default function Game({setWinGameStats}: Props) {
                 upload: uploadProps
             }
         });
+        upload("PHASE", db, { phaseState: {location: "wilderness", amount: table.phases.wilderness + 1} }, joinedGameID);
+        if(table.phases.wilderness === 20) {
+            const cardIdsToAdd = ["KLW01", "KLW02", "KLW03", "KEW01", "GW01", "GW02", "GW03", "RL09", "RL09", "RL09"];
+            const cardsToAdd = Array.from(cardIdsToAdd, (id) => getCardById(id));
+            dispatchDeck({
+                type: DECK_REDUCER_ACTIONS.DECK_ADD__DISCARD_BOT,
+                payload: {
+                    pile: [...cardsToAdd],
+                    upload: uploadProps
+                }
+            });
+        }
         inspectKeeper(null);
         resetGroups();
     }
@@ -714,6 +726,7 @@ export default function Game({setWinGameStats}: Props) {
             case "A11":
             case "A15":
             case "AF04":
+            case "AF06":
             case "CO04":
             case "CO06":
                 return selectedKeeperGroup.length ? [{ id: selectedKeeperGroup[0].state.id, index: selectedKeeperGroup[0].index, playerIndex: selectedKeeperGroup[0].playerIndex }] : [];
@@ -1316,6 +1329,16 @@ export default function Game({setWinGameStats}: Props) {
             const thisPlayer = getPlayer(players, user?.uid ?? '');
             const thisKeeper = getPlayerKeeper(thisPlayer.state, card.id);
             discardKeeper(thisKeeper.index, true);
+        } else if(card.effects.includes("TO_HAND_1")) {
+            dispatchPlayers({
+                type: PLAYER_REDUCER_ACTIONS.HAND_CARDS__ADD,
+                payload: {
+                    playerId: players[selectedKeeperGroup[0].playerIndex].user.uid,
+                    cards: [selectedKeeperGroup[0].state],
+                    upload: uploadProps
+                }
+            });
+            discardKeeperFromPlayer(selectedKeeperGroup[0].index, players[selectedKeeperGroup[0].playerIndex].user.uid, false);
         }
         resetGroups();
     }
@@ -1376,6 +1399,7 @@ export default function Game({setWinGameStats}: Props) {
         } else if(
             keeperId === "KL07" || keeperId === "KR07" || keeperId === "KE04"
             || keeperId === "K02" || keeperId === "KE02" || keeperId === "KL06"
+            || keeperId === "KLW01"
         ) {
             // destroy cards //
             playCard(getCardById("A15"), -1);
@@ -1407,6 +1431,10 @@ export default function Game({setWinGameStats}: Props) {
             const choices = ["KEAB01", "KEAB02", "A07", "A08", "A09", "AAB01", "GAB02", "RB16", "RL02", "AF05"];
             const ran = Math.floor(Math.random() * choices.length);
             playCard(getCardById(choices[ran]), -1);
+        } else if(keeperId === "KLW02" || keeperId === "KLW03") {
+            playCard(getCardById("AF06"), -1);
+        } else if(keeperId === "KEW01") {
+            playCard(getCardById("RL09"), -1);
         }
 
         resetGroups();

@@ -9,12 +9,44 @@
             "text": "Once per turn, destroy any keeper of any time in play."
         },
         {
-            "id": "KLW01",
+            "id": "KLW02",
             "type": "KEEPER",
             "subtype": "LIVING",
-            "name": "Lava Dragon",
+            "name": "Chaos Elemental",
+            "effects": ["TO_HAND_1"],
+            "text": "Once per turn, send any keeper in play to that players hand."
+        },
+        {
+            "id": "KLW03",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Chaos Fanatic",
+            "effects": ["TO_HAND_1"],
+            "text": "Once per turn, send any keeper in play to that players hand."
+        },
+        {
+            "id": "KEW01",
+            "type": "KEEPER",
+            "subtype": "LIVING",
+            "name": "Burning Amulet",
+            "effects": ["TELEPORT_WILDERNESS"],
+            "text": "Once per turn, teleport to wilderness and teleblock."
+        },
+        {
+            "id": "GW01",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Disarm",
             "effects": [],
-            "text": ""
+            "text": "The bosses of the wilderness who remove equipment from the player. |Chaos Elemental| and |Chaos Fanatic|."
+        },
+        {
+            "id": "GW02",
+            "type": "GOAL",
+            "subtype": "",
+            "name": "Dragons",
+            "effects": [],
+            "text": "Collection type: |Elvarg|, |King Black Dragon|."
         }
     ]
 }

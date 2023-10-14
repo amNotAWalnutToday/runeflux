@@ -619,6 +619,42 @@ export default (() => {
         else return { hasWon: false, bypassCreeper: false };
     }
 
+    const checkGW01 = (keepers: CardSchema[]) => {
+        const requirements = { chaosEle: false, chaosFanatic: false };
+        
+        keepers.forEach((keeper) => {
+            if(keeper.id === "KLW03") requirements.chaosFanatic = true;
+            if(keeper.id === "KLW02") requirements.chaosEle = true;
+        });
+
+        if(requirements.chaosFanatic && requirements.chaosEle) return { hasWon: true, bypassCreeper: false };
+        else return { hasWon: false, bypassCreeper: false };
+    }
+
+    const checkGW02 = (keepers: CardSchema[]) => {
+        const requirements = { KBD: false, elvarg: false };
+        
+        keepers.forEach((keeper) => {
+            if(keeper.id === "CR01") requirements.elvarg = true;
+            if(keeper.id === "KLW01") requirements.KBD = true;
+        });
+
+        if(requirements.KBD && requirements.elvarg) return { hasWon: true, bypassCreeper: true };
+        else return { hasWon: false, bypassCreeper: false };
+    }
+
+    const checkGW03 = (keepers: CardSchema[]) => {
+        const requirements = { ghostspeak: false, burning: false };
+        
+        keepers.forEach((keeper) => {
+            if(keeper.id === "KEW01") requirements.burning = true;
+            if(keeper.id === "KE01") requirements.ghostspeak = true;
+        });
+
+        if(requirements.burning && requirements.ghostspeak) return { hasWon: true, bypassCreeper: false };
+        else return { hasWon: false, bypassCreeper: false };
+    }
+
     const compareKeepersToGoal = (
         keepers: CardSchema[], 
         goal: CardSchema,
@@ -725,6 +761,13 @@ export default (() => {
                 return checkGM02(keepers);
             case "GM03":
                 return checkGM03(keepers);
+            case "GW01":
+                return checkGW01(keepers);
+            case "GW02":
+                return checkGW02(keepers);
+            case "GW03":
+                return checkGW03(keepers);
+
         }
 
         return { hasWon: false, bypassCreeper: false };
