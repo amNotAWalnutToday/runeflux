@@ -8,7 +8,7 @@ import UserContext from '../data/Context';
 
 type Props = {
     pageType: "LOBBY" | "ACCOUNT" | "CATALOG" | "GAME",
-    leaveGame: () => void,
+    leaveGame?: () => void,
 }
 
 export default function Header({pageType, leaveGame}: Props) {
